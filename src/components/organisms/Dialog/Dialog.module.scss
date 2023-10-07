@@ -1,0 +1,130 @@
+@import 'styles/DefaultValueVariable.scss';
+
+.background {
+  position: fixed;
+  z-index: 2;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal {
+  margin: 10% auto;
+  width: 50%;
+  border: 1px solid #888;
+  border-radius: 10px;
+  background-color: white;
+
+  &__title {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #888;
+    padding: 10px;
+  }
+
+  &__conts {
+    display: grid;
+    grid-row-gap: 20px;
+    padding: 10px 30px;
+
+    &--sel {
+      display: flex;
+      justify-content: center;
+
+      >div {
+        border: 1px solid #E5E5E5;
+        padding: 5px 50px;
+        cursor: pointer;
+      }
+
+      >div:first-child {
+
+      }
+      >div:last-child {
+
+      }
+    }
+
+    &--name {
+
+      >input {
+        width: 100%;
+        height: 30px;
+        border: 1px solid #E5E5E5;
+      }
+    }
+
+    &--charge {
+      display: flex;
+      justify-content: space-between;
+      line-height: 30px;
+
+      >input {
+        height: 30px;
+        border: 1px solid #E5E5E5;
+      }
+      >input:last-child {
+        width: 250px;
+      }
+    }
+
+    &--service {
+
+      >div:last-child {
+        display: flex;
+
+        >label {
+          margin-right: 30px;
+        }
+      }
+    }
+
+    &--client {
+
+      >input {
+        width: 100%;
+        height: 30px;
+        border: 1px solid #E5E5E5;
+      }
+    }
+
+    &--etc {
+
+      >textarea {
+        width: 100%;
+        height: 150px;
+        border: 1px solid #E5E5E5;
+      }
+    }
+
+    &--btn {
+      display: flex;
+      justify-content: center;
+
+      >button {
+        width: 70px;
+        height: 30px;
+      }
+    }
+
+  }
+}
+
+.close {
+
+}
+
+.active {
+  background-color: #45A9FA;
+}
+
+.margin {
+  margin-bottom: 5px;
+}
+
+.font--bold {
+  font-size: 14px;
+  font-weight: 600;
+}

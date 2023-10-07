@@ -1,0 +1,13 @@
+.btn {
+  display: grid;
+  place-items: center;
+  border: 1px solid #828282;
+  border-radius: 5px;
+
+	&.btn--background {
+
+		&-default {
+			background-color: #E5E5E5;
+		}
+	}
+}
