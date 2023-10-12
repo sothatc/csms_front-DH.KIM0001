@@ -1,9 +1,11 @@
-import { Select } from 'components/atoms/Select/Select';
 import { Button } from 'components/atoms/Button/Button';
-import { useState, useEffect } from 'react';
-import { getEnterpriseDtlInfo, insertEnterprise } from 'pages/api/Enterprise/EnterpriseAPI';
-import styles from './EnterpriseDtlPage.module.scss';
+import { CustListModal } from 'components/organisms/Dialog/CustInfoModal/CustInfoModal';
+import { downloadAtchFile, getEnterpriseDtlInfo } from 'pages/api/Enterprise/EnterpriseAPI';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { openModal } from 'reduxStore/modalSlice';
+import styles from './EnterpriseDtlPage.module.scss';
 
 const sysDataDivs = [
   {data : 'os_vers'      , type: 'I', label: 'OS'         }
@@ -59,6 +61,7 @@ const EnterpriseDtlPage = () => {
   const [systemRowIndex     , setSystemRowIndex     ] = useState(-1);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const entpNoArr = window.location.search.substring(1).split("=");
@@ -87,6 +90,31 @@ const EnterpriseDtlPage = () => {
 
   const handleClickModifyEvent = () => {
     navigate(`/enterprise/register?entp_unq=${enterpriseData.entp_unq}&cust_unq=${principalCustData.cust_unq}`);
+  }
+
+  const onClickDownloadAtchFile = (atch_file_unq) => {
+    downloadAtchFile(atch_file_unq).then((response) => {
+      const contentDisposition = response.headers['content-disposition'];
+
+      const fileNameMatch = decodeURI(contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)[1]
+      .replace(/['"]/g, ''));
+
+      if(fileNameMatch) {
+        const blob =  new Blob([response.data], { type: response.headers['content-type'] });
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = fileNameMatch;
+        link.click();
+
+        URL.revokeObjectURL(link.href);
+      }
+    })
+    .catch((err) => {});
+  }
+
+  const onClickOpenCustListModal = () => {
+    dispatch(openModal());
   }
 
   return (
@@ -130,7 +158,7 @@ const EnterpriseDtlPage = () => {
               </div>
               <div>
                 <div>{principalCustData?.memb_nm}</div>
-                <Button value={'더보기'}/>
+                <Button value={'더보기'} onClickEvent={onClickOpenCustListModal} />
               </div>
               <div>
                 <span className={styles.compulsory}>*</span>
@@ -146,14 +174,14 @@ const EnterpriseDtlPage = () => {
                 직위
               </div>
               <div>
-              <div>{principalCustData?.memb_pst_nm}</div>
+                <div>{principalCustData?.memb_pst_nm}</div>
               </div>
               <div>
                 <span className={styles.compulsory}>*</span>
                 연락처
               </div>
               <div>
-              <div>{principalCustData?.memb_tel}</div>
+                <div>{principalCustData?.memb_tel}</div>
               </div>
             </div>
             <div>
@@ -162,14 +190,14 @@ const EnterpriseDtlPage = () => {
                 이메일
               </div>
               <div>
-              <div>{principalCustData?.memb_email}</div>
+                <div>{principalCustData?.memb_email}</div>
               </div>
               <div>
                 <span className={styles.compulsory}>*</span>
                 서비스 형태
               </div>
               <div>
-              <div>{enterpriseData?.svc_tp}</div>
+                <div>{enterpriseData?.svc_tp}</div>
               </div>
             </div>
             <div>
@@ -184,11 +212,7 @@ const EnterpriseDtlPage = () => {
             <div className={`${styles['register__file--td']}`}>
               <div>
                 {atchFiles && atchFiles.map((file, index) => (
-                  <div>
-                    <div>
-                      <div>{file.atch_file_org_nm}</div>
-                    </div>
-                  </div>
+                  <div onClick={() => onClickDownloadAtchFile(file.atch_file_unq)}>{file.atch_file_org_nm}</div>
                 ))}
               </div>
             </div>
@@ -264,6 +288,7 @@ const EnterpriseDtlPage = () => {
           <div></div>
         </div>
       </div>
+      <CustListModal />
     </>
   )
 }

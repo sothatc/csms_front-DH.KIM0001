@@ -70,5 +70,19 @@ const updateEnterprise = async (object) => {
   }
 }
 
+const downloadAtchFile = async (atch_file_unq) => {
+  try {
+    const response = await axiosInstance.post(`/entp/enterprise/atch/${atch_file_unq}`,
+      null,
+      {
+        responseType: 'arraybuffer',
+      }
+    );
+    return response;
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
 
-export { getEnterpriseList, getEnterpriseDtlInfo, insertEnterprise, updateEnterprise };
+
+export { getEnterpriseList, getEnterpriseDtlInfo, insertEnterprise, updateEnterprise, downloadAtchFile };

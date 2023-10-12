@@ -87,7 +87,7 @@ const EnterpriseRegPage = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const entp_unq = searchParams.get('entp_unq');
-  const cust_unq = searchParams.get('cust_unq');
+  // const cust_unq = searchParams.get('cust_unq');
 
   useEffect(() => {
     getEnterpriseDtlInfo(entp_unq).then((response) => {
@@ -324,8 +324,8 @@ const EnterpriseRegPage = () => {
               </div>
               <div>
                 <Select
+                  name  = 'entp_tp'
                   value = {enterpriseData && enterpriseData.entp_tp}
-                  name          = 'entp_tp'
                   onChangeEvent = {onChangeEnterpriseCode}
                   // 공통 dataSet으로 만들 예정
                   dataSet = {[
@@ -534,13 +534,6 @@ const EnterpriseRegPage = () => {
                   </div>
                 )
               })}
-              {/* {sysDataDivs.map(item =>{
-                return (
-                  <div>
-                    <div>{sys[item.data]}</div>
-                  </div>
-                )
-              })} */}
             </div>)
           })}
         </div>

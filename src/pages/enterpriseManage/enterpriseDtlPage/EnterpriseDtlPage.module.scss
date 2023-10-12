@@ -149,6 +149,16 @@
           padding: 10px;
           height: 150px;
           overflow: auto;
+
+          >div{
+            margin-bottom: 5px;
+            text-decoration: underline;
+            cursor: pointer;
+
+            &:hover{
+              color: #1c427e;
+            }
+          }
         }
       }
     }
@@ -159,7 +169,6 @@
   max-width: 1280px;
   margin: 60px auto;
   display: grid;
-  // grid-template-rows: 24px 200px calc(100% - 24px - 400px - 20px * 3) 200px;
   grid-template-rows: 24px 160px calc(100% - 24px - 360px - 20px * 3) 200px;
   gap: 20px;
 

@@ -1,13 +1,11 @@
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-import Grid from 'components/molecules/Grid/Grid';
 import { Button } from 'components/atoms/Button/Button';
+import { Select } from 'components/atoms/Select/Select';
+import Grid from 'components/molecules/Grid/Grid';
+import { getEnterpriseList } from 'pages/api/Enterprise/EnterpriseAPI';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PopUpModal } from 'components/organisms/Dialog/Dialog';
-import { getEnterpriseList } from 'pages/api/Enterprise/EnterpriseAPI';
-import { EnterpriseSearchBox } from 'components/organisms/EnterpriseSearchBox/EnterpriseSearchBox';
-import { Select } from 'components/atoms/Select/Select';
 
 
 const ButtonActionRenderer = (param) => {
@@ -36,7 +34,6 @@ const ButtonAtchFileRenderer = (param) => {
 		</>
 	)
 }
-
 
 const ColumnDefs = [
 	{headerName : 'No.'             , field : ''     },
@@ -96,15 +93,10 @@ console.log(requestData);
 		getEnterpriseListEvent(requestData);
 	}
 
-	// const handleOpenRegClientModal = () => {
-	// 	dispatch(openModal());
-	// }
-
 	return (
 		<>
 			<div className='client'>
 				<div className='client__title'>업체관리</div>
-				{/* <EnterpriseSearchBox onChangeEntpTypeCode={onChangeEntpTypeCode}/> */}
 				<div className="client__search">
 					<div className="client__search--precondition">
 						<div>
@@ -144,7 +136,6 @@ console.log(requestData);
 				</div>
 				<div className='client__btn'>
 					<Button value='업체 등록' onClickEvent={moveToNoticePage} />
-					{/* <Button value='업체 등록' onClickEvent={handleOpenRegClientModal} /> */}
 				</div>
 				<div className="client__list">
 					<Grid
@@ -153,7 +144,6 @@ console.log(requestData);
 					/>
 				</div>
 			</div>
-			{/* <PopUpModal /> */}
 		</>
 	)
 }
