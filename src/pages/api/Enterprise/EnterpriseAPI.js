@@ -34,7 +34,6 @@ const getEnterpriseDtlInfo = async (entp_unq) => {
 }
 
 const insertEnterprise = async (object) => {
-  console.log("insertAPI");
   const formData = object;
   try{
     const response = await axiosInstance.post(
@@ -84,5 +83,62 @@ const downloadAtchFile = async (atch_file_unq) => {
   }
 }
 
+const insertCustInfo = async (object) => {
+  const {entp_unq, entp_tp, memb_nm, memb_pst_nm, memb_dept_nm, memb_tel, memb_email, flag} = object;
 
-export { getEnterpriseList, getEnterpriseDtlInfo, insertEnterprise, updateEnterprise, downloadAtchFile };
+  try{
+    const response = await axiosInstance.post(`/entp/enterprise/setCustInfo`,
+      {
+        entp_unq,
+        entp_tp,
+        memb_nm,
+        memb_pst_nm,
+        memb_dept_nm,
+        memb_tel,
+        memb_email,
+        flag,
+        principal_tp: 'N',
+      }
+    );
+    return response;
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
+
+const getCustList = async (entp_unq) => {
+  try{
+    const response = await axiosInstance.post(`/entp/enterprise/getCustList`,
+      {
+        entp_unq,
+      }
+    );
+    return response.data;
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
+
+const deleteCustInfo = async (cust_unq) => {
+  try{
+    const response = await axiosInstance.post(`/entp/enterprise/deleteCustInfo`,
+      {
+        cust_unq,
+      }
+    );
+    return response;
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
+
+
+export {getEnterpriseList,
+        getEnterpriseDtlInfo,
+        insertEnterprise,
+        updateEnterprise,
+        downloadAtchFile,
+        insertCustInfo,
+        getCustList,
+        deleteCustInfo,
+};

@@ -81,7 +81,7 @@ const EnterpriseRegPage = () => {
   const [systemData     , setSystemData         ] = useState([]);
   const [systemInputData, setSystemInputData    ] = useState({...defaultSysData});
   const [systemRowIndex , setSystemRowIndex     ] = useState(-1);
-
+console.log("atchFiles = ", atchFiles);
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -96,7 +96,7 @@ const EnterpriseRegPage = () => {
       setSystemData(response.enterpriseSvcData);
       setCustData(response.enterpriseCustData[0]);
     });
-  },[]);
+  },[entp_unq]);
 
   const onClickOneDeleteFile = (index) => {
     delFileArray.push(atchFiles[index].atch_file_unq);
@@ -147,7 +147,6 @@ const EnterpriseRegPage = () => {
   }
 
   const onClickInsertEntp = () => {
-    console.log("insertBtn");
     const numericPattern = /^[0-9]+$/;
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -436,7 +435,7 @@ const EnterpriseRegPage = () => {
               </div>
               <div>
                 {atchFiles && atchFiles.map((file, index) => (
-                  <div>
+                  <div key={index}>
                     <div>
                       <div>{file.name || file.atch_file_nm}</div>
                     </div>

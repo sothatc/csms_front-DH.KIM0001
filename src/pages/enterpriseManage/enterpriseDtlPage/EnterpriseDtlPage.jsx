@@ -1,10 +1,10 @@
 import { Button } from 'components/atoms/Button/Button';
-import { CustListModal } from 'components/organisms/Dialog/CustInfoModal/CustInfoModal';
+import { useState, useEffect } from 'react';
 import { downloadAtchFile, getEnterpriseDtlInfo } from 'pages/api/Enterprise/EnterpriseAPI';
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { openModal } from 'reduxStore/modalSlice';
+import { CustListModal } from 'components/organisms/Dialog/CustListModal/CustListModal';
 import styles from './EnterpriseDtlPage.module.scss';
 
 const sysDataDivs = [
@@ -113,8 +113,18 @@ const EnterpriseDtlPage = () => {
     .catch((err) => {});
   }
 
-  const onClickOpenCustListModal = () => {
-    dispatch(openModal());
+  const handleOpenCustListModal = () => {
+    dispatch(
+      openModal({
+        modalType : 'CustListModal',
+        isOpen    : true,
+        data: {
+          entpUnqProps: enterpriseData.entp_unq,
+          entpTpProps : enterpriseData.entp_tp,
+          cuatDataProps: custData,
+        },
+      })
+    )
   }
 
   return (
@@ -158,7 +168,7 @@ const EnterpriseDtlPage = () => {
               </div>
               <div>
                 <div>{principalCustData?.memb_nm}</div>
-                <Button value={'더보기'} onClickEvent={onClickOpenCustListModal} />
+                <Button value={'더보기'} onClickEvent={ ()=>handleOpenCustListModal('custListModal') } />
               </div>
               <div>
                 <span className={styles.compulsory}>*</span>
@@ -212,7 +222,7 @@ const EnterpriseDtlPage = () => {
             <div className={`${styles['register__file--td']}`}>
               <div>
                 {atchFiles && atchFiles.map((file, index) => (
-                  <div onClick={() => onClickDownloadAtchFile(file.atch_file_unq)}>{file.atch_file_org_nm}</div>
+                  <div key={index} onClick={() => onClickDownloadAtchFile(file.atch_file_unq)}>{file.atch_file_org_nm}</div>
                 ))}
               </div>
             </div>
@@ -288,7 +298,6 @@ const EnterpriseDtlPage = () => {
           <div></div>
         </div>
       </div>
-      <CustListModal />
     </>
   )
 }

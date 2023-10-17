@@ -1,26 +1,30 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  // modalType : "",
-  isOpen : false,
-}
+  modalType: '',
+  isOpen   : false,
+  data     : {},
+};
 
 export const modalSlice = createSlice({
-  name: "modal",   // slice의 이름
-  initialState,       // 초기 값
-  reducers: {      // state 바꾸는 함수
-    openModal: (state) => {
-      // const { modalType } = action.payload;
+  name: "modal",
+  initialState,
+  reducers: {
+    openModal: (state, action) => {
+      const { modalType, data } = action.payload;
 
-      // state.modalType = modalType;
-      state.isOpen = true;
+      state.modalType = modalType;
+      state.isOpen    = true;
+      state.data      = data;
     },
     closeModal: (state) => {
       state.isOpen = false;
+      state.data   = null;
     },
   },
 });
 
 export const { openModal, closeModal } = modalSlice.actions;
+export const selectModal = (state) => state.modal;
 
 export default modalSlice.reducer;

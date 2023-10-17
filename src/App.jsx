@@ -7,13 +7,14 @@ import TaskManagePage from 'pages/taskManage';
 import EnterpriseManagePage from 'pages/enterpriseManage';
 import EnterpriseRegPage from 'pages/enterpriseManage/enterpriseRegPage/EnterpriseRegPage';
 import EnterpriseDtlPage from 'pages/enterpriseManage/enterpriseDtlPage/EnterpriseDtlPage';
+import { GlobalModal } from 'reduxStore/GlobalModal';
 
 function App() {
 
   return (
     <Provider store={store}>
       <Layout>
-
+      <GlobalModal />
         <Routes>
             <Route exact path="/"               element = {<HomePage />            } />
             <Route path ="/enterprise"          element = {<EnterpriseManagePage />} />
