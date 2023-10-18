@@ -1,7 +1,7 @@
 import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
-import { getEnterpriseDtlInfo, insertEnterprise, updateEnterprise } from 'pages/api/Enterprise/EnterpriseAPI';
-import { useEffect, useState } from 'react';
+import { deleteEnterpriseInfo, getEnterpriseDtlInfo, insertEnterprise, updateEnterprise } from 'pages/api/Enterprise/EnterpriseAPI';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import styles from './EnterpriseRegPage.module.scss';
 
@@ -17,9 +17,7 @@ const sysDataDivs = [
 , {data : 'gpu_model'    , type: 'I', label: 'GPU'        }
 , {data : 'cpu_cnt'      , type: 'I', label: 'CPU 코어'   }
 , {data : 'total_mem_sz' , type: 'I', label: 'Memory'     }
-// , {data : 'mem_sz' , type: 'I', label: 'Memory'     }
 , {data : 'total_disk_sz', type: 'I', label: 'Disk'       }
-// , {data : 'disk_sz', type: 'I', label: 'Disk'       }
 , {data : 'resc_use_flag', type: 'S', label: '리소스 사용'}
 , {data : 'base_path'    , type: 'I', label: '기본경로'   }
 , {data : 'log_path'     , type: 'I', label: '로그경로'   }
@@ -52,15 +50,9 @@ const defaultSysData = {
   reg_dtm      : ''
 }
 const defaultEntpData = {
-  entp_nm      : '',
-  entp_tp      : '',
-  // memb_dept_nm : '',
-  // memb_email   : '',
-  // memb_nm      : '',
-  // memb_pst_nm  : '',
-  // memb_tel     : '',
-  svc_tp       : '',
-  // principal_tp : ''
+  entp_nm : '',
+  entp_tp : '',
+  svc_tp  : '',
 }
 
 const defaultCustData = {
@@ -73,15 +65,16 @@ const defaultCustData = {
 }
 const delFileArray = [];
 
+const FILE_SIZE_MAX_LIMIT = 20 * 1024 * 1024;
+
 const EnterpriseRegPage = () => {
-  // const [atchFiles      , setAtchFiles          ] = useState([]);
-  const [atchFiles      , setAtchFiles          ] = useState();
+  const [atchFiles      , setAtchFiles          ] = useState([]);
   const [enterpriseData , setEnterpriseData     ] = useState({...defaultEntpData});
   const [custData       , setCustData           ] = useState({...defaultCustData});
   const [systemData     , setSystemData         ] = useState([]);
   const [systemInputData, setSystemInputData    ] = useState({...defaultSysData});
   const [systemRowIndex , setSystemRowIndex     ] = useState(-1);
-console.log("atchFiles = ", atchFiles);
+
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -89,14 +82,14 @@ console.log("atchFiles = ", atchFiles);
   const entp_unq = searchParams.get('entp_unq');
   // const cust_unq = searchParams.get('cust_unq');
 
-  useEffect(() => {
+  if(entp_unq) {
     getEnterpriseDtlInfo(entp_unq).then((response) => {
       setEnterpriseData(response.enterpriseData);
       setAtchFiles(response.enterpriseAtchData);
       setSystemData(response.enterpriseSvcData);
       setCustData(response.enterpriseCustData[0]);
     });
-  },[entp_unq]);
+  }
 
   const onClickOneDeleteFile = (index) => {
     delFileArray.push(atchFiles[index].atch_file_unq);
@@ -146,6 +139,16 @@ console.log("atchFiles = ", atchFiles);
     setSystemData(newData);
   }
 
+  const totalFileSizeInByte = useMemo(() => {
+    let totalSize = 0;
+
+    atchFiles.forEach((file) => {
+      totalSize += file.size;
+    });
+
+    return totalSize;
+  }, [atchFiles])
+
   const onClickInsertEntp = () => {
     const numericPattern = /^[0-9]+$/;
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -161,6 +164,9 @@ console.log("atchFiles = ", atchFiles);
     }else if(!emailPattern.test(custData.memb_email)) {
       validationBoolean = false;
       alert('이메일 형식에 맞게 입력해주세요.');
+    }else if(totalFileSizeInByte > FILE_SIZE_MAX_LIMIT){
+      validationBoolean = false;
+      alert('파일 최대 용량은 20MB입니다.');
     }else {
       systemData.forEach((item) => {
         if (!numericPattern.test(item.cpu_cnt)) {
@@ -219,12 +225,12 @@ console.log("atchFiles = ", atchFiles);
       validationBoolean = false;
       alert('이메일 형식에 맞게 입력해주세요.');
     }else {
-      systemData.forEach((item) => {
-        if (!numericPattern.test(item.cpu_cnt)) {
-          validationBoolean = false;
-          alert('CPU코어 수는 숫자만 입력해주세요.');
-        }
-      });
+      // systemData.forEach((item) => {
+      //   if (!numericPattern.test(item.cpu_cnt)) {
+      //     validationBoolean = false;
+      //     alert('CPU코어 수는 숫자만 입력해주세요.');
+      //   }
+      // });
     }
 
     if(!validationBoolean) {
@@ -248,7 +254,6 @@ console.log("atchFiles = ", atchFiles);
     updateEnterprise(formData);
 
     alert('업체 수정 완료');
-    // navigate('/enterprise');
   }
 
   const isAnyPropertyNotEmpty = (obj) => {
@@ -291,6 +296,7 @@ console.log("atchFiles = ", atchFiles);
     setSystemRowIndex(index);
     setSystemInputData(systemData[index]);
   }
+
 
   return (
     <>

@@ -1,6 +1,6 @@
 import { Button } from 'components/atoms/Button/Button';
 import { useState, useEffect } from 'react';
-import { downloadAtchFile, getEnterpriseDtlInfo } from 'pages/api/Enterprise/EnterpriseAPI';
+import { deleteEnterpriseInfo, downloadAtchFile, getEnterpriseDtlInfo } from 'pages/api/Enterprise/EnterpriseAPI';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { openModal } from 'reduxStore/modalSlice';
@@ -127,6 +127,14 @@ const EnterpriseDtlPage = () => {
     )
   }
 
+
+  const onClickDeleteEntp = () => {
+    deleteEnterpriseInfo(enterpriseData.entp_unq);
+
+    alert('삭제완료');
+    navigate('/enterprise');
+  }
+
   return (
     <>
       <div className={styles.register}>
@@ -138,7 +146,8 @@ const EnterpriseDtlPage = () => {
             </div>
             <div>
               <Button value={'수정'} onClickEvent={handleClickModifyEvent}/>
-              <Button value={'취소'} />
+              <Button value={'삭제'} onClickEvent={onClickDeleteEntp}/>
+              <Button value={'메인으로'} />
             </div>
           </div>
           <div className={styles.register__content}>
@@ -168,7 +177,7 @@ const EnterpriseDtlPage = () => {
               </div>
               <div>
                 <div>{principalCustData?.memb_nm}</div>
-                <Button value={'더보기'} onClickEvent={ ()=>handleOpenCustListModal('custListModal') } />
+                <Button value={'더보기'} onClickEvent={ handleOpenCustListModal } />
               </div>
               <div>
                 <span className={styles.compulsory}>*</span>

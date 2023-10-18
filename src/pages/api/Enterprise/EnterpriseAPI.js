@@ -132,6 +132,19 @@ const deleteCustInfo = async (cust_unq) => {
   }
 }
 
+const deleteEnterpriseInfo = async (entp_unq) => {
+  try {
+    const response = await axiosInstance.post(`/entp/enterprise/deleteEnterpriseInfo`,
+      {
+        entp_unq,
+      }
+    );
+    return response;
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
+
 
 export {getEnterpriseList,
         getEnterpriseDtlInfo,
@@ -141,4 +154,5 @@ export {getEnterpriseList,
         insertCustInfo,
         getCustList,
         deleteCustInfo,
+        deleteEnterpriseInfo,
 };

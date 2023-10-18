@@ -16,9 +16,13 @@ const ButtonActionRenderer = (param) => {
     navigate(`/enterprise/detail?entp_unq=${param.data.entp_unq}`);
   }
 
+  const moveToTaskInsertPage = () => {
+    navigate(`/task/register`);
+  }
+
   return (
     <div className='grid__btn'>
-      <Button value = {'작업 등록'} />
+      <Button value = {'작업 등록'} onClickEvent={moveToTaskInsertPage}/>
       <Button value = {'상세 보기'} onClickEvent={moveToEntpDtlPage} />
     </div>
   )
@@ -63,9 +67,8 @@ const EnterpriseManagePage = () => {
 		entp_tp : '',
 		svc_tp  : '',
 	});
-console.log(requestData);
+
 	const navigate = useNavigate();
-	// const dispatch = useDispatch();
 
   useEffect(() => {
     getEnterpriseListEvent(requestData);

@@ -8,6 +8,7 @@ import EnterpriseManagePage from 'pages/enterpriseManage';
 import EnterpriseRegPage from 'pages/enterpriseManage/enterpriseRegPage/EnterpriseRegPage';
 import EnterpriseDtlPage from 'pages/enterpriseManage/enterpriseDtlPage/EnterpriseDtlPage';
 import { GlobalModal } from 'reduxStore/GlobalModal';
+import { TaskRegPage } from 'pages/taskManage/taskRegPage/TaskRegPage';
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
             <Route path ="/enterprise/register" element = {<EnterpriseRegPage />   } />
             <Route path ="/enterprise/detail"   element = {<EnterpriseDtlPage />   } />
             <Route path ="/task"                element = {<TaskManagePage />      } />
+            <Route path ="/task/register"       element = {<TaskRegPage />         } />
         </Routes>
 
       </Layout>
