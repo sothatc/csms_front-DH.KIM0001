@@ -119,12 +119,25 @@ const getCustList = async (entp_unq) => {
   }
 }
 
-const deleteCustInfo = async (cust_unq) => {
-  try{
-    const response = await axiosInstance.post(`/entp/enterprise/deleteCustInfo`,
+const getCustOneInfo = async (cust_unq) => {
+  try {
+    const response = await axiosInstance.post(`/entp/enterprise/getCustOneInfo`,
       {
         cust_unq,
       }
+    );
+    return response.data;
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
+
+const deleteCustInfo = async (cust_unq) => {
+  try{
+    const response = await axiosInstance.post(`/entp/enterprise/deleteCustInfo`,
+    {
+      cust_unq,
+    }
     );
     return response;
   }catch(err) {
@@ -153,6 +166,7 @@ export {getEnterpriseList,
         downloadAtchFile,
         insertCustInfo,
         getCustList,
+        getCustOneInfo,
         deleteCustInfo,
         deleteEnterpriseInfo,
 };

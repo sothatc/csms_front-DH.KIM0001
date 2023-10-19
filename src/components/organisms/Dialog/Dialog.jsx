@@ -1,13 +1,80 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from 'reduxStore/modalSlice';
-import { useState } from 'react';
-import styles from './Dialog.module.scss';
 import { Button } from 'components/atoms/Button/Button';
+import styles from './Dialog.module.scss';
+import { useState } from 'react';
+
+
+const DummyCustList = [
+  {
+    entp_nm : '회사이름',
+    cust_dept_nm : '부서이름',
+    cust_pst_nm : '직위 s',
+    cust_nm : '고미란',
+  },
+  {
+    entp_nm : '회사이름',
+    cust_dept_nm : '부서이름',
+    cust_pst_nm : '직위 s',
+    cust_nm : '고미란',
+  },
+  {
+    entp_nm : '회사이름33',
+    cust_dept_nm : '부서이름',
+    cust_pst_nm : '직위 s',
+    cust_nm : '고미란',
+  },
+  {
+    entp_nm : '회사이름',
+    cust_dept_nm : '부서이름',
+    cust_pst_nm : '직위 s',
+    cust_nm : '고미란',
+  },
+  {
+    entp_nm : '회사이름',
+    cust_dept_nm : '부서이름',
+    cust_pst_nm : '직위 s',
+    cust_nm : '고미란',
+  },
+  {
+    entp_nm : '회사이름',
+    cust_dept_nm : '부서이름',
+    cust_pst_nm : '직위 s',
+    cust_nm : '고미란',
+  },
+  {
+    entp_nm : '회사이름',
+    cust_dept_nm : '부서이름',
+    cust_pst_nm : '직위 s',
+    cust_nm : '고미란',
+  },
+  {
+    entp_nm : '회사이름',
+    cust_dept_nm : '부서이름',
+    cust_pst_nm : '직위 s',
+    cust_nm : '고미란',
+  },
+  {
+    entp_nm : '회사이름',
+    cust_dept_nm : '부서이름',
+    cust_pst_nm : '직위 s',
+    cust_nm : '고미란',
+  },
+]
+
+// const defaultCustData = {
+//   entp_nm : '',
+//   cust_dept_nm : '',
+//   cust_pst_nm : '',
+//   cust_nm : '',
+// }
+
 
 const PopUpModal = () => {
-  const [compCode, setCompCode] = useState('C');
-
+  // const [compCode, setCompCode] = useState('C');
   const isOpen = useSelector((state) => state.modal.isOpen);
+
+  const [custData, setCustData] = useState(DummyCustList);
 
   const dispatch = useDispatch();
 
@@ -15,74 +82,53 @@ const PopUpModal = () => {
     dispatch(closeModal());
   }
 
-  const onClickCompObjectSel = (code) => {
-    setCompCode(code);
+  const onClickAddCustModal = () => {
+    // dispatch(op)
   }
+
+  // const onClickCompObjectSel = (code) => {
+  //   setCompCode(code);
+  // }
 
   return (
     isOpen && (
       <div className={styles.background}>
         <div className={styles.modal}>
           <div className={styles.modal__title}>
-            <div>업체 등록</div>
+            <div></div>
+            <div>담당자 정보 조회</div>
             <div className={styles.close} onClick={handleClose}>
               x
             </div>
           </div>
-          <div className={styles.modal__conts}>
-            <div className={`${styles['modal__conts--sel']}`}>
-              <div className={compCode === 'C' ? styles.active : ''} onClick={() => onClickCompObjectSel('C')}>고객사</div>
-              <div className={compCode === 'S' ? styles.active : ''} onClick={() => onClickCompObjectSel('S')}>협력사</div>
+          <div className={styles.modal__search}>
+            <div>담당자명</div>
+            <input value={''} maxLength={10} />
+            <Button value={'조회'} />
+          </div>
+          <div className={styles.modal__list}>
+            <div>
+              <div>회사명</div>
+              <div>부서명</div>
+              <div>직위</div>
+              <div>담당자명</div>
+              <div></div>
             </div>
-            <div className={`${styles['modal__conts--name']}`}>
-              <div className={`${styles.margin} ${styles['font--bold']}`}>업체명</div>
-              <input />
-            </div>
-            <div className={`${styles['modal__conts--charge']}`}>
-              <span className={`${styles['font--bold']}`}>담당자</span>
-              <input />
-              <span className={`${styles['font--bold']}`}>연락처</span>
-              <input />
-              <span className={`${styles['font--bold']}`}>이메일</span>
-              <input />
-            </div>
-            {compCode === 'C' ?
-            <>
-              <div className={`${styles['modal__conts--service']}`}>
-                <div className={`${styles.margin} ${styles['font--bold']}`}>서비스 형태</div>
-                <div>
-                  <input type='checkbox' id='real' name='real'/>
-                  <label for='real'>실시간</label>
-                  <input type='checkbox' id='semi-real' name='semi-real'/>
-                  <label for='semi-real'>준실시간</label>
-                  <input type='checkbox' id='batch' name='batch'/>
-                  <label for='batch'>배치</label>
+            <div>
+              {custData && custData.map((item, key) => (
+                <div key={key}>
+                  <div>{item.entp_nm}</div>
+                  <div>{item.cust_dept_nm}</div>
+                  <div>{item.cust_pst_nm}</div>
+                  <div>{item.cust_nm}</div>
+                  <div className={`${styles['modal__list--btn']}`}>x</div>
                 </div>
-              </div>
-              <div className={`${styles['modal__conts--month']}`}>
-                <span className={`${styles['font--bold']}`}>월 STT처리건수</span>
-                <input />
-              </div>
-              <div className={`${styles['modal__conts--daliy']}`}>
-                <span className={`${styles['font--bold']}`}>일 STT처리건수</span>
-                <input />
-              </div>
-            </>
-            :
-            <>
-              <div className={`${styles['modal__conts--client']}`}>
-                <div>고객사</div>
-                <input />
-              </div>
-            </>
-            }
-            <div className={`${styles['modal__conts--etc']}`}>
-              <div className={`${styles.margin} ${styles['font--bold']}`}>비고</div>
-              <textarea />
+              ))}
             </div>
-            <div className={`${styles['modal__conts--btn']}`}>
-              <Button value={'등록'}/>
-            </div>
+          </div>
+          <div className={styles.modal__btn}>
+            <Button value={'추가'} onClickEvent={onClickAddCustModal} />
+            <Button value={'닫기'} />
           </div>
         </div>
       </div>

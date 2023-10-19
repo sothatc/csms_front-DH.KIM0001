@@ -12,10 +12,10 @@
 
 .modal {
   display: grid;
-  grid-template-rows: 50px 40px calc(100% - 50px - 120px - 30px)  40px 40px;
+  grid-template-rows: 50px 40px calc(100% - 50px - 80px - 30px)  40px 40px;
   grid-row-gap: 10px;
   margin: 10% auto;
-  width: 45%;
+  width: 20%;
   height: 50%;
   padding: 15px;
   border: 1px solid #888;
@@ -62,10 +62,10 @@
 
     >div:first-child {
       display: grid;
-      grid-template-columns: 1fr 90px 80px 1fr 1fr 20px;
+      grid-template-columns: 1fr 1fr 1fr 50px;
       place-items: center;
       border-bottom: 1px solid black;
-      padding: 3px 0;
+      padding: 3px 10px;
       background-color: #D9D9D9;
     }
 
@@ -75,9 +75,13 @@
 
       >div {
         display: grid;
-        grid-template-columns: 1fr 90px 80px 1fr 1fr 20px;
+        grid-template-columns: 1fr 1fr 1fr 50px;
         place-items: center;
-        padding: 5px;
+        padding: 5px 10px;
+
+        >button {
+          font-size: 14px;
+        }
       }
 
       >div{
@@ -93,25 +97,6 @@
     }
   }
 
-  &__add {
-
-    display: grid;
-    // grid-template-columns: 150px 150px 150px 150px 150px 40px;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 40px;
-    grid-column-gap: 5px;
-    place-items: center;
-
-    >input {
-      width: 100%;
-    }
-    >button {
-      width: 100%;
-      font-size: 14px;
-      font-weight: 600;
-      height: 25px;
-    }
-
-  }
 
   &__btn {
     display: flex;

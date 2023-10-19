@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux';
 import { closeModal } from 'reduxStore/modalSlice';
 import styles from './CustListModal.module.scss';
 
-
 const CustListModal = ({data}) => {
   const {entpUnqProps, entpTpProps, cuatDataProps} = data;
 
@@ -25,7 +24,8 @@ const CustListModal = ({data}) => {
 
   useEffect(() => {
 
-  },[custData]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[custData, insertCustInfo, deleteCustInfo]);
 
   const handleClose = () => {
     dispatch(closeModal());
@@ -35,13 +35,23 @@ const CustListModal = ({data}) => {
     const newCustData = inputCustData;
     newCustData['flag'] = 'I';
 
-    alert('추가 완료 되었습니다.');
 
     insertCustInfo(newCustData);
+
+    alert('추가 완료 되었습니다.');
 
     getCustList(entpUnqProps).then((response) => {
       setCustData(response.data);
     });
+
+    setInputCustData({
+      memb_nm     : '',
+      memb_pst_nm : '',
+      memb_dept_nm: '',
+      memb_tel    : '',
+      memb_email  : '',
+      flag        : '',
+    })
   }
 
   const onChangeCustData = (name, e) => {
@@ -53,9 +63,10 @@ const CustListModal = ({data}) => {
   }
 
   const onClickDeleteCust = (cust_unq) => {
-    alert("삭제 완료 되었습니다.");
 
     deleteCustInfo(cust_unq);
+
+    alert("삭제 완료 되었습니다.");
 
     getCustList(entpUnqProps).then((response) => {
       setCustData(response.data);
@@ -108,7 +119,7 @@ const CustListModal = ({data}) => {
           <Button value={'추가'} onClickEvent={onClickAddCust}/>
         </div>
         <div className={styles.modal__btn}>
-          <Button value={'닫기'} />
+          <Button value={'닫기'} onClickEvent={handleClose} />
         </div>
       </div>
     </div>

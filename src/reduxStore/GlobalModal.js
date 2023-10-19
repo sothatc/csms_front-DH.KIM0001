@@ -3,10 +3,14 @@ import { CustListModal } from "components/organisms/Dialog/CustListModal/CustLis
 import { useDispatch, useSelector } from "react-redux";
 import { closeModal, selectModal } from "./modalSlice";
 import React from "react";
+import { SearchEntpModal } from "components/organisms/Dialog/SearchEntpModal/SearchEntpModal";
+import { SearchCustModal } from "components/organisms/Dialog/SearchCustModal/SearchCustModal";
 
 const MODAL_TYPES = {
-  CustListModal: 'CustListModal',
-  CustAddModal : 'CustAddModal',
+  CustListModal   : 'CustListModal',
+  CustAddModal    : 'CustAddModal',
+  SearchEntpModal : 'SearchEntpModal',
+  SearchCustModal : 'SearchCustModal',
 };
 
 const MODAL_COMPONENTS = [
@@ -17,6 +21,14 @@ const MODAL_COMPONENTS = [
   {
     type : MODAL_TYPES.CustAddModal,
     component : <CustAddModal />,
+  },
+  {
+    type : MODAL_TYPES.SearchEntpModal,
+    component : <SearchEntpModal />,
+  },
+  {
+    type : MODAL_TYPES.SearchCustModal,
+    component : <SearchCustModal />
   },
 ];
 

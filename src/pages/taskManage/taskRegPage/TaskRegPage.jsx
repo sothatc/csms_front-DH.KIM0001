@@ -1,15 +1,15 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
 import { ko } from 'date-fns/esm/locale';
+import { IconImage } from 'components/atoms';
+import { useDispatch, useSelector } from 'react-redux';
+import { openModal } from 'reduxStore/modalSlice';
 import "react-datepicker/dist/react-datepicker.css";
 import styles from './TaskRegPage.module.scss';
-import { IconImage } from 'components/atoms';
-
-
-
+import { getCustOneInfo, getEnterpriseDtlInfo } from 'pages/api/Enterprise/EnterpriseAPI';
 
 
 const defaultEntpData = {
@@ -31,10 +31,39 @@ const delFileArray = [];
 const FILE_SIZE_MAX_LIMIT = 20 * 1024 * 1024;
 
 const TaskRegPage = () => {
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate  , setEndDate  ] = useState(new Date());
+  const [startDate     , setStartDate     ] = useState(new Date());
+  const [endDate       , setEndDate       ] = useState(new Date());
+  const [enterpriseData, setEnterpriseData] = useState({});
+  const [custData      , setCustData      ] = useState({});
 
-console.log("startDate = ", startDate);
+  // console.log("startDate = ", startDate);
+
+  const custDataProps = useSelector((state) => state?.modal.data.custData);
+
+// console.log("custDataProps= ", custDataProps);
+  const dispatch = useDispatch();
+
+  const entpNoArr = window.location.search.substring(1).split("=");
+
+  useEffect(() => {
+    getEnterpriseDtlInfo(entpNoArr[1]).then((response) => {
+      setEnterpriseData(response.enterpriseData);
+    });
+    // getCustOneInfo(custUnqProps).then((response) => {
+    //   setCustData(response.data);
+    // });
+  }, [])
+
+  const openSerachModal = (modalType) => {
+    dispatch(
+      openModal({
+        modalType : modalType,
+        isOpen    : true,
+        data: {'entp_unq' : entpNoArr[1]},
+      })
+    )
+  }
+
   return (
     <>
       <div className={styles.register}>
@@ -83,8 +112,8 @@ console.log("startDate = ", startDate);
                 회사명
               </div>
               <div>
-                <div></div>
-                <Button value={'조회'} />
+                <div>{enterpriseData?.entp_nm}</div>
+                <Button value={'조회'} onClickEvent={() => openSerachModal('SearchEntpModal')} />
               </div>
               <div>
               <span className={styles.compulsory}>*</span>
@@ -92,7 +121,7 @@ console.log("startDate = ", startDate);
               </div>
               <div>
                 <div></div>
-                <Button value={'조회'} />
+                <Button value={'조회'} onClickEvent={() => openSerachModal('SearchCustModal')} />
               </div>
             </div>
             <div>
@@ -222,7 +251,7 @@ console.log("startDate = ", startDate);
             <div>
               <div>작업 내용</div>
               <div>
-                <textarea value={''} />
+                {/* <textarea value={'ddd'} /> */}
               </div>
             </div>
           </div>

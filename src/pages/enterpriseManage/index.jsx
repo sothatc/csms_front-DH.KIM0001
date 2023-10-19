@@ -2,22 +2,22 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
-import Grid from 'components/molecules/Grid/Grid';
 import { getEnterpriseList } from 'pages/api/Enterprise/EnterpriseAPI';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Grid from 'components/molecules/Grid/Grid';
+import { useDispatch } from 'react-redux';
+import { initModal } from 'reduxStore/modalSlice';
 
 
 const ButtonActionRenderer = (param) => {
   const navigate = useNavigate();
-
-
   const moveToEntpDtlPage = () => {
     navigate(`/enterprise/detail?entp_unq=${param.data.entp_unq}`);
   }
 
   const moveToTaskInsertPage = () => {
-    navigate(`/task/register`);
+    navigate(`/task/register?entp_unq=${param.data.entp_unq}`);
   }
 
   return (
@@ -40,7 +40,7 @@ const ButtonAtchFileRenderer = (param) => {
 }
 
 const ColumnDefs = [
-	{headerName : 'No.'             , field : ''     },
+	{headerName : 'No.'             , field : ''             },
 	{headerName : '사업자등록번호'  , field : 'entp_unq'     },
 	{headerName : '구분'            , field : 'entp_tp'      },
 	{headerName : '업체명'          , field : 'entp_nm'      },
@@ -70,8 +70,11 @@ const EnterpriseManagePage = () => {
 
 	const navigate = useNavigate();
 
+	// const dispatch = useDispatch();
+
   useEffect(() => {
     getEnterpriseListEvent(requestData);
+		// dispatch(initModal());
   },[]);
 
   const getEnterpriseListEvent = (requestData) => {
