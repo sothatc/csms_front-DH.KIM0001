@@ -12,20 +12,10 @@ import styles from './TaskRegPage.module.scss';
 import { getCustOneInfo, getEnterpriseDtlInfo } from 'pages/api/Enterprise/EnterpriseAPI';
 
 
-const defaultEntpData = {
-  entp_nm : '',
-  entp_tp : '',
-  svc_tp  : '',
+const defaultTaskData = {
+
 }
 
-const defaultCustData = {
-  memb_dept_nm : '',
-  memb_email   : '',
-  memb_nm      : '',
-  memb_pst_nm  : '',
-  memb_tel     : '',
-  principal_tp : ''
-}
 const delFileArray = [];
 
 const FILE_SIZE_MAX_LIMIT = 20 * 1024 * 1024;
@@ -34,13 +24,16 @@ const TaskRegPage = () => {
   const [startDate     , setStartDate     ] = useState(new Date());
   const [endDate       , setEndDate       ] = useState(new Date());
   const [enterpriseData, setEnterpriseData] = useState({});
-  const [custData      , setCustData      ] = useState({});
+  const [taskData      , setTaskData      ] = useState({...defaultTaskData});
 
   // console.log("startDate = ", startDate);
 
-  const custDataProps = useSelector((state) => state?.modal.data.custData);
+  const selectedCust     = useSelector((state) => state?.modal.data.selectedCust    );
+  const selectedTaskMemb = useSelector((state) => state?.modal.data.selectedTaskMemb);
 
-// console.log("custDataProps= ", custDataProps);
+  console.log("selectedCust = ", selectedCust);
+  console.log("selectedTaskMemb = ", selectedTaskMemb);
+
   const dispatch = useDispatch();
 
   const entpNoArr = window.location.search.substring(1).split("=");
@@ -49,19 +42,37 @@ const TaskRegPage = () => {
     getEnterpriseDtlInfo(entpNoArr[1]).then((response) => {
       setEnterpriseData(response.enterpriseData);
     });
-    // getCustOneInfo(custUnqProps).then((response) => {
-    //   setCustData(response.data);
-    // });
   }, [])
 
-  const openSerachModal = (modalType) => {
-    dispatch(
-      openModal({
-        modalType : modalType,
-        isOpen    : true,
-        data: {'entp_unq' : entpNoArr[1]},
-      })
-    )
+  const openSerachModal = (modalType, target) => {
+    switch(target) {
+      case '고객사담당':
+        dispatch(
+          openModal({
+            modalType : modalType,
+            isOpen    : true,
+            data: {'entp_unq' : entpNoArr[1]},
+          })
+        );
+        break;
+      case '작업담당':
+        dispatch(
+          openModal({
+            modalType : modalType,
+            isOpen    : true,
+            data: {},
+          })
+        );
+        break;
+      default:
+        dispatch(
+          openModal({
+            modalType : modalType,
+            isOpen    : true,
+            data: {'entp_unq' : entpNoArr[1]},
+          })
+        );
+    }
   }
 
   return (
@@ -100,8 +111,13 @@ const TaskRegPage = () => {
                   // onChangeEvent = {}
                   // 공통 dataSet으로 만들 예정
                   dataSet = {[
-                    {value: 'C', text: "고객사"},
-                    {value: 'S', text: "협력사"},
+                    {value: 'INS', text: "정기정검"   },
+                    {value: 'ISS', text: "이슈"       },
+                    {value: 'SET', text: "설정변경"   },
+                    {value: 'TRN', text: "학습수행"   },
+                    {value: 'ACC', text: "인식률 측정"},
+                    {value: 'DEV', text: "개발적용"   },
+                    {value: 'EDT', text: "수정적용"   },
                   ]}
                 />
               </div>
@@ -113,15 +129,15 @@ const TaskRegPage = () => {
               </div>
               <div>
                 <div>{enterpriseData?.entp_nm}</div>
-                <Button value={'조회'} onClickEvent={() => openSerachModal('SearchEntpModal')} />
+                <Button value={'조회'} onClickEvent={() => openSerachModal('SearchEntpModal', '업체조회')} />
               </div>
               <div>
               <span className={styles.compulsory}>*</span>
                 고객사 담당자
               </div>
               <div>
-                <div></div>
-                <Button value={'조회'} onClickEvent={() => openSerachModal('SearchCustModal')} />
+                <div>{selectedCust?.memb_nm}</div>
+                <Button value={'조회'} onClickEvent={() => openSerachModal('SearchMembModal', '고객사담당')} />
               </div>
             </div>
             <div>
@@ -131,13 +147,14 @@ const TaskRegPage = () => {
               </div>
               <div>
                 <div></div>
+                <Button value={'조회'} onClickEvent={() => openSerachModal('SearchMembModal', '작업담당')} />
               </div>
               <div>
                 <span className={styles.compulsory}>*</span>
                 담당 부서
               </div>
               <div>
-                <div></div>
+                <div>{selectedCust?.memb_dept_nm}</div>
               </div>
             </div>
             <div>
@@ -146,14 +163,14 @@ const TaskRegPage = () => {
                 고객사 담당자 연락처
               </div>
               <div>
-                <div></div>
+                <div>{selectedCust?.memb_tel}</div>
               </div>
               <div>
                 <span className={styles.compulsory}>*</span>
                 고객사 담당자 이메일
               </div>
               <div>
-                <div></div>
+                <div>{selectedCust?.memb_email}</div>
               </div>
             </div>
             <div>
@@ -204,7 +221,13 @@ const TaskRegPage = () => {
                 작업 방식
               </div>
               <div>
-                <Select />
+                <Select
+                  // value={taskData && taskData.}
+                  dataSet={[
+                    {value: 'VST', text: '방문'},
+                    {value: 'RMT', text: '원격'},
+                  ]}
+                />
               </div>
               <div>
                 서비스 영향
@@ -214,9 +237,10 @@ const TaskRegPage = () => {
                   // value   = {enterpriseData && enterpriseData.svc_tp}
                   name    = 'svc_tp'
                   dataSet = {[
-                    {value: 'R' , text: "실시간"  },
-                    {value: 'SR', text: "준실시간"},
-                    {value: 'B' , text: "배치"    },
+                    {value: '3', text: "상"  },
+                    {value: '2', text: "중"  },
+                    {value: '1', text: "하"  },
+                    {value: '0', text: "없음"},
                   ]}
                   // onChangeEvent={onChangeEnterpriseCode}
                 />

@@ -62,7 +62,7 @@
 
     >div:first-child {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr 50px;
+      grid-template-columns: 40px 1fr 1fr 1fr;
       place-items: center;
       border-bottom: 1px solid black;
       padding: 3px 10px;
@@ -75,17 +75,20 @@
 
       >div {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 50px;
+        grid-template-columns: 40px 1fr 1fr 1fr;
         place-items: center;
         padding: 5px 10px;
+        margin-bottom: 5px;
+        cursor: pointer;
 
-        >button {
-          font-size: 14px;
+        &:hover {
+          color: blue;
+          background-color: #D9D9D9;
         }
       }
 
-      >div{
-        margin-bottom: 5px;
+      .active {
+        background-color: #D9D9D9;
       }
 
     }

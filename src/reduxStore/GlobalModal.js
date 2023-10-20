@@ -1,16 +1,16 @@
-import { CustAddModal } from "components/organisms/Dialog/CustAddModal/CustAddModal";
-import { CustListModal } from "components/organisms/Dialog/CustListModal/CustListModal";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { closeModal, selectModal } from "./modalSlice";
-import React from "react";
+import { CustAddModal } from "components/organisms/Dialog/CustAddModal/CustAddModal";
+import { CustListModal } from "components/organisms/Dialog/CustListModal/CustListModal";
 import { SearchEntpModal } from "components/organisms/Dialog/SearchEntpModal/SearchEntpModal";
-import { SearchCustModal } from "components/organisms/Dialog/SearchCustModal/SearchCustModal";
+import { SearchMembModal } from "components/organisms/Dialog/SearchMembModal/SearchMembModal";
 
 const MODAL_TYPES = {
   CustListModal   : 'CustListModal',
   CustAddModal    : 'CustAddModal',
   SearchEntpModal : 'SearchEntpModal',
-  SearchCustModal : 'SearchCustModal',
+  SearchMembModal : 'SearchMembModal',
 };
 
 const MODAL_COMPONENTS = [
@@ -27,8 +27,8 @@ const MODAL_COMPONENTS = [
     component : <SearchEntpModal />,
   },
   {
-    type : MODAL_TYPES.SearchCustModal,
-    component : <SearchCustModal />
+    type : MODAL_TYPES.SearchMembModal,
+    component : <SearchMembModal />
   },
 ];
 

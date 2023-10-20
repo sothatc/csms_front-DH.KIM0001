@@ -132,12 +132,22 @@ const getCustOneInfo = async (cust_unq) => {
   }
 }
 
+const getTaskMembList = async () => {
+  try{
+    const response = await axiosInstance.post(`/entp/task/getTaskMembList`);
+
+    return response.data;
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
+
 const deleteCustInfo = async (cust_unq) => {
   try{
     const response = await axiosInstance.post(`/entp/enterprise/deleteCustInfo`,
-    {
-      cust_unq,
-    }
+      {
+        cust_unq,
+      }
     );
     return response;
   }catch(err) {
@@ -167,6 +177,7 @@ export {getEnterpriseList,
         insertCustInfo,
         getCustList,
         getCustOneInfo,
+        getTaskMembList,
         deleteCustInfo,
         deleteEnterpriseInfo,
 };
