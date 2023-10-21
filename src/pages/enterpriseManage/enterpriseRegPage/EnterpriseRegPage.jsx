@@ -372,8 +372,8 @@ const EnterpriseRegPage = () => {
               </div>
               <div>
                 <Select
-                  value         = {custData && custData.memb_pst_nm}
                   name          = 'memb_pst_nm'
+                  value         = {custData && custData.memb_pst_nm}
                   onChangeEvent = {onChangeCustInfoCode}
                   dataSet={[
                     {value: 'L1' , text: "부장"  },

@@ -6,44 +6,58 @@ import { closeModal } from "reduxStore/modalSlice";
 import styles from './SearchMembModal.module.scss';
 
 const SearchMembModal = ({data}) => {
+  // const {entp_unq} = data[0];
   const {entp_unq} = data;
 
-  const [selectedItem, setSelectedItem] = useState({});
+  const [selectedCustMemb, setSelectedCustMemb] = useState({});
+  const [selectedTaskMemb, setSelectedTaskMemb] = useState({});
   const [custDataList, setCustDataList] = useState([]);
   const [taskMembList, setTaskMembList] = useState([]);
 
   const dispatch = useDispatch();
 
   const handleDivClick = (item) => {
-    setSelectedItem(item);
+    if(entp_unq) {
+      setSelectedCustMemb(item);
+    }else {
+      setSelectedTaskMemb(item);
+    }
   }
 
   useEffect(() => {
-    if(entp_unq) {
-      getCustList(entp_unq).then((response) => {
-        setCustDataList(response.data);
-      })
-      .catch((err) => {});
+    getCustList(entp_unq).then((response) => {
+      setCustDataList(response.data);
+    })
+    .catch((err) => {});
 
-    }else {
-      getTaskMembList().then((response) => {
-        setTaskMembList(response.data);
-      })
-      .catch((err) => {});
-    }
-
+    getTaskMembList().then((response) => {
+      setTaskMembList(response.data);
+    })
+    .catch((err) => {});
   },[])
 
   const handleClose = () => {
-    if(entp_unq) {
-      dispatch(closeModal({
-        data: {"selectedCust": selectedItem},
-      }));
-    }else {
-      dispatch(closeModal({
-        data: {"selectedTaskMemb": selectedItem},
-      }));
-    }
+    // dispatch(closeModal({
+    //   data: {
+    //     "selectedCust"    : selectedCustMemb,
+    //     "selectedTaskMemb": selectedTaskMemb,
+    //   },
+    // }));
+
+    // if(entp_unq) {
+    //   dispatch(closeModal({
+    //     data: {"selectedCust": selectedCustMemb},
+    //   }));
+    // }else {
+    //   dispatch(closeModal({
+    //     data: {"selectedTaskMemb": selectedTaskMemb},
+    //   }));
+    // }
+
+    dispatch(closeModal({
+      data: {"selectedCust": selectedCustMemb},
+    }));
+
   }
 
   return (
@@ -74,7 +88,7 @@ const SearchMembModal = ({data}) => {
                 <div
                   key={index}
                   onClick={() => handleDivClick(item)}
-                  className={selectedItem.cust_unq === item.cust_unq ? styles.active : ''}
+                  className={selectedCustMemb.cust_unq === item.cust_unq ? styles.active : ''}
                 >
                   <div>{index}</div>
                   <div>{item.memb_dept_nm}</div>
@@ -86,7 +100,7 @@ const SearchMembModal = ({data}) => {
                 <div
                   key={index}
                   onClick={() => handleDivClick(item)}
-                  className={selectedItem.memb_unq === item.memb_unq ? styles.active : ''}
+                  className={selectedTaskMemb.memb_unq === item.memb_unq ? styles.active : ''}
                 >
                   <div>{index}</div>
                   <div>{item.memb_dept_nm}</div>

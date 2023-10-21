@@ -5,12 +5,14 @@ import { CustAddModal } from "components/organisms/Dialog/CustAddModal/CustAddMo
 import { CustListModal } from "components/organisms/Dialog/CustListModal/CustListModal";
 import { SearchEntpModal } from "components/organisms/Dialog/SearchEntpModal/SearchEntpModal";
 import { SearchMembModal } from "components/organisms/Dialog/SearchMembModal/SearchMembModal";
+import { SearchTaskMembModal } from "components/organisms/Dialog/SearchTaskMembModal/SearchTaskMembModal";
 
 const MODAL_TYPES = {
   CustListModal   : 'CustListModal',
   CustAddModal    : 'CustAddModal',
   SearchEntpModal : 'SearchEntpModal',
   SearchMembModal : 'SearchMembModal',
+  SearchTaskMembModal : 'SearchTaskMembModal',
 };
 
 const MODAL_COMPONENTS = [
@@ -29,6 +31,10 @@ const MODAL_COMPONENTS = [
   {
     type : MODAL_TYPES.SearchMembModal,
     component : <SearchMembModal />
+  },
+  {
+    type : MODAL_TYPES.SearchTaskMembModal,
+    component : <SearchTaskMembModal />
   },
 ];
 

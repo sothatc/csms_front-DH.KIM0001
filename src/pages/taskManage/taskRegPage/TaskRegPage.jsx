@@ -1,15 +1,15 @@
 
-import { useEffect, useState } from 'react';
-import DatePicker from 'react-datepicker';
+import { IconImage } from 'components/atoms';
 import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
 import { ko } from 'date-fns/esm/locale';
-import { IconImage } from 'components/atoms';
-import { useDispatch, useSelector } from 'react-redux';
-import { openModal } from 'reduxStore/modalSlice';
+import { getEnterpriseDtlInfo } from 'pages/api/Enterprise/EnterpriseAPI';
+import { useEffect, useRef, useState } from 'react';
+import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { useDispatch, useSelector } from 'react-redux';
+import { initModal, openModal } from 'reduxStore/modalSlice';
 import styles from './TaskRegPage.module.scss';
-import { getCustOneInfo, getEnterpriseDtlInfo } from 'pages/api/Enterprise/EnterpriseAPI';
 
 
 const defaultTaskData = {
@@ -21,28 +21,36 @@ const delFileArray = [];
 const FILE_SIZE_MAX_LIMIT = 20 * 1024 * 1024;
 
 const TaskRegPage = () => {
-  const [startDate     , setStartDate     ] = useState(new Date());
-  const [endDate       , setEndDate       ] = useState(new Date());
-  const [enterpriseData, setEnterpriseData] = useState({});
-  const [taskData      , setTaskData      ] = useState({...defaultTaskData});
-
-  // console.log("startDate = ", startDate);
-
-  const selectedCust     = useSelector((state) => state?.modal.data.selectedCust    );
-  const selectedTaskMemb = useSelector((state) => state?.modal.data.selectedTaskMemb);
-
-  console.log("selectedCust = ", selectedCust);
-  console.log("selectedTaskMemb = ", selectedTaskMemb);
+  const [startDate       , setStartDate       ] = useState(new Date());
+  const [endDate         , setEndDate         ] = useState(new Date());
+  const [enterpriseData  , setEnterpriseData  ] = useState({});
+  const [taskData        , setTaskData        ] = useState({});
+  const [selectedCust    , setSelectedCust    ] = useState({});
+  const [selectedTaskMemb, setSelectedTaskMemb] = useState({});
 
   const dispatch = useDispatch();
 
   const entpNoArr = window.location.search.substring(1).split("=");
 
+  const selectedCustProps     = useSelector((state) => state?.modal.data.selectedCust);
+  const selectedTaskMembProps = useSelector((state) => state?.modal.data.selectedTaskMemb);
+
   useEffect(() => {
     getEnterpriseDtlInfo(entpNoArr[1]).then((response) => {
       setEnterpriseData(response.enterpriseData);
     });
+    dispatch(initModal());
   }, [])
+
+  useEffect(() => {
+    if(selectedCustProps) {
+      setSelectedCust(selectedCustProps);
+    }
+    if(selectedTaskMembProps) {
+      setSelectedTaskMemb(selectedTaskMembProps);
+    }
+
+  },[useSelector((state) => state?.modal.data)])
 
   const openSerachModal = (modalType, target) => {
     switch(target) {
@@ -73,6 +81,12 @@ const TaskRegPage = () => {
           })
         );
     }
+  }
+
+  const onChangeTaskInfoCode = (name, value) => {
+    setTaskData((prev) => {
+      return {...prev, [name]: value};
+    })
   }
 
   return (
@@ -106,10 +120,9 @@ const TaskRegPage = () => {
               </div>
               <div>
                 <Select
-                  name  = 'entp_tp'
-                  value = {''}
-                  // onChangeEvent = {}
-                  // 공통 dataSet으로 만들 예정
+                  name  = 'task_tp'
+                  value = {taskData.task_tp}
+                  onChangeEvent = {onChangeTaskInfoCode}
                   dataSet = {[
                     {value: 'INS', text: "정기정검"   },
                     {value: 'ISS', text: "이슈"       },
@@ -146,8 +159,8 @@ const TaskRegPage = () => {
                 작업 담당자
               </div>
               <div>
-                <div></div>
-                <Button value={'조회'} onClickEvent={() => openSerachModal('SearchMembModal', '작업담당')} />
+                <div>{selectedTaskMemb?.memb_nm}</div>
+                <Button value={'조회'} onClickEvent={() => openSerachModal('SearchTaskMembModal', '작업담당')} />
               </div>
               <div>
                 <span className={styles.compulsory}>*</span>
@@ -182,11 +195,11 @@ const TaskRegPage = () => {
                 <div>
                   <label>
                     <DatePicker
-                      className={styles.datepicker}
-                      selected={startDate}
-                      onChange={date => setStartDate(date)}
-                      dateFormat="yyyy년 MM월 dd일"
-                      locale={ko}
+                      className  = {styles.datepicker}
+                      selected   = {startDate}
+                      onChange   = {date => setStartDate(date)}
+                      dateFormat = "yyyy년 MM월 dd일"
+                      locale     = {ko}
                     />
                     <IconImage icon={'CALENDAR'} />
                   </label>
@@ -202,11 +215,11 @@ const TaskRegPage = () => {
                 <div>
                   <label>
                     <DatePicker
-                      className={styles.datepicker}
-                      selected={endDate}
-                      onChange={date => setEndDate(date)}
-                      dateFormat="yyyy년 MM월 dd일"
-                      locale={ko}
+                      className  = {styles.datepicker}
+                      selected   = {endDate}
+                      onChange   = {date => setEndDate(date)}
+                      dateFormat = "yyyy년 MM월 dd일"
+                      locale     = {ko}
                     />
                     <IconImage icon={'CALENDAR'} />
                   </label>
@@ -222,8 +235,10 @@ const TaskRegPage = () => {
               </div>
               <div>
                 <Select
-                  // value={taskData && taskData.}
-                  dataSet={[
+                  name    = {'task_job_tp'}
+                  value   = {taskData.task_job_tp}
+                  onChangeEvent = {onChangeTaskInfoCode}
+                  dataSet = {[
                     {value: 'VST', text: '방문'},
                     {value: 'RMT', text: '원격'},
                   ]}
@@ -234,8 +249,9 @@ const TaskRegPage = () => {
               </div>
               <div>
                 <Select
-                  // value   = {enterpriseData && enterpriseData.svc_tp}
-                  name    = 'svc_tp'
+                  name  = 'svc_efc'
+                  value = {taskData.svc_efc}
+                  onChangeEvent={onChangeTaskInfoCode}
                   dataSet = {[
                     {value: '3', text: "상"  },
                     {value: '2', text: "중"  },
@@ -313,4 +329,4 @@ const TaskRegPage = () => {
   )
 }
 
-export {TaskRegPage};
+export { TaskRegPage };
