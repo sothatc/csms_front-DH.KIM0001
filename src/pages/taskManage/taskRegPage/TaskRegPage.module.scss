@@ -89,6 +89,7 @@
 
             >div {
               display: flex;
+              align-items: center;
 
               >label {
                 display: flex;
@@ -106,9 +107,14 @@
                 }
               }
 
-              >div {  //Select
+              >input {
+                width: 80px;
+                padding: 0 5px;
+                text-align: right;
                 margin-left: 5px;
+                border: 1px solid #E5E5E5;
               }
+
             }
 
           }

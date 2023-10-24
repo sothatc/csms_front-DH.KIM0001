@@ -44,6 +44,12 @@ const TaskRegPage = () => {
     task_st_tm : '',
     task_ed_tm : '',
   });
+  const [inputTime       , setInputTime       ] = useState({
+    startHour   : '',
+    endHour     : '',
+    startMinute : '',
+    endMinute   : '',
+  });
 
   const dispatch = useDispatch();
 
@@ -119,6 +125,23 @@ const TaskRegPage = () => {
     const startMinute = '';
     const endMinute   = '';
 
+  }
+
+  const limitToTwoNum = (name, e) => {
+    let value = e.target.value;
+
+    value = value.replace(/\D/g, '');
+    if(value.length > 2) {
+      value = value.slice(0,2);
+    }
+
+    setInputTime({...inputTime, [name] : value});
+  }
+
+  const limitInputString = (name, e) => {
+    let value = e.target.value;
+
+    value = value.replace(/\D/g, '');
 
 
   }
@@ -238,20 +261,18 @@ const TaskRegPage = () => {
                     />
                     <IconImage icon={'CALENDAR'} />
                   </label>
-                  <Select
-                    name    = {'startHour'}
-                    value   = {taskDate.startHour}
-                    dataSet = {HourDataSet}
-                    label   = {'시'}
-                    onChangeEvent={onChangeTaskTime}
+                  <input
+                    value       = {inputTime.startHour}
+                    pattern     = '\d{2}'
+                    onChange    = {(e) => limitToTwoNum('startHour', e)}
                   />
-                  <Select
-                    name    = {'startMinute'}
-                    value   = {taskDate.startMinute}
-                    dataSet = {MinuteDataSet}
-                    label   = {'분'}
-                    onChangeEvent={onChangeTaskTime}
+                  <div>시</div>
+                  <input
+                    value       = {inputTime.startMinute}
+                    pattern     = '\d{2}'
+                    onChange    = {(e) => limitToTwoNum('startMinute', e)}
                   />
+                  <div>분</div>
                 </div>
               </div>
               <div>
@@ -271,20 +292,18 @@ const TaskRegPage = () => {
                     />
                     <IconImage icon={'CALENDAR'} />
                   </label>
-                  <Select
-                    name    = {'endHour'}
-                    value   = {taskDate.endHour}
-                    dataSet = {HourDataSet}
-                    label   = {'시'}
-                    onChangeEvent={onChangeTaskTime}
+                  <input
+                    value       = {inputTime.endHour}
+                    pattern     = '\d{2}'
+                    onChange    = {(e) => limitToTwoNum('endHour', e)}
                   />
-                  <Select
-                    name    = {'endMinute'}
-                    value   = {taskDate.endMinute}
-                    dataSet = {MinuteDataSet}
-                    label   = {'분'}
-                    onChangeEvent={onChangeTaskTime}
+                  <div>시</div>
+                  <input
+                    value       = {inputTime.endMinute}
+                    pattern     = '\d{2}'
+                    onChange    = {(e) => limitToTwoNum('endMinute', e)}
                   />
+                  <div>분</div>
                 </div>
               </div>
             </div>
