@@ -5,10 +5,10 @@ import { Select } from 'components/atoms/Select/Select';
 import { ko } from 'date-fns/esm/locale';
 import { getEnterpriseDtlInfo } from 'pages/api/Enterprise/EnterpriseAPI';
 import { useEffect, useRef, useState } from 'react';
-import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
 import { useDispatch, useSelector } from 'react-redux';
 import { initModal, openModal } from 'reduxStore/modalSlice';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
 import styles from './TaskRegPage.module.scss';
 
 
@@ -20,13 +20,30 @@ const delFileArray = [];
 
 const FILE_SIZE_MAX_LIMIT = 20 * 1024 * 1024;
 
+const HourDataSet = [];
+for (let i = 9; i <= 23; i++) {
+  const value = i < 10 ? `0${i}` : `${i}`;
+  HourDataSet.push({ value, text: `${i}시` });
+}
+HourDataSet.push({ value: '00', text: '00시' });
+
+const MinuteDataSet = [];
+for (let i = 0; i <= 60; i += 10) {
+  const value = i < 10 ? `0${i}` : `${i}`;
+  MinuteDataSet.push({ value, text: `${value}분` });
+}
+
 const TaskRegPage = () => {
-  const [startDate       , setStartDate       ] = useState(new Date());
-  const [endDate         , setEndDate         ] = useState(new Date());
   const [enterpriseData  , setEnterpriseData  ] = useState({});
   const [taskData        , setTaskData        ] = useState({});
   const [selectedCust    , setSelectedCust    ] = useState({});
   const [selectedTaskMemb, setSelectedTaskMemb] = useState({});
+  const [taskDate        , setTaskDate        ] = useState({
+    task_st_dt : new Date(),
+    task_ed_dt : new Date(),
+    task_st_tm : '',
+    task_ed_tm : '',
+  });
 
   const dispatch = useDispatch();
 
@@ -50,6 +67,7 @@ const TaskRegPage = () => {
       setSelectedTaskMemb(selectedTaskMembProps);
     }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[useSelector((state) => state?.modal.data)])
 
   const openSerachModal = (modalType, target) => {
@@ -87,6 +105,22 @@ const TaskRegPage = () => {
     setTaskData((prev) => {
       return {...prev, [name]: value};
     })
+  }
+
+  const onChangeTaskDateInfoCode = (name, value) => {
+    setTaskDate((prev) => {
+      return {...prev, [name]: value};
+    })
+  }
+
+  const onChangeTaskTime = (name, value) => {
+    const startHour   = '';
+    const endHour     = '';
+    const startMinute = '';
+    const endMinute   = '';
+
+
+
   }
 
   return (
@@ -196,15 +230,28 @@ const TaskRegPage = () => {
                   <label>
                     <DatePicker
                       className  = {styles.datepicker}
-                      selected   = {startDate}
-                      onChange   = {date => setStartDate(date)}
+                      selected   = {taskDate.task_st_dt}
+                      // onChange   = {date => setTaskStartDate(date)}
+                      onChange   = {date => onChangeTaskDateInfoCode('taskStartDate', date)}
                       dateFormat = "yyyy년 MM월 dd일"
                       locale     = {ko}
                     />
                     <IconImage icon={'CALENDAR'} />
                   </label>
-                  <Select />
-                  <Select />
+                  <Select
+                    name    = {'startHour'}
+                    value   = {taskDate.startHour}
+                    dataSet = {HourDataSet}
+                    label   = {'시'}
+                    onChangeEvent={onChangeTaskTime}
+                  />
+                  <Select
+                    name    = {'startMinute'}
+                    value   = {taskDate.startMinute}
+                    dataSet = {MinuteDataSet}
+                    label   = {'분'}
+                    onChangeEvent={onChangeTaskTime}
+                  />
                 </div>
               </div>
               <div>
@@ -216,15 +263,28 @@ const TaskRegPage = () => {
                   <label>
                     <DatePicker
                       className  = {styles.datepicker}
-                      selected   = {endDate}
-                      onChange   = {date => setEndDate(date)}
+                      selected   = {taskDate.task_ed_dt}
+                      // onChange   = {date => setTaskEndDate(date)}
+                      onChange   = {date => onChangeTaskDateInfoCode('taskEndDate', date)}
                       dateFormat = "yyyy년 MM월 dd일"
                       locale     = {ko}
                     />
                     <IconImage icon={'CALENDAR'} />
                   </label>
-                  <Select />
-                  <Select />
+                  <Select
+                    name    = {'endHour'}
+                    value   = {taskDate.endHour}
+                    dataSet = {HourDataSet}
+                    label   = {'시'}
+                    onChangeEvent={onChangeTaskTime}
+                  />
+                  <Select
+                    name    = {'endMinute'}
+                    value   = {taskDate.endMinute}
+                    dataSet = {MinuteDataSet}
+                    label   = {'분'}
+                    onChangeEvent={onChangeTaskTime}
+                  />
                 </div>
               </div>
             </div>

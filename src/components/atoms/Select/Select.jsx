@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styles from './Select.module.scss';
 
-const Select = ({ name, dataSet=[{}], onChangeEvent=()=>{}, disabled, value }) => {
+const Select = ({ name, dataSet=[{}], onChangeEvent=()=>{}, disabled, value, label }) => {
   const [toggle        , setToggle]         = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
 
@@ -21,7 +21,7 @@ const Select = ({ name, dataSet=[{}], onChangeEvent=()=>{}, disabled, value }) =
           {dataSet.filter(item => item.value === value).length > 0 ?
             dataSet.filter(item => item.value === value)[0].text
             :
-            '선택해주세요'
+            label || '선택해주세요'
           }
         </div>
         <div>▼</div>
