@@ -58,9 +58,9 @@ const SearchTaskMembModal = () => {
                 className={selectedTaskMemb.memb_unq === item.memb_unq ? styles.active : ''}
               >
                 <div>{index}</div>
-                <div>{item.memb_dept_nm}</div>
-                <div>{item.memb_nm}</div>
-                <div>{item.memb_pst_nm}</div>
+                <div>{item.task_dept}</div>
+                <div>{item.task_usr_nm}</div>
+                <div>{item.task_usr_pst_nm}</div>
               </div>
             ))}
           </div>

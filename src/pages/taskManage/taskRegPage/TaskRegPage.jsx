@@ -216,7 +216,7 @@ const TaskRegPage = () => {
                 작업 담당자
               </div>
               <div>
-                <div>{selectedTaskMemb?.memb_nm}</div>
+                <div>{selectedTaskMemb?.task_usr_nm}</div>
                 <Button value={'조회'} onClickEvent={() => openSerachModal('SearchTaskMembModal', '작업담당')} />
               </div>
               <div>
