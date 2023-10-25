@@ -35,7 +35,14 @@ for (let i = 0; i <= 60; i += 10) {
 
 const TaskRegPage = () => {
   const [enterpriseData  , setEnterpriseData  ] = useState({});
-  const [taskData        , setTaskData        ] = useState({});
+  const [taskData        , setTaskData        ] = useState({
+    stt_month_total_cnt: 0,
+    stt_month_s_cnt    : 0,
+    stt_month_f_cnt    : 0,
+    stt_day_total_cnt  : 0,
+    stt_day_s_cnt      : 0,
+    stt_day_f_cnt      : 0,
+  });
   const [selectedCust    , setSelectedCust    ] = useState({});
   const [selectedTaskMemb, setSelectedTaskMemb] = useState({});
   const [taskDate        , setTaskDate        ] = useState({
@@ -43,6 +50,7 @@ const TaskRegPage = () => {
     task_ed_dt : new Date(),
     task_st_tm : '',
     task_ed_tm : '',
+
   });
   const [inputTime       , setInputTime       ] = useState({
     startHour   : '',
@@ -117,6 +125,39 @@ const TaskRegPage = () => {
     setTaskDate((prev) => {
       return {...prev, [name]: value};
     })
+  }
+
+  const onChangeSTTCnt = (name, e) => {
+    let value = e.target.value;
+    value = value.replace(/\D/g, '');
+
+    const numericValue = parseFloat(value);
+
+    if(name === 'stt_month_s_cnt' || name === 'stt_month_f_cnt') {
+      setTaskData((prev) => ({
+        ...prev,
+        [name]: numericValue,
+        stt_month_total_cnt: name === "stt_month_s_cnt"
+          ? numericValue + prev.stt_month_f_cnt
+          : name === "stt_month_f_cnt"
+            ? prev.stt_month_s_cnt + numericValue
+            : prev.stt_month_total_cnt
+      }));
+    }else if(name === 'stt_day_s_cnt' || name === 'stt_day_f_cnt'){
+      setTaskData((prev) => ({
+        ...prev,
+        [name]: numericValue,
+        stt_day_total_cnt: name === "stt_day_s_cnt"
+          ? numericValue + prev.stt_day_f_cnt
+          : name === "stt_day_f_cnt"
+            ? prev.stt_day_s_cnt + numericValue
+            : prev.stt_day_total_cnt
+      }));
+    }
+  }
+
+  const onChangeTaskData = (name, e) => {
+    setTaskData({...taskData, [name]: e.target.value});
   }
 
   const onChangeTaskTime = (name, value) => {
@@ -254,7 +295,6 @@ const TaskRegPage = () => {
                     <DatePicker
                       className  = {styles.datepicker}
                       selected   = {taskDate.task_st_dt}
-                      // onChange   = {date => setTaskStartDate(date)}
                       onChange   = {date => onChangeTaskDateInfoCode('taskStartDate', date)}
                       dateFormat = "yyyy년 MM월 dd일"
                       locale     = {ko}
@@ -285,7 +325,6 @@ const TaskRegPage = () => {
                     <DatePicker
                       className  = {styles.datepicker}
                       selected   = {taskDate.task_ed_dt}
-                      // onChange   = {date => setTaskEndDate(date)}
                       onChange   = {date => onChangeTaskDateInfoCode('taskEndDate', date)}
                       dateFormat = "yyyy년 MM월 dd일"
                       locale     = {ko}
@@ -337,7 +376,6 @@ const TaskRegPage = () => {
                     {value: '1', text: "하"  },
                     {value: '0', text: "없음"},
                   ]}
-                  // onChangeEvent={onChangeEnterpriseCode}
                 />
               </div>
             </div>
@@ -346,11 +384,11 @@ const TaskRegPage = () => {
               <div>
                 <div>
                   <div>총 건수</div>
-                  <input />
+                  <input value={taskData.stt_month_total_cnt} />
                   <div>성공</div>
-                  <input />
+                  <input value={taskData.stt_month_s_cnt} onChange={(e) => onChangeSTTCnt('stt_month_s_cnt', e)}/>
                   <div>실패</div>
-                  <input />
+                  <input value={taskData.stt_month_f_cnt} onChange={(e) => onChangeSTTCnt('stt_month_f_cnt', e)}/>
                 </div>
               </div>
             </div>
@@ -359,18 +397,18 @@ const TaskRegPage = () => {
               <div>
                 <div>
                   <div>총 건수</div>
-                  <input />
+                  <input value={taskData.stt_day_total_cnt} />
                   <div>성공</div>
-                  <input />
+                  <input value={taskData.stt_day_s_cnt} onChange={(e) => onChangeSTTCnt('stt_day_s_cnt', e)}/>
                   <div>실패</div>
-                  <input />
+                  <input value={taskData.stt_day_f_cnt} onChange={(e) => onChangeSTTCnt('stt_day_f_cnt', e)}/>
                 </div>
               </div>
             </div>
             <div>
               <div>작업 내용</div>
               <div>
-                {/* <textarea value={'ddd'} /> */}
+                <textarea value={taskData.task_memo} onChange={(e) => onChangeTaskData('task_memo', e)}/>
               </div>
             </div>
           </div>
