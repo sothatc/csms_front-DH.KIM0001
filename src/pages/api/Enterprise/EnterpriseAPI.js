@@ -1,4 +1,4 @@
-const { default: axiosInstance } = require("../axiosInstance")
+const { default: axiosInstance } = require("../axiosInstance");
 
 
 const getEnterpriseList = async (object) => {

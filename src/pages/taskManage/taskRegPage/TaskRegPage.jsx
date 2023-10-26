@@ -10,6 +10,7 @@ import { initModal, openModal } from 'reduxStore/modalSlice';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import styles from './TaskRegPage.module.scss';
+import { insertTaskInfoAPI } from 'pages/api/Task/TaskAPI';
 
 
 const defaultTaskData = {
@@ -42,16 +43,13 @@ const TaskRegPage = () => {
     stt_day_total_cnt  : 0,
     stt_day_s_cnt      : 0,
     stt_day_f_cnt      : 0,
-  });
-  const [selectedCust    , setSelectedCust    ] = useState({});
-  const [selectedTaskMemb, setSelectedTaskMemb] = useState({});
-  const [taskDate        , setTaskDate        ] = useState({
     task_st_dt : new Date(),
     task_ed_dt : new Date(),
     task_st_tm : '',
     task_ed_tm : '',
-
   });
+  const [selectedCust    , setSelectedCust    ] = useState({});
+  const [selectedTaskMemb, setSelectedTaskMemb] = useState({});
   const [inputTime       , setInputTime       ] = useState({
     startHour   : '',
     endHour     : '',
@@ -121,12 +119,6 @@ const TaskRegPage = () => {
     })
   }
 
-  const onChangeTaskDateInfoCode = (name, value) => {
-    setTaskDate((prev) => {
-      return {...prev, [name]: value};
-    })
-  }
-
   const onChangeSTTCnt = (name, e) => {
     let value = e.target.value;
     value = value.replace(/\D/g, '');
@@ -168,7 +160,7 @@ const TaskRegPage = () => {
 
   }
 
-  const limitToTwoNum = (name, e) => {
+  const limitInputTimeToTwoNum = (name, e) => {
     let value = e.target.value;
 
     value = value.replace(/\D/g, '');
@@ -179,13 +171,27 @@ const TaskRegPage = () => {
     setInputTime({...inputTime, [name] : value});
   }
 
-  const limitInputString = (name, e) => {
-    let value = e.target.value;
+  const onClickInsertTaskInfo = () => {
+    const newTaskData = taskData;
+    newTaskData['flag'] = 'I';
+    newTaskData['task_st_tm'] = `${inputTime.startHour.padStart(2, '0')}:${inputTime.startMinute.padStart(2, '0')}`;
+    newTaskData['task_ed_tm'] = `${inputTime.endHour.padStart(2, '0')}:${inputTime.endMinute.padStart(2, '0')}`;
+console.log("newTaskData= ", newTaskData);
 
-    value = value.replace(/\D/g, '');
+    let formData = new FormData();
 
+    formData.append('taskData', JSON.stringify(newTaskData));
+
+    insertTaskInfoAPI(formData);
+    alert("작업 등록 완료");
 
   }
+
+  // const limitInputString = (name, e) => {
+  //   let value = e.target.value;
+
+  //   value = value.replace(/\D/g, '');
+  // }
 
   return (
     <>
@@ -198,8 +204,9 @@ const TaskRegPage = () => {
             </div>
             <div>
               {/* {entp_unq !== null || '' */}
-                ? <Button value={'수정'} />
-                : <Button value={'등록'} />
+                {/* ? <Button value={'수정'} /> */}
+                {/* : <Button value={'등록'} /> */}
+                <Button value={'등록'} onClickEvent={onClickInsertTaskInfo}/>
               {/* } */}
               <Button value={'취소'}/>
             </div>
@@ -294,8 +301,10 @@ const TaskRegPage = () => {
                   <label>
                     <DatePicker
                       className  = {styles.datepicker}
-                      selected   = {taskDate.task_st_dt}
-                      onChange   = {date => onChangeTaskDateInfoCode('taskStartDate', date)}
+                      // selected   = {taskDate.task_st_dt}
+                      selected   = {taskData.task_st_dt}
+                      // onChange   = {date => onChangeTaskDateInfoCode('task_st_dt', date)}
+                      onChange   = {date => onChangeTaskInfoCode('task_st_dt', date)}
                       dateFormat = "yyyy년 MM월 dd일"
                       locale     = {ko}
                     />
@@ -304,13 +313,13 @@ const TaskRegPage = () => {
                   <input
                     value       = {inputTime.startHour}
                     pattern     = '\d{2}'
-                    onChange    = {(e) => limitToTwoNum('startHour', e)}
+                    onChange    = {(e) => limitInputTimeToTwoNum('startHour', e)}
                   />
                   <div>시</div>
                   <input
                     value       = {inputTime.startMinute}
                     pattern     = '\d{2}'
-                    onChange    = {(e) => limitToTwoNum('startMinute', e)}
+                    onChange    = {(e) => limitInputTimeToTwoNum('startMinute', e)}
                   />
                   <div>분</div>
                 </div>
@@ -324,23 +333,25 @@ const TaskRegPage = () => {
                   <label>
                     <DatePicker
                       className  = {styles.datepicker}
-                      selected   = {taskDate.task_ed_dt}
-                      onChange   = {date => onChangeTaskDateInfoCode('taskEndDate', date)}
+                      // selected   = {taskDate.task_ed_dt}
+                      selected   = {taskData.task_ed_dt}
+                      // onChange   = {date => onChangeTaskDateInfoCode('task_ed_dt', date)}
+                      onChange   = {date => onChangeTaskInfoCode('task_ed_dt', date)}
                       dateFormat = "yyyy년 MM월 dd일"
                       locale     = {ko}
                     />
                     <IconImage icon={'CALENDAR'} />
                   </label>
                   <input
-                    value       = {inputTime.endHour}
-                    pattern     = '\d{2}'
-                    onChange    = {(e) => limitToTwoNum('endHour', e)}
+                    value    = {inputTime.endHour}
+                    pattern  = '\d{2}'
+                    onChange = {(e) => limitInputTimeToTwoNum('endHour', e)}
                   />
                   <div>시</div>
                   <input
-                    value       = {inputTime.endMinute}
-                    pattern     = '\d{2}'
-                    onChange    = {(e) => limitToTwoNum('endMinute', e)}
+                    value    = {inputTime.endMinute}
+                    pattern  = '\d{2}'
+                    onChange = {(e) => limitInputTimeToTwoNum('endMinute', e)}
                   />
                   <div>분</div>
                 </div>
