@@ -11,6 +11,7 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import styles from './TaskRegPage.module.scss';
 import { insertTaskInfoAPI } from 'pages/api/Task/TaskAPI';
+import { format, parseISO } from 'date-fns';
 
 
 const defaultTaskData = {
@@ -50,6 +51,10 @@ const TaskRegPage = () => {
   });
   const [selectedCust    , setSelectedCust    ] = useState({});
   const [selectedTaskMemb, setSelectedTaskMemb] = useState({});
+  const [dateString      , setDateString      ] = useState({
+    task_st_dt: '',
+    task_ed_dt: ''
+  });
   const [inputTime       , setInputTime       ] = useState({
     startHour   : '',
     endHour     : '',
@@ -63,7 +68,8 @@ const TaskRegPage = () => {
 
   const selectedCustProps     = useSelector((state) => state?.modal.data.selectedCust);
   const selectedTaskMembProps = useSelector((state) => state?.modal.data.selectedTaskMemb);
-
+console.log("taskData = ", taskData);
+console.log("dateString = ", dateString);
   useEffect(() => {
     getEnterpriseDtlInfo(entpNoArr[1]).then((response) => {
       setEnterpriseData(response.enterpriseData);
@@ -111,6 +117,20 @@ const TaskRegPage = () => {
           })
         );
     }
+  }
+
+  const onChangeTaskDateParsing = (name, date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    const dateString = `${year}-${month}-${day}`;
+    const parseISODate = parseISO(dateString);
+    const formattedDate = format(parseISODate, 'yyyy-MM-dd');
+
+    setDateString((prev) => {
+      return {...prev, [name]: formattedDate};
+    });
   }
 
   const onChangeTaskInfoCode = (name, value) => {
@@ -176,6 +196,16 @@ const TaskRegPage = () => {
     newTaskData['flag'] = 'I';
     newTaskData['task_st_tm'] = `${inputTime.startHour.padStart(2, '0')}:${inputTime.startMinute.padStart(2, '0')}`;
     newTaskData['task_ed_tm'] = `${inputTime.endHour.padStart(2, '0')}:${inputTime.endMinute.padStart(2, '0')}`;
+
+    newTaskData['cust_unq']  = selectedCust.cust_unq;
+    newTaskData['entp_unq'] = selectedCust.entp_unq;
+
+    newTaskData['task_dept'] = selectedTaskMemb.task_dept;
+    newTaskData['task_usr_nm'] = selectedTaskMemb.task_usr_nm;
+
+    newTaskData['task_st_dt'] = dateString.task_st_dt;
+    newTaskData['task_ed_dt'] = dateString.task_ed_dt;
+
 console.log("newTaskData= ", newTaskData);
 
     let formData = new FormData();
@@ -303,8 +333,8 @@ console.log("newTaskData= ", newTaskData);
                       className  = {styles.datepicker}
                       // selected   = {taskDate.task_st_dt}
                       selected   = {taskData.task_st_dt}
-                      // onChange   = {date => onChangeTaskDateInfoCode('task_st_dt', date)}
-                      onChange   = {date => onChangeTaskInfoCode('task_st_dt', date)}
+                      // onChange   = {date => onChangeTaskInfoCode('task_st_dt', date)}
+                      onChange   = {date => onChangeTaskDateParsing('task_st_dt', date)}
                       dateFormat = "yyyy년 MM월 dd일"
                       locale     = {ko}
                     />
@@ -335,8 +365,8 @@ console.log("newTaskData= ", newTaskData);
                       className  = {styles.datepicker}
                       // selected   = {taskDate.task_ed_dt}
                       selected   = {taskData.task_ed_dt}
-                      // onChange   = {date => onChangeTaskDateInfoCode('task_ed_dt', date)}
-                      onChange   = {date => onChangeTaskInfoCode('task_ed_dt', date)}
+                      // onChange   = {date => onChangeTaskInfoCode('task_ed_dt', date)}
+                      onChange   = {date => onChangeTaskDateParsing('task_ed_dt', date)}
                       dateFormat = "yyyy년 MM월 dd일"
                       locale     = {ko}
                     />
