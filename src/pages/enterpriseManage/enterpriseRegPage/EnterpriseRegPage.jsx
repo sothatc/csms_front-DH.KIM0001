@@ -204,9 +204,14 @@ const EnterpriseRegPage = () => {
     formData.append('systemData', JSON.stringify(systemData));
     formData.append('custData', JSON.stringify(newCustData));
 
-    insertEnterprise(formData);
-    alert('업체 등록 완료');
-    navigate('/enterprise');
+    insertEnterprise(formData)
+      .then((resolve) => {
+        alert('업체 등록 완료');
+        navigate('/enterprise');
+      })
+      .catch((reject) => {
+        console.log("reject => ", reject);
+      });
   }
 
   const onClickModifyEntp = () => {

@@ -4,21 +4,19 @@ import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
 import { ko } from 'date-fns/esm/locale';
 import { getEnterpriseDtlInfo } from 'pages/api/Enterprise/EnterpriseAPI';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { initModal, openModal } from 'reduxStore/modalSlice';
+import { insertTaskInfoAPI } from 'pages/api/Task/TaskAPI';
+import { format, parseISO } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import styles from './TaskRegPage.module.scss';
-import { insertTaskInfoAPI } from 'pages/api/Task/TaskAPI';
-import { format, parseISO } from 'date-fns';
 
 
 const defaultTaskData = {
 
 }
-
-const delFileArray = [];
 
 const FILE_SIZE_MAX_LIMIT = 20 * 1024 * 1024;
 
@@ -35,8 +33,11 @@ for (let i = 0; i <= 60; i += 10) {
   MinuteDataSet.push({ value, text: `${value}분` });
 }
 
+const delFileArray = [];
+
 const TaskRegPage = () => {
   const [enterpriseData  , setEnterpriseData  ] = useState({});
+  const [atchFiles       , setAtchFiles       ] = useState([]);
   const [taskData        , setTaskData        ] = useState({
     stt_month_total_cnt: 0,
     stt_month_s_cnt    : 0,
@@ -135,7 +136,6 @@ console.log("dateString = ", dateString);
     setDateString((prev) => {
       return {...prev, [name]: formattedDate};
     });
-
   }
 
   const onChangeTaskInfoCode = (name, value) => {
@@ -207,6 +207,10 @@ console.log("dateString = ", dateString);
 
     formData.append('taskData', JSON.stringify(newTaskData));
 
+    atchFiles?.forEach((atchFile) => {
+      formData.append('files', atchFile);
+    });
+
     insertTaskInfoAPI(formData)
       .then((resolve) => {
         alert("작업 등록 완료");
@@ -216,11 +220,26 @@ console.log("dateString = ", dateString);
       );
   }
 
-  // const limitInputString = (name, e) => {
-  //   let value = e.target.value;
+  const onClickOneDeleteFile = (index) => {
+    delFileArray.push(atchFiles[index].atch_file_unq);
+    const remainingFiles = atchFiles.filter((_, idx) => idx !== index);
+    setAtchFiles([...remainingFiles]);
+  }
 
-  //   value = value.replace(/\D/g, '');
-  // }
+  const onSelectFile = (e) => {
+    const selectFiles = e.target.files;
+    setAtchFiles((prev) => [...prev, ...selectFiles]);
+  }
+
+  const totalFileSizeInByte = useMemo(() => {
+    let totalSize = 0;
+
+    atchFiles.forEach((file) => {
+      totalSize += file.size;
+    });
+
+    return totalSize;
+  }, [atchFiles])
 
   return (
     <>
@@ -460,23 +479,23 @@ console.log("dateString = ", dateString);
                   id       = 'fileInput'
                   type     = 'file'
                   multiple = 'multiple'
-                  // onChange = {onSelectFile}
+                  onChange = {onSelectFile}
                 />
                 <label htmlFor='fileInput'>
                   <div>첨부하기</div>
                 </label>
               </div>
               <div>
-                {/* {atchFiles && atchFiles.map((file, index) => ( */}
-                  <div>
+                {atchFiles && atchFiles.map((file, index) => (
+                  <div key={index}>
                     <div>
-                      <div>{''}</div>
+                      <div>{file.name || file.atch_file_nm}</div>
                     </div>
-                    <button className={`${styles.closeBtn} ${styles.close}`}>
+                    <button className={`${styles.closeBtn} ${styles.close}`} onClick={() => onClickOneDeleteFile(index)}>
                       <span className={`${styles['a11y--hidden']}`}>닫기</span>
                     </button>
                   </div>
-                {/* ))} */}
+                ))}
               </div>
             </div>
           </div>
