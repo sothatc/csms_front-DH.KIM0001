@@ -53,8 +53,8 @@ const TaskRegPage = () => {
   const [selectedCust    , setSelectedCust    ] = useState({});
   const [selectedTaskMemb, setSelectedTaskMemb] = useState({});
   const [dateString      , setDateString      ] = useState({
-    task_st_dt: new Date(),
-    task_ed_dt: new Date(),
+    task_st_dt: '',
+    task_ed_dt: '',
   });
   const [inputTime       , setInputTime       ] = useState({
     startHour   : '',
@@ -69,8 +69,7 @@ const TaskRegPage = () => {
 
   const selectedCustProps     = useSelector((state) => state?.modal.data.selectedCust);
   const selectedTaskMembProps = useSelector((state) => state?.modal.data.selectedTaskMemb);
-console.log("taskData = ", taskData);
-console.log("dateString = ", dateString);
+
   useEffect(() => {
     getEnterpriseDtlInfo(entpNoArr[1]).then((response) => {
       setEnterpriseData(response.enterpriseData);
@@ -200,8 +199,30 @@ console.log("dateString = ", dateString);
     newTaskData['task_dept'] = selectedTaskMemb.task_dept;
     newTaskData['task_usr_nm'] = selectedTaskMemb.task_usr_nm;
 
-    newTaskData['task_st_dt'] = dateString.task_st_dt;
-    newTaskData['task_ed_dt'] = dateString.task_ed_dt;
+    const date = new Date();
+
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const twoDigitMonth = month.toString().padStart(2, '0');
+    const day = date.getDate();
+    const twoDigitDay = day.toString().padStart(2, '0');
+
+    const dateStr = `${year}-${twoDigitMonth}-${twoDigitDay}`;
+    const parseISODate = parseISO(dateStr);
+    const formattedDate = format(parseISODate, 'yyyy-MM-dd');
+
+    if(dateString.task_st_dt === '') {
+      newTaskData['task_st_dt'] = formattedDate;
+    }else {
+      newTaskData['task_st_dt'] = dateString.task_st_dt;
+    }
+
+    if(dateString.task_ed_dt === '') {
+      newTaskData['task_ed_dt'] = formattedDate;
+    }else {
+      newTaskData['task_ed_dt'] = dateString.task_ed_dt;
+    }
+
 
     let formData = new FormData();
 
