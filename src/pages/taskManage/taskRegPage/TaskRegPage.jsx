@@ -52,8 +52,8 @@ const TaskRegPage = () => {
   const [selectedCust    , setSelectedCust    ] = useState({});
   const [selectedTaskMemb, setSelectedTaskMemb] = useState({});
   const [dateString      , setDateString      ] = useState({
-    task_st_dt: '',
-    task_ed_dt: ''
+    task_st_dt: new Date(),
+    task_ed_dt: new Date(),
   });
   const [inputTime       , setInputTime       ] = useState({
     startHour   : '',
@@ -120,17 +120,22 @@ console.log("dateString = ", dateString);
   }
 
   const onChangeTaskDateParsing = (name, date) => {
+    onChangeTaskInfoCode(name, date);
+
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
+    const twoDigitMonth = month.toString().padStart(2, '0');
     const day = date.getDate();
+    const twoDigitDay = day.toString().padStart(2, '0');
 
-    const dateString = `${year}-${month}-${day}`;
+    const dateString = `${year}-${twoDigitMonth}-${twoDigitDay}`;
     const parseISODate = parseISO(dateString);
     const formattedDate = format(parseISODate, 'yyyy-MM-dd');
 
     setDateString((prev) => {
       return {...prev, [name]: formattedDate};
     });
+
   }
 
   const onChangeTaskInfoCode = (name, value) => {
@@ -172,14 +177,6 @@ console.log("dateString = ", dateString);
     setTaskData({...taskData, [name]: e.target.value});
   }
 
-  const onChangeTaskTime = (name, value) => {
-    const startHour   = '';
-    const endHour     = '';
-    const startMinute = '';
-    const endMinute   = '';
-
-  }
-
   const limitInputTimeToTwoNum = (name, e) => {
     let value = e.target.value;
 
@@ -206,15 +203,17 @@ console.log("dateString = ", dateString);
     newTaskData['task_st_dt'] = dateString.task_st_dt;
     newTaskData['task_ed_dt'] = dateString.task_ed_dt;
 
-console.log("newTaskData= ", newTaskData);
-
     let formData = new FormData();
 
     formData.append('taskData', JSON.stringify(newTaskData));
 
-    insertTaskInfoAPI(formData);
-    alert("작업 등록 완료");
-
+    insertTaskInfoAPI(formData)
+      .then((resolve) => {
+        alert("작업 등록 완료");
+      })
+      .catch((reject) => {
+        console.log('reject =>', reject);}
+      );
   }
 
   // const limitInputString = (name, e) => {
