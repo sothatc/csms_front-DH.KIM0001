@@ -1,6 +1,25 @@
 const { default: axiosInstance } = require("../axiosInstance");
 
 
+
+const getTaskDataListAPI = async (object) => {
+  const {entp_unq, task_tp, task_st_dt} = object;
+
+  try {
+    const response =  await axiosInstance.post(
+      `/entp/task/getTaskList`,
+      {
+        entp_unq,
+        task_tp,
+        task_st_dt
+      },
+    );
+    return response.data.data;
+  }catch(error) {
+    throw new Error(`Error: ${error}`);
+  }
+}
+
 const insertTaskInfoAPI = async (object) => {
   const formData = object;
   try{
@@ -21,5 +40,6 @@ const insertTaskInfoAPI = async (object) => {
 
 export {
   insertTaskInfoAPI,
+  getTaskDataListAPI,
 };
 

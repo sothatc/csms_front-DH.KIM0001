@@ -2,12 +2,10 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
+import Grid from 'components/molecules/Grid/Grid';
 import { getEnterpriseList } from 'pages/api/Enterprise/EnterpriseAPI';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Grid from 'components/molecules/Grid/Grid';
-import { useDispatch } from 'react-redux';
-import { initModal } from 'reduxStore/modalSlice';
 
 
 const ButtonActionRenderer = (param) => {
