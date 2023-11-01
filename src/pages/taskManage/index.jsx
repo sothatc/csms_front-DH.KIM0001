@@ -52,33 +52,48 @@ const ColumnDefs = [
 const TaskManagePage = () => {
   const [taskDataList, setTaskDataList] = useState([]);
   const [requestData, setRequestData] = useState({
-    entp_unq: '', //업체 이름별 검색
-    task_tp: '', //지원유형별 검색
+    entp_unq  : '', //업체 이름별 검색
+    task_tp   : '', //지원유형별 검색
     task_st_dt: '', //작업 시작 날짜별 검색
   });
 
   useEffect(() => {
     getTaskDataListEvent(requestData);
   },[])
+
+	const getTextForTaskType = (value) => {
+		if (value === 'INS') return '정기정검';
+		if (value === 'ISS') return '이슈';
+		if (value === 'SET') return '설정변경';
+		if (value === 'TRN') return '학습수행';
+		if (value === 'ACC') return '인식률 측정';
+		if (value === 'DEV') return '개발적용';
+		if (value === 'EDT') return '수정적용';
+		return '알 수 없음';
+	}
+
+	const getTextForTaskJobType = (value) => {
+		if (value === 'VST') return '방문';
+		if (value === 'RMT') return '원격';
+		return '알 수 없음';
+	}
+
   const getTaskDataListEvent = (requestData) => {
+
     getTaskDataListAPI(requestData).then((response) => {
-      console.log("response.taskList = ", response.taskList);
-      setTaskDataList(response.taskList);
+			const updatedTaskDataList = [...response.taskList];
+
+			updatedTaskDataList.forEach(task => {
+				task.task_tp = getTextForTaskType(task.task_tp);
+				task.task_job_tp = getTextForTaskJobType(task.task_job_tp);
+			});
+
+			setTaskDataList(updatedTaskDataList);
     })
-    .catch((err) => {console.log("reject Err => ", err);});
+    .catch((err) => {console.log("reject Err => ", err)});
+
   }
-
-  // const getTextForValue = (value) => {
-  //   if (value === 'INS') return '정기정검';
-  //   if (value === 'ISS') return '이슈';
-  //   if (value === 'SET') return '설정변경';
-  //   if (value === 'TRN') return '학습수행';
-  //   if (value === 'ACC') return '인식률 측정';
-  //   if (value === 'DEV') return '개발적용';
-  //   if (value === 'EDT') return '수정적용';
-  //   return '알 수 없음';
-  // }
-
+console.log("taskDataList = ", taskDataList);
   return (
     <>
 			<div className='task'>
