@@ -1,3 +1,5 @@
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { Button } from "components/atoms/Button/Button";
 import { Select } from "components/atoms/Select/Select";
 import Grid from "components/molecules/Grid/Grid";
@@ -15,7 +17,7 @@ const ButtonActionRenderer = (param) => {
   }
 
   return (
-    <div>
+    <div className='grid__btn'>
       <Button value={'상세 보기'} onClickEvent={moveToTaskDtlPage} />
     </div>
   )
@@ -41,18 +43,19 @@ const ColumnDefs = [
   {
 		headerName : '첨부파일',
 		field : 'atch_file_nm',
-		cellRenderer : ButtonAtchFileRenderer
+		cellRenderer : ButtonAtchFileRenderer,
 	},
   {
     field : 'action',
     cellRenderer: ButtonActionRenderer,
+		cellStyle: {display: 'flex', alignItems: 'center'}
   }
 ];
 
 const TaskManagePage = () => {
   const [taskDataList, setTaskDataList] = useState([]);
   const [requestData, setRequestData] = useState({
-    entp_unq  : '', //업체 이름별 검색
+    entp_nm  : '', //업체 이름별 검색
     task_tp   : '', //지원유형별 검색
     task_st_dt: '', //작업 시작 날짜별 검색
   });
@@ -93,6 +96,20 @@ const TaskManagePage = () => {
     .catch((err) => {console.log("reject Err => ", err)});
 
   }
+
+	const handleClickSearch = () => {
+		getTaskDataListEvent(requestData);
+	}
+
+	const handleChangeSearchData = (name, codeVal) => {
+		setRequestData({...requestData, [name] : codeVal});
+	}
+
+	const onChangeSearchEntpName = (e) => {
+		setRequestData({...requestData, entp_nm : e.target.value});
+	}
+
+
 console.log("taskDataList = ", taskDataList);
   return (
     <>
@@ -103,11 +120,12 @@ console.log("taskDataList = ", taskDataList);
 						<div>
 							<div>작업일자</div>
 							<Select
-								// name    = 'entp_tp'
+								// name    = 'task_job_tp'
+								// value   = {requestData.task_job_tp}
 								// dataSet = {[
-								// 	{value: ''  , text:'전체'   },
-								// 	{value: 'C' , text: "고객사"},
-								// 	{value: 'S' , text: "협력사"},
+								// 	{value: ''   , text: '전체'},
+								// 	{value: 'VST', text: '방문'},
+								// 	{value: 'RMT', text: '원격'},
 								// ]}
 								// onChangeEvent={handleChangeSearchData}
 							/>
@@ -115,25 +133,27 @@ console.log("taskDataList = ", taskDataList);
 						<div>
 							<div>지원유형</div>
 							<Select
-								// name    = 'svc_tp'
-								// dataSet = {[
-								// 	{value: ''  , text:'전체'           },
-								// 	{value: 'R' , text:'실시간'         },
-								// 	{value: 'SR', text:'준실시간'       },
-								// 	{value: 'B' , text:'배치'           },
-								// 	{value: 'S' , text:'self(수동/단건)'},
-								// ]}
-								// onChangeEvent={handleChangeSearchData}
+								name    = 'task_tp'
+								value   = {requestData.task_tp}
+								dataSet = {[
+									{value: ''   , text: "전체"       },
+									{value: 'INS', text: "정기정검"   },
+									{value: 'ISS', text: "이슈"       },
+									{value: 'SET', text: "설정변경"   },
+									{value: 'TRN', text: "학습수행"   },
+									{value: 'ACC', text: "인식률 측정"},
+									{value: 'DEV', text: "개발적용"   },
+									{value: 'EDT', text: "수정적용"   },
+								]}
+								onChangeEvent={handleChangeSearchData}
 							/>
 						</div>
 						<div className="task__search--input">
-							<div className="search__input--title">업체명</div>
-							{/* <input type='text'onChange={(e)=>onChangeSearchEntpName(e)}/> */}
-							<input type='text'/>
+							<div className="search__input--title">고객사명</div>
+							<input value={requestData.entp_nm} type='text'onChange={(e)=>onChangeSearchEntpName(e)}/>
 						</div>
 						<div className="task__search--btn">
-							{/* <Button value={'검색'} onClickEvent={handleClickSearch}/> */}
-							<Button value={'검색'} />
+							<Button value={'검색'} onClickEvent={handleClickSearch}/>
 						</div>
 					</div>
 				</div>

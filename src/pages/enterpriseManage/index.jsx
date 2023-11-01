@@ -131,7 +131,7 @@ const EnterpriseManagePage = () => {
 						</div>
 						<div className="client__search--input">
 							<div className="search__input--title">회사명</div>
-							<input type='text'onChange={(e)=>onChangeSearchEntpName(e)}/>
+							<input value={requestData.entp_nm} type='text'onChange={(e)=>onChangeSearchEntpName(e)}/>
 						</div>
 						<div className="client__search--btn">
 							<Button value={'검색'} onClickEvent={handleClickSearch}/>

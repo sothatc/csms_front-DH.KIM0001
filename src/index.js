@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
 import './styles/clientManage.scss';
+import './styles/taskManage.scss';
 import './styles/globals.scss';
 
 import App from './App';

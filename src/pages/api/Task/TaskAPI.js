@@ -3,13 +3,13 @@ const { default: axiosInstance } = require("../axiosInstance");
 
 
 const getTaskDataListAPI = async (object) => {
-  const {entp_unq, task_tp, task_st_dt} = object;
+  const {entp_nm, task_tp, task_st_dt} = object;
 
   try {
     const response =  await axiosInstance.post(
       `/entp/task/getTaskList`,
       {
-        entp_unq,
+        entp_nm,
         task_tp,
         task_st_dt
       },
