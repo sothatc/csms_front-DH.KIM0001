@@ -38,8 +38,25 @@ const insertTaskInfoAPI = async (object) => {
   }
 }
 
+// const getTaskDtlInfoAPI = async (task_unq) => {
+//   const {task_unq} = object;
+
+//   try {
+//     const response = await axiosInstance.post(
+//       `/entp/task/getTaskDtlInfo`,
+//       {
+//         task_unq,
+//       },
+//     );
+//     return response.data.data;
+//   }catch(err) {
+//     throw new Error(`Error: ${err}`);
+//   };
+// }
+
 export {
   insertTaskInfoAPI,
   getTaskDataListAPI,
+  // getTaskDtlInfoAPI,
 };
 

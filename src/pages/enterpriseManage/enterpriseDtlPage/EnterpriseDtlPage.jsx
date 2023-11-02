@@ -1,10 +1,9 @@
 import { Button } from 'components/atoms/Button/Button';
-import { useState, useEffect } from 'react';
 import { deleteEnterpriseInfo, downloadAtchFile, getEnterpriseDtlInfo } from 'pages/api/Enterprise/EnterpriseAPI';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { openModal } from 'reduxStore/modalSlice';
-import { CustListModal } from 'components/organisms/Dialog/CustListModal/CustListModal';
 import styles from './EnterpriseDtlPage.module.scss';
 
 const sysDataDivs = [

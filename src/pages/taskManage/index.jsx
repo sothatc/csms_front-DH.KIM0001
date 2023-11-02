@@ -1,10 +1,13 @@
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
+import { IconImage } from 'components/atoms';
 import { Button } from "components/atoms/Button/Button";
 import { Select } from "components/atoms/Select/Select";
 import Grid from "components/molecules/Grid/Grid";
+import { ko } from 'date-fns/esm/locale';
 import { getTaskDataListAPI } from "pages/api/Task/TaskAPI";
 import { useEffect, useState } from "react";
+import DatePicker from 'react-datepicker';
 import { useNavigate } from "react-router-dom";
 
 
@@ -13,7 +16,7 @@ const ButtonActionRenderer = (param) => {
   // console.log("상세보기 param = ", param);
 
   const moveToTaskDtlPage = () => {
-    navigate(`/`);
+    navigate(`/task/detail`);
   }
 
   return (
@@ -55,7 +58,7 @@ const ColumnDefs = [
 const TaskManagePage = () => {
   const [taskDataList, setTaskDataList] = useState([]);
   const [requestData, setRequestData] = useState({
-    entp_nm  : '', //업체 이름별 검색
+    entp_nm   : '', //업체 이름별 검색
     task_tp   : '', //지원유형별 검색
     task_st_dt: '', //작업 시작 날짜별 검색
   });
@@ -87,7 +90,7 @@ const TaskManagePage = () => {
 			const updatedTaskDataList = [...response.taskList];
 
 			updatedTaskDataList.forEach(task => {
-				task.task_tp = getTextForTaskType(task.task_tp);
+				task.task_tp     = getTextForTaskType(task.task_tp);
 				task.task_job_tp = getTextForTaskJobType(task.task_job_tp);
 			});
 
@@ -109,6 +112,26 @@ const TaskManagePage = () => {
 		setRequestData({...requestData, entp_nm : e.target.value});
 	}
 
+	const onChangeTaskDateParsing = (name, date) => {
+    // onChangeTaskInfoCode(name, date);
+
+    // const year = date.getFullYear();
+    // const month = date.getMonth() + 1;
+    // const twoDigitMonth = month.toString().padStart(2, '0');
+    // const day = date.getDate();
+    // const twoDigitDay = day.toString().padStart(2, '0');
+
+    // const dateString = `${year}-${twoDigitMonth}-${twoDigitDay}`;
+    // const parseISODate = parseISO(dateString);
+    // const formattedDate = format(parseISODate, 'yyyy-MM-dd');
+
+    // setRequestData((prev) => {
+    //   return {...prev, [name]: formattedDate};
+    // });
+
+		setRequestData({...requestData, [name]: date});
+  }
+
 
 console.log("taskDataList = ", taskDataList);
   return (
@@ -119,16 +142,16 @@ console.log("taskDataList = ", taskDataList);
 					<div className="task__search--precondition">
 						<div>
 							<div>작업일자</div>
-							<Select
-								// name    = 'task_job_tp'
-								// value   = {requestData.task_job_tp}
-								// dataSet = {[
-								// 	{value: ''   , text: '전체'},
-								// 	{value: 'VST', text: '방문'},
-								// 	{value: 'RMT', text: '원격'},
-								// ]}
-								// onChangeEvent={handleChangeSearchData}
-							/>
+							<label>
+								<DatePicker
+									// className  = {styles.datepicker}
+									selected   = {requestData.task_st_dt}
+									onChange   = {date => onChangeTaskDateParsing('task_st_dt', date)}
+									dateFormat = "yyyy년 MM월 dd일"
+									locale     = {ko}
+								/>
+								<IconImage icon={'CALENDAR'} />
+							</label>
 						</div>
 						<div>
 							<div>지원유형</div>

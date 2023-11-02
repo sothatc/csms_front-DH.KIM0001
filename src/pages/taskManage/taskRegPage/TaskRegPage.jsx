@@ -370,9 +370,7 @@ const TaskRegPage = () => {
                   <label>
                     <DatePicker
                       className  = {styles.datepicker}
-                      // selected   = {taskDate.task_st_dt}
                       selected   = {taskData.task_st_dt}
-                      // onChange   = {date => onChangeTaskInfoCode('task_st_dt', date)}
                       onChange   = {date => onChangeTaskDateParsing('task_st_dt', date)}
                       dateFormat = "yyyy년 MM월 dd일"
                       locale     = {ko}
@@ -402,9 +400,7 @@ const TaskRegPage = () => {
                   <label>
                     <DatePicker
                       className  = {styles.datepicker}
-                      // selected   = {taskDate.task_ed_dt}
                       selected   = {taskData.task_ed_dt}
-                      // onChange   = {date => onChangeTaskInfoCode('task_ed_dt', date)}
                       onChange   = {date => onChangeTaskDateParsing('task_ed_dt', date)}
                       dateFormat = "yyyy년 MM월 dd일"
                       locale     = {ko}
