@@ -6,9 +6,9 @@ import { closeModal } from 'reduxStore/modalSlice';
 import styles from './CustListModal.module.scss';
 
 const CustListModal = ({data}) => {
-  const {entpUnqProps, entpTpProps, cuatDataProps} = data;
+  const {entpUnqProps, entpTpProps, custDataProps} = data;
 
-  const [custData     , setCustData     ] = useState(cuatDataProps);
+  const [custData     , setCustData     ] = useState(custDataProps);
   const [inputCustData, setInputCustData] = useState({
     entp_unq    : entpUnqProps,
     entp_tp     : entpTpProps,

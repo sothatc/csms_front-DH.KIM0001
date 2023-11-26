@@ -55,9 +55,9 @@ const SearchTaskMembModal = () => {
               <div
                 key={index}
                 onClick={() => handleDivClick(item)}
-                className={selectedTaskMemb.memb_unq === item.memb_unq ? styles.active : ''}
+                className={selectedTaskMemb.task_usr_unq === item.task_usr_unq ? styles.active : ''}
               >
-                <div>{index}</div>
+                <div>{index + 1}</div>
                 <div>{item.task_dept}</div>
                 <div>{item.task_usr_nm}</div>
                 <div>{item.task_usr_pst_nm}</div>

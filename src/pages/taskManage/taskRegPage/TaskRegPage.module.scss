@@ -114,6 +114,9 @@
                 margin-left: 5px;
                 border: 1px solid #E5E5E5;
               }
+              >input::placeholder {
+                font-size: 14px;
+              }
 
             }
 

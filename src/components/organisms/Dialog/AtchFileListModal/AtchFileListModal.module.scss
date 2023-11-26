@@ -1,0 +1,53 @@
+@import 'styles/DefaultValueVariable.scss';
+
+.background {
+  position: fixed;
+  z-index: 3;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal {
+  display: grid;
+  grid-template-rows: 50px calc(100% - 110px) 40px;
+  grid-row-gap: 10px;
+  margin: 10% auto;
+  width: 20%;
+  height: 50%;
+  padding: 15px;
+  border: 1px solid #888;
+  border-radius: 10px;
+  background-color: #1c85c7;
+
+  &__title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  &__content {
+    padding: 10px;
+    background-color: #fff;
+
+    >div {
+      margin-bottom: 10px;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+
+  &__btn {
+    display: flex;
+    justify-content: center;
+
+    >button {
+      width: 100%;
+    }
+  }
+}

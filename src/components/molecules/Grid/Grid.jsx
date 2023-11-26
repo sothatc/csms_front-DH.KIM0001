@@ -1,5 +1,7 @@
 import { AgGridReact } from "ag-grid-react";
-import { forwardRef, useMemo, useRef, useState } from "react";
+import { forwardRef, useMemo } from "react";
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 
 const Grid = forwardRef((props, ref) => {
@@ -7,9 +9,9 @@ const Grid = forwardRef((props, ref) => {
 
 	const defaultColDef = useMemo(() => {
     return {
-        resizable: true,
-        sortable : true,
-        filter   : true,
+      resizable: true,
+      sortable : true,
+      filter   : true,
     };
   }, []);
 

@@ -1,5 +1,5 @@
 import { Button } from 'components/atoms/Button/Button';
-import { deleteEnterpriseInfo, downloadAtchFile, getEnterpriseDtlInfo } from 'pages/api/Enterprise/EnterpriseAPI';
+import { deleteEnterpriseInfo, downloadEntpAtchFileAPI, getEnterpriseDtlInfo } from 'pages/api/Enterprise/EnterpriseAPI';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -92,7 +92,7 @@ const EnterpriseDtlPage = () => {
   }
 
   const onClickDownloadAtchFile = (atch_file_unq) => {
-    downloadAtchFile(atch_file_unq).then((response) => {
+    downloadEntpAtchFileAPI(atch_file_unq).then((response) => {
       const contentDisposition = response.headers['content-disposition'];
 
       const fileNameMatch = decodeURI(contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)[1]
@@ -120,7 +120,7 @@ const EnterpriseDtlPage = () => {
         data: {
           entpUnqProps: enterpriseData.entp_unq,
           entpTpProps : enterpriseData.entp_tp,
-          cuatDataProps: custData,
+          custDataProps: custData,
         },
       })
     )

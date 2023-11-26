@@ -1,23 +1,62 @@
-import { Select } from 'components/atoms/Select/Select';
-import styles from './TaskDtlPage.module.scss';
-import { useEffect, useState } from 'react';
 import { Button } from 'components/atoms/Button/Button';
-import { getTaskDtlInfoAPI } from 'pages/api/Task/TaskAPI';
+import { downloadTaskAtchFileAPI, getTaskDtlInfoAPI } from 'pages/api/Task/TaskAPI';
+import { TaskJobTypeObject, TaskSvcEfc, TaskTypeObject } from 'pages/api/TaskTypeObject';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styles from './TaskDtlPage.module.scss';
 
 const TaskDtlPage = () => {
-  const [selectedCust, setSelectCust] = useState({});
-  const [atchFiles, setAtchFiles] = useState([]);
-  const [enterpriseData, setEnterpriseData] = useState({});
-  const [selectedTaskMemb, setSelectedTaskMemb] = useState({});
+  const [atchFiles       , setAtchFiles       ] = useState([]);
+  const [enterpriseData  , setEnterpriseData  ] = useState({});
+  const [taskData        , setTaskData        ] = useState({});
+  const [custData        , setCustData        ] = useState({});
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // getTaskDtlInfoAPI().then((response) => {
-    //   console.log("taskDtl response = ", response);
-    // })
-    // .catch((error) => {
-    //   alert(`Error: ${error}`);
-    // })
+    const taskNoArr = window.location.search.substring(1).split("=");
+
+    getTaskDtlInfoAPI(taskNoArr[1]).then((response) => {
+      setEnterpriseData(response.enterpriseData);
+      setTaskData({...response.taskData,
+        task_job_tp: TaskJobTypeObject[`${response.taskData.task_job_tp}`] || '알 수 없음',
+        task_tp    : TaskTypeObject[`${response.taskData.task_tp}`] || '알 수 없음',
+        svc_efc    : TaskSvcEfc[`${response.taskData.svc_efc}`] || '알 수 없음',
+      });
+      setAtchFiles(response.taskAtchData);
+      setCustData(response.enterpriseCustData);
+    })
+    .catch((error) => {
+      alert(`Error: ${error}`);
+    })
   },[])
+
+  const handleClickMoveToModify = () => {
+    navigate(`/task/register?task_unq=${taskData.task_unq}`);
+  }
+
+  const onClickDownAtchFile = (atch_file_unq) => {
+    downloadTaskAtchFileAPI(atch_file_unq).then((response) => {
+      const contentDisposition = response.headers['content-disposition'];
+
+      const fileNameMatch = decodeURI(contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)[1]
+      .replace(/['"]/g, ''));
+
+      if(fileNameMatch) {
+        const blob =  new Blob([response.data], { type: response.headers['content-type'] });
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = fileNameMatch;
+        link.click();
+
+        URL.revokeObjectURL(link.href);
+      }
+    })
+    .catch((err) => {
+      alert(`API Error: ${err}`);
+    });
+  }
 
   return (
     <>
@@ -29,7 +68,7 @@ const TaskDtlPage = () => {
               <h4>작업 상세</h4>
             </div>
             <div>
-              <Button value={'수정'} />
+              <Button value={'수정'} onClickEvent={handleClickMoveToModify}/>
               <Button value={'메인으로'}/>
             </div>
           </div>
@@ -46,20 +85,7 @@ const TaskDtlPage = () => {
                 지원 유형
               </div>
               <div>
-                <Select
-                  name  = 'task_tp'
-                  // value = {taskData.task_tp}
-                  // onChangeEvent = {onChangeTaskInfoCode}
-                  dataSet = {[
-                    {value: 'INS', text: "정기정검"   },
-                    {value: 'ISS', text: "이슈"       },
-                    {value: 'SET', text: "설정변경"   },
-                    {value: 'TRN', text: "학습수행"   },
-                    {value: 'ACC', text: "인식률 측정"},
-                    {value: 'DEV', text: "개발적용"   },
-                    {value: 'EDT', text: "수정적용"   },
-                  ]}
-                />
+                <div>{taskData.task_tp}</div>
               </div>
             </div>
             <div>
@@ -75,7 +101,7 @@ const TaskDtlPage = () => {
                 고객사 담당자
               </div>
               <div>
-                <div>{selectedCust?.memb_nm}</div>
+                <div>{custData?.memb_nm}</div>
               </div>
             </div>
             <div>
@@ -84,14 +110,14 @@ const TaskDtlPage = () => {
                 작업 담당자
               </div>
               <div>
-                <div>{selectedTaskMemb?.task_usr_nm}</div>
+                <div>{taskData?.task_usr_nm}</div>
               </div>
               <div>
                 <span className={styles.compulsory}>*</span>
                 담당 부서
               </div>
               <div>
-                <div>{selectedCust?.memb_dept_nm}</div>
+                <div>{custData?.memb_dept_nm}</div>
               </div>
             </div>
             <div>
@@ -100,14 +126,14 @@ const TaskDtlPage = () => {
                 고객사 담당자 연락처
               </div>
               <div>
-                <div>{selectedCust?.memb_tel}</div>
+                <div>{custData?.memb_tel}</div>
               </div>
               <div>
                 <span className={styles.compulsory}>*</span>
                 고객사 담당자 이메일
               </div>
               <div>
-                <div>{selectedCust?.memb_email}</div>
+                <div>{custData?.memb_email}</div>
               </div>
             </div>
             <div>
@@ -117,28 +143,9 @@ const TaskDtlPage = () => {
               </div>
               <div>
                 <div>
-                  {/* <label>
-                    <DatePicker
-                      className  = {styles.datepicker}
-                      selected   = {taskData.task_st_dt}
-                      onChange   = {date => onChangeTaskDateParsing('task_st_dt', date)}
-                      dateFormat = "yyyy년 MM월 dd일"
-                      locale     = {ko}
-                    />
-                    <IconImage icon={'CALENDAR'} />
-                  </label>
-                  <input
-                    value       = {inputTime.startHour}
-                    pattern     = '\d{2}'
-                    onChange    = {(e) => limitInputTimeToTwoNum('startHour', e)}
-                  />
-                  <div>시</div>
-                  <input
-                    value       = {inputTime.startMinute}
-                    pattern     = '\d{2}'
-                    onChange    = {(e) => limitInputTimeToTwoNum('startMinute', e)}
-                  />
-                  <div>분</div> */}
+                  <div>{taskData.task_st_dt}</div>
+                  <div>{taskData.task_st_dt && taskData.task_st_tm.split(":")[0]} 시</div>
+                  <div>{taskData.task_st_dt && taskData.task_st_tm.split(":")[1]} 분</div>
                 </div>
               </div>
               <div>
@@ -147,28 +154,9 @@ const TaskDtlPage = () => {
               </div>
               <div>
                 <div>
-                  {/* <label>
-                    <DatePicker
-                      className  = {styles.datepicker}
-                      selected   = {taskData.task_ed_dt}
-                      onChange   = {date => onChangeTaskDateParsing('task_ed_dt', date)}
-                      dateFormat = "yyyy년 MM월 dd일"
-                      locale     = {ko}
-                    />
-                    <IconImage icon={'CALENDAR'} />
-                  </label>
-                  <input
-                    value    = {inputTime.endHour}
-                    pattern  = '\d{2}'
-                    onChange = {(e) => limitInputTimeToTwoNum('endHour', e)}
-                  />
-                  <div>시</div>
-                  <input
-                    value    = {inputTime.endMinute}
-                    pattern  = '\d{2}'
-                    onChange = {(e) => limitInputTimeToTwoNum('endMinute', e)}
-                  />
-                  <div>분</div> */}
+                  <div>{taskData.task_ed_dt}</div>
+                  <div>{taskData.task_ed_tm && taskData.task_ed_tm.split(":")[0]} 시</div>
+                  <div>{taskData.task_ed_tm && taskData.task_ed_tm.split(":")[1]} 분</div>
                 </div>
               </div>
             </div>
@@ -178,31 +166,13 @@ const TaskDtlPage = () => {
                 작업 방식
               </div>
               <div>
-                <Select
-                  name    = {'task_job_tp'}
-                  // value   = {taskData.task_job_tp}
-                  // onChangeEvent = {onChangeTaskInfoCode}
-                  dataSet = {[
-                    {value: 'VST', text: '방문'},
-                    {value: 'RMT', text: '원격'},
-                  ]}
-                />
+                <div>{taskData.task_job_tp}</div>
               </div>
               <div>
                 서비스 영향
               </div>
               <div>
-                <Select
-                  name  = 'svc_efc'
-                  // value = {taskData.svc_efc}
-                  // onChangeEvent={onChangeTaskInfoCode}
-                  dataSet = {[
-                    {value: '3', text: "상"  },
-                    {value: '2', text: "중"  },
-                    {value: '1', text: "하"  },
-                    {value: '0', text: "없음"},
-                  ]}
-                />
+                <div>{taskData.svc_efc && taskData.svc_efc}</div>
               </div>
             </div>
             <div>
@@ -210,14 +180,11 @@ const TaskDtlPage = () => {
               <div>
                 <div>
                   <div>총 건수</div>
-                  {/* <input value={taskData.stt_month_total_cnt} /> */}
-                  <input  />
+                  <div>{taskData && taskData.stt_month_total_cnt}</div>
                   <div>성공</div>
-                  {/* <input value={taskData.stt_month_s_cnt} onChange={(e) => onChangeSTTCnt('stt_month_s_cnt', e)}/> */}
-                  <input />
+                  <div>{taskData && taskData.stt_month_s_cnt}</div>
                   <div>실패</div>
-                  {/* <input value={taskData.stt_month_f_cnt} onChange={(e) => onChangeSTTCnt('stt_month_f_cnt', e)}/> */}
-                  <input />
+                  <div>{taskData && taskData.stt_month_f_cnt}</div>
                 </div>
               </div>
             </div>
@@ -226,22 +193,18 @@ const TaskDtlPage = () => {
               <div>
                 <div>
                   <div>총 건수</div>
-                  {/* <input value={taskData.stt_day_total_cnt} /> */}
-                  <input />
+                  <div>{taskData && taskData.stt_day_total_cnt}</div>
                   <div>성공</div>
-                  {/* <input value={taskData.stt_day_s_cnt} onChange={(e) => onChangeSTTCnt('stt_day_s_cnt', e)}/> */}
-                  <input/>
+                  <div>{taskData && taskData.stt_day_s_cnt}</div>
                   <div>실패</div>
-                  {/* <input value={taskData.stt_day_f_cnt} onChange={(e) => onChangeSTTCnt('stt_day_f_cnt', e)}/> */}
-                  <input />
+                  <div>{taskData && taskData.stt_day_f_cnt}</div>
                 </div>
               </div>
             </div>
             <div>
               <div>작업 내용</div>
               <div>
-                {/* <textarea value={taskData.task_memo} onChange={(e) => onChangeTaskData('task_memo', e)}/> */}
-                <textarea />
+                <div>{taskData && taskData.task_memo}</div>
               </div>
             </div>
           </div>
@@ -249,26 +212,11 @@ const TaskDtlPage = () => {
             <div className={`${styles['detail__file--th']}`}>첨부파일</div>
             <div className={`${styles['detail__file--td']}`}>
               <div>
-                <input
-                  // id       = 'fileInput'
-                  // type     = 'file'
-                  // multiple = 'multiple'
-                  // onChange = {onSelectFile}
-                />
-                <label htmlFor='fileInput'>
-                  <div>첨부하기</div>
-                </label>
-              </div>
-              <div>
                 {atchFiles && atchFiles.map((file, index) => (
                   <div key={index}>
                     <div>
-                      <div>{file.name || file.atch_file_nm}</div>
+                      <div onClick={() => onClickDownAtchFile(file.atch_file_unq)}>{file.name || file.atch_file_org_nm}</div>
                     </div>
-                    {/* <button className={`${styles.closeBtn} ${styles.close}`} onClick={() => onClickOneDeleteFile(index)}> */}
-                    <button className={`${styles.closeBtn} ${styles.close}`} >
-                      <span className={`${styles['a11y--hidden']}`}>닫기</span>
-                    </button>
                   </div>
                 ))}
               </div>
@@ -280,4 +228,5 @@ const TaskDtlPage = () => {
   )
 }
 
-export {TaskDtlPage};
+export { TaskDtlPage };
+

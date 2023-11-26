@@ -1,5 +1,5 @@
+import { IconImage } from '..';
 import styles from './Button.module.scss';
-const { IconImage } = require("..");
 
 
 const Button = (props) => {

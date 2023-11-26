@@ -1,8 +1,8 @@
 import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
-import { deleteEnterpriseInfo, getEnterpriseDtlInfo, insertEnterprise, updateEnterprise } from 'pages/api/Enterprise/EnterpriseAPI';
-import { useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { getEnterpriseDtlInfo, insertEnterprise, updateEnterprise } from 'pages/api/Enterprise/EnterpriseAPI';
+import { useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './EnterpriseRegPage.module.scss';
 
 
@@ -61,7 +61,7 @@ const defaultCustData = {
   memb_nm      : '',
   memb_pst_nm  : '',
   memb_tel     : '',
-  principal_tp : ''
+  principal_tp : '',
 }
 const delFileArray = [];
 
@@ -80,7 +80,6 @@ const EnterpriseRegPage = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const entp_unq = searchParams.get('entp_unq');
-  // const cust_unq = searchParams.get('cust_unq');
 
   if(entp_unq) {
     getEnterpriseDtlInfo(entp_unq).then((response) => {
@@ -204,14 +203,9 @@ const EnterpriseRegPage = () => {
     formData.append('systemData', JSON.stringify(systemData));
     formData.append('custData', JSON.stringify(newCustData));
 
-    insertEnterprise(formData)
-      .then((resolve) => {
-        alert('업체 등록 완료');
-        navigate('/enterprise');
-      })
-      .catch((reject) => {
-        console.log("reject => ", reject);
-      });
+    insertEnterprise(formData);
+    alert('업체 등록 완료');
+    navigate('/enterprise');
   }
 
   const onClickModifyEntp = () => {
@@ -259,6 +253,7 @@ const EnterpriseRegPage = () => {
     updateEnterprise(formData);
 
     alert('업체 수정 완료');
+    navigate('/enterprise');
   }
 
   const isAnyPropertyNotEmpty = (obj) => {
@@ -448,7 +443,7 @@ const EnterpriseRegPage = () => {
                 {atchFiles && atchFiles.map((file, index) => (
                   <div key={index}>
                     <div>
-                      <div>{file.name || file.atch_file_nm}</div>
+                      <div>{file.name || file.atch_file_org_nm}</div>
                     </div>
                     <button className={`${styles.closeBtn} ${styles.close}`} onClick={() => onClickOneDeleteFile(index)}>
                       <span className={`${styles['a11y--hidden']}`}>닫기</span>
@@ -547,10 +542,10 @@ const EnterpriseRegPage = () => {
             </div>)
           })}
         </div>
-        <div className={styles.system__etc}>
+        {/* <div className={styles.system__etc}>
           <div>추가정보</div>
           <div></div>
-        </div>
+        </div> */}
       </div>
     </>
   )

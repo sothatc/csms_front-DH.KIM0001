@@ -1,4 +1,4 @@
-const { default: axiosInstance } = require("../axiosInstance");
+const { default: axiosInstance } = require("../axiosInstance")
 
 
 const getEnterpriseList = async (object) => {
@@ -69,7 +69,7 @@ const updateEnterprise = async (object) => {
   }
 }
 
-const downloadAtchFile = async (atch_file_unq) => {
+const downloadEntpAtchFileAPI = async (atch_file_unq) => {
   try {
     const response = await axiosInstance.post(`/entp/enterprise/atch/${atch_file_unq}`,
       null,
@@ -173,7 +173,7 @@ export {getEnterpriseList,
         getEnterpriseDtlInfo,
         insertEnterprise,
         updateEnterprise,
-        downloadAtchFile,
+        downloadEntpAtchFileAPI,
         insertCustInfo,
         getCustList,
         getCustOneInfo,

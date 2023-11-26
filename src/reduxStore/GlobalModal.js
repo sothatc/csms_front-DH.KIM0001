@@ -6,6 +6,7 @@ import { CustListModal } from "components/organisms/Dialog/CustListModal/CustLis
 import { SearchEntpModal } from "components/organisms/Dialog/SearchEntpModal/SearchEntpModal";
 import { SearchMembModal } from "components/organisms/Dialog/SearchMembModal/SearchMembModal";
 import { SearchTaskMembModal } from "components/organisms/Dialog/SearchTaskMembModal/SearchTaskMembModal";
+import { AtchFileListModal } from "components/organisms/Dialog/AtchFileListModal/AtchFileListModal";
 
 const MODAL_TYPES = {
   CustListModal   : 'CustListModal',
@@ -13,6 +14,7 @@ const MODAL_TYPES = {
   SearchEntpModal : 'SearchEntpModal',
   SearchMembModal : 'SearchMembModal',
   SearchTaskMembModal : 'SearchTaskMembModal',
+  AtchFileListModal : 'AtchFileListModal',
 };
 
 const MODAL_COMPONENTS = [
@@ -35,6 +37,10 @@ const MODAL_COMPONENTS = [
   {
     type : MODAL_TYPES.SearchTaskMembModal,
     component : <SearchTaskMembModal />
+  },
+  {
+    type : MODAL_TYPES.AtchFileListModal,
+    component : <AtchFileListModal />
   },
 ];
 

@@ -1,22 +1,23 @@
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
-import { IconImage } from 'components/atoms';
+import { Checkbox, IconImage } from 'components/atoms';
 import { Button } from "components/atoms/Button/Button";
 import { Select } from "components/atoms/Select/Select";
 import Grid from "components/molecules/Grid/Grid";
+import { format, parseISO } from 'date-fns';
 import { ko } from 'date-fns/esm/locale';
 import { getTaskDataListAPI } from "pages/api/Task/TaskAPI";
+import { TaskJobTypeObject, TaskTypeObject } from 'pages/api/TaskTypeObject';
 import { useEffect, useState } from "react";
 import DatePicker from 'react-datepicker';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from "react-router-dom";
+import { initModal, openModal } from 'reduxStore/modalSlice';
 
 
 const ButtonActionRenderer = (param) => {
   const navigate = useNavigate();
-  // console.log("상세보기 param = ", param);
 
   const moveToTaskDtlPage = () => {
-    navigate(`/task/detail`);
+    navigate(`/task/detail?task_unq=${param.data.task_unq}`);
   }
 
   return (
@@ -27,10 +28,21 @@ const ButtonActionRenderer = (param) => {
 }
 
 const ButtonAtchFileRenderer = (param) => {
-  // console.log("atchFile param = ", param);
+  const dispatch = useDispatch();
+
+  const openAtchFileModal = () => {
+    dispatch(
+      openModal({
+        modalType : 'AtchFileListModal',
+        isOpen    : true,
+        data: {'task_unq' : param.data.task_unq},
+      })
+    );
+  }
+
   return (
-    <div>
-      <Button value={'첨부파일'} />
+    <div className='grid__btn--atch'>
+      <Button image={'ATCHFILEICON'} onClickEvent={openAtchFileModal} />
     </div>
   )
 }
@@ -47,6 +59,7 @@ const ColumnDefs = [
 		headerName : '첨부파일',
 		field : 'atch_file_nm',
 		cellRenderer : ButtonAtchFileRenderer,
+    cellStyle: {display: 'flex', alignItems: 'center'}
 	},
   {
     field : 'action',
@@ -57,32 +70,21 @@ const ColumnDefs = [
 
 const TaskManagePage = () => {
   const [taskDataList, setTaskDataList] = useState([]);
-  const [requestData, setRequestData] = useState({
+  const [dateString  , setDateString  ] = useState({});
+  const [requestData , setRequestData ] = useState({
     entp_nm   : '', //업체 이름별 검색
     task_tp   : '', //지원유형별 검색
     task_st_dt: '', //작업 시작 날짜별 검색
+    noDate    : true, //날짜조건여부
   });
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     getTaskDataListEvent(requestData);
+    dispatch(initModal());
   },[])
-
-	const getTextForTaskType = (value) => {
-		if (value === 'INS') return '정기정검';
-		if (value === 'ISS') return '이슈';
-		if (value === 'SET') return '설정변경';
-		if (value === 'TRN') return '학습수행';
-		if (value === 'ACC') return '인식률 측정';
-		if (value === 'DEV') return '개발적용';
-		if (value === 'EDT') return '수정적용';
-		return '알 수 없음';
-	}
-
-	const getTextForTaskJobType = (value) => {
-		if (value === 'VST') return '방문';
-		if (value === 'RMT') return '원격';
-		return '알 수 없음';
-	}
 
   const getTaskDataListEvent = (requestData) => {
 
@@ -90,14 +92,19 @@ const TaskManagePage = () => {
 			const updatedTaskDataList = [...response.taskList];
 
 			updatedTaskDataList.forEach(task => {
-				task.task_tp     = getTextForTaskType(task.task_tp);
-				task.task_job_tp = getTextForTaskJobType(task.task_job_tp);
+				task.task_tp     = TaskTypeObject[`${task.task_tp}`];
+				task.task_job_tp = TaskJobTypeObject[`${task.task_job_tp}`];
 			});
 
 			setTaskDataList(updatedTaskDataList);
     })
-    .catch((err) => {console.log("reject Err => ", err)});
+    .catch((err) => {
+      alert(`API Error: ${err}`);
+    });
+  }
 
+  const moveToTaskInsertPage = () => {
+    navigate(`/task/register`);
   }
 
 	const handleClickSearch = () => {
@@ -113,45 +120,61 @@ const TaskManagePage = () => {
 	}
 
 	const onChangeTaskDateParsing = (name, date) => {
-    // onChangeTaskInfoCode(name, date);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const twoDigitMonth = month.toString().padStart(2, '0');
+    const day = date.getDate();
+    const twoDigitDay = day.toString().padStart(2, '0');
 
-    // const year = date.getFullYear();
-    // const month = date.getMonth() + 1;
-    // const twoDigitMonth = month.toString().padStart(2, '0');
-    // const day = date.getDate();
-    // const twoDigitDay = day.toString().padStart(2, '0');
+    const dateString = `${year}-${twoDigitMonth}-${twoDigitDay}`;
+    const parseISODate = parseISO(dateString);
+    const formattedDate = format(parseISODate, 'yyyy-MM-dd')
 
-    // const dateString = `${year}-${twoDigitMonth}-${twoDigitDay}`;
-    // const parseISODate = parseISO(dateString);
-    // const formattedDate = format(parseISODate, 'yyyy-MM-dd');
+    setRequestData((prev) => {
+      return {...prev, [name]: formattedDate};
+    });
 
-    // setRequestData((prev) => {
-    //   return {...prev, [name]: formattedDate};
-    // });
-
-		setRequestData({...requestData, [name]: date});
+    setDateString({...dateString, [name]: date});
   }
 
+  const onChangeHandler = (name, value) => {
+    setRequestData((prev) => {
+      return {
+        ...prev,
+        [name] : value,
+      }
+    });
+  }
 
-console.log("taskDataList = ", taskDataList);
   return (
     <>
 			<div className='task'>
-				<div className='task__title'>작업관리</div>
+				<div className='task__title'>
+          <div></div>
+          <div>작업관리</div>
+        </div>
 				<div className="task__search">
 					<div className="task__search--precondition">
 						<div>
-							<div>작업일자</div>
-							<label>
-								<DatePicker
-									// className  = {styles.datepicker}
-									selected   = {requestData.task_st_dt}
-									onChange   = {date => onChangeTaskDateParsing('task_st_dt', date)}
-									dateFormat = "yyyy년 MM월 dd일"
-									locale     = {ko}
-								/>
-								<IconImage icon={'CALENDAR'} />
-							</label>
+              <div>
+                <div>작업일자</div>
+                <Checkbox
+                  name          = 'noDate'
+                  label         = {'전체'}
+                  onChangeEvent = {onChangeHandler}
+                  checked       = {requestData.noDate}
+                />
+              </div>
+              <label>
+                <DatePicker
+                  selected   = {dateString.task_st_dt}
+                  onChange   = {date => onChangeTaskDateParsing('task_st_dt', date)}
+                  dateFormat = "yyyy년 MM월 dd일"
+                  disabled   = {requestData.noDate}
+                  locale     = {ko}
+                />
+                <IconImage icon={'CALENDAR'} />
+              </label>
 						</div>
 						<div>
 							<div>지원유형</div>
@@ -181,8 +204,7 @@ console.log("taskDataList = ", taskDataList);
 					</div>
 				</div>
 				<div className='task__btn'>
-					{/* <Button value='업체 등록' onClickEvent={moveToNoticePage} /> */}
-					<Button value='작업등록' />
+					<Button value='작업등록' onClickEvent={moveToTaskInsertPage} />
 				</div>
 				<div className="task__list">
 					<Grid

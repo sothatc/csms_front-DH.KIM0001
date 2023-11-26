@@ -1,11 +1,11 @@
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
 import Grid from 'components/molecules/Grid/Grid';
 import { getEnterpriseList } from 'pages/api/Enterprise/EnterpriseAPI';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { initModal, openModal } from 'reduxStore/modalSlice';
 
 
 const ButtonActionRenderer = (param) => {
@@ -21,17 +21,31 @@ const ButtonActionRenderer = (param) => {
   return (
     <div className='grid__btn'>
       <Button value = {'작업 등록'} onClickEvent={moveToTaskInsertPage}/>
-      <Button value = {'상세 보기'} onClickEvent={moveToEntpDtlPage} />
+      <Button value = {'상세 보기'} onClickEvent={moveToEntpDtlPage}   />
     </div>
   )
 }
 
 const ButtonAtchFileRenderer = (param) => {
+  const dispatch = useDispatch();
+
+  const openAtchFileModal = () => {
+    dispatch(
+      openModal({
+        modalType : 'AtchFileListModal',
+        isOpen    : true,
+        data: {'entp_unq' : param.data.entp_unq},
+      })
+    );
+  }
+
 	return (
 		<>
 			{param.data.atch_file_bool === true
-				? <Button value={'첨부파일'}/>
-				: null
+        ? <div className='grid__btn--atch'>
+            <Button image={'ATCHFILEICON'} onClickEvent={openAtchFileModal} />
+          </div>
+        : null
 			}
 		</>
 	)
@@ -49,7 +63,8 @@ const ColumnDefs = [
 	{
 		headerName : '첨부파일',
 		field : 'atch_file_nm',
-		cellRenderer : ButtonAtchFileRenderer
+		cellRenderer : ButtonAtchFileRenderer,
+    cellStyle: {display: 'flex', alignItems: 'center'}
 	},
   {
     field : 'action',
@@ -67,19 +82,20 @@ const EnterpriseManagePage = () => {
 	});
 
 	const navigate = useNavigate();
-
-	// const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getEnterpriseListEvent(requestData);
-		// dispatch(initModal());
+		dispatch(initModal());
   },[]);
 
   const getEnterpriseListEvent = (requestData) => {
     getEnterpriseList(requestData).then((response) => {
       setEnterpriseDataList(response.enterpriseList);
     })
-    .catch((err) => {});
+    .catch((err) => {
+      alert(`API Error: ${err}`);
+    });
   }
 
 	const moveToNoticePage = () => {
@@ -100,17 +116,22 @@ const EnterpriseManagePage = () => {
 	return (
 		<>
 			<div className='client'>
-				<div className='client__title'>업체관리</div>
+				<div className='client__title'>
+          <div></div>
+          <div>업체관리</div>
+        </div>
 				<div className="client__search">
 					<div className="client__search--precondition">
 						<div>
 							<div>업체 구분</div>
 							<Select
 								name    = 'entp_tp'
+								label   = {'전체'}
+								value   = {requestData && requestData.entp_tp}
 								dataSet = {[
-									{value: ''  , text:'전체'   },
-									{value: 'C' , text: "고객사"},
-									{value: 'S' , text: "협력사"},
+									{value: '' , text:'전체'   },
+									{value: 'C', text: "고객사"},
+									{value: 'S', text: "협력사"},
 								]}
 								onChangeEvent={handleChangeSearchData}
 							/>
@@ -119,6 +140,8 @@ const EnterpriseManagePage = () => {
 							<div>서비스구분</div>
 							<Select
 								name    = 'svc_tp'
+								label   = {'전체'}
+								value   = {requestData && requestData.svc_tp}
 								dataSet = {[
 									{value: ''  , text:'전체'           },
 									{value: 'R' , text:'실시간'         },
@@ -131,7 +154,7 @@ const EnterpriseManagePage = () => {
 						</div>
 						<div className="client__search--input">
 							<div className="search__input--title">회사명</div>
-							<input value={requestData.entp_nm} type='text'onChange={(e)=>onChangeSearchEntpName(e)}/>
+							<input type='text'onChange={(e)=>onChangeSearchEntpName(e)}/>
 						</div>
 						<div className="client__search--btn">
 							<Button value={'검색'} onClickEvent={handleClickSearch}/>

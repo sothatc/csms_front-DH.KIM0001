@@ -17,10 +17,10 @@ export const modalSlice = createSlice({
       state.modalType = modalType;
       state.isOpen    = true;
       // state.data.push(data);
-      state.data      = data;
+      state.data      =  data;
     },
     closeModal: (state, action) => {
-      const { data } = action?.payload;
+      const data = action?.payload;
 
       state.isOpen = false;
       // state.data.push(data);

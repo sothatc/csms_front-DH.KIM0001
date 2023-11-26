@@ -1,8 +1,67 @@
-.chk {
-    gap : 0 5px;
-    display : flex;
-    margin-right : 15px;
-    .chk label{
-        
-    }
+.a11y-hidden{
+  display: block;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  position: absolute;
+  top: -9999px;
 }
+
+.shape{
+  display: block;
+  &__input{
+    &--check{
+      >label{
+        display: flex;
+        gap: 0 5px;
+
+        >div{
+          display: grid;
+          place-items: center;
+          width: 20px;
+          height: 20px;
+          border: 1px solid #999;
+          border-radius: 5px;
+          background-color: #fff;
+
+          &:before{
+            display: block;
+            content:'';
+            width: 8px;
+            height: 4px;
+            border-right: 2px solid #fff;
+            border-top: 2px solid #fff;
+            transform: rotate(135deg);
+          }
+        }
+        >span{
+          display: block;
+        }
+      }
+      >input[type=checkbox]{
+        &:checked{
+
+          + label{
+
+            >div{
+              background-color: #121952;
+              border: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+// .chk {
+//     gap : 0 5px;
+//     display : flex;
+//     margin-right : 15px;
+//     .chk label{
+
+//     }
+// }

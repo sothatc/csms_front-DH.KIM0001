@@ -1,13 +1,16 @@
 import React from 'react';
 import Logo from 'assets/images/logo.png';
 import Calendar from 'assets/images/common/Calendar.svg';
+import AtchFileIcon from 'assets/images/common/AtchFileIcon.svg';
 
 const isDiscernIcon = ({ icon }) => {
     switch (icon) {
-        case 'LOGO'     :
-            return Logo;
-        case 'CALENDAR' :
-            return Calendar;
+        case 'LOGO'        :
+          return Logo;
+        case 'CALENDAR'    :
+          return Calendar;
+        case 'ATCHFILEICON':
+          return AtchFileIcon;
         default:
             break;
     }

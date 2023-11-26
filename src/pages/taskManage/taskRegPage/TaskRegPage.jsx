@@ -2,16 +2,17 @@
 import { IconImage } from 'components/atoms';
 import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
+import { format, parseISO } from 'date-fns';
 import { ko } from 'date-fns/esm/locale';
 import { getEnterpriseDtlInfo } from 'pages/api/Enterprise/EnterpriseAPI';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { initModal, openModal } from 'reduxStore/modalSlice';
-import { insertTaskInfoAPI } from 'pages/api/Task/TaskAPI';
-import { format, parseISO } from 'date-fns';
+import { getTaskDtlInfoAPI, insertTaskInfoAPI, updateTaskInfoAPI } from 'pages/api/Task/TaskAPI';
+import { useEffect, useMemo, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { useDispatch, useSelector } from 'react-redux';
+import { initModal, openModal } from 'reduxStore/modalSlice';
 import styles from './TaskRegPage.module.scss';
+import { useNavigate } from 'react-router-dom';
 
 
 const defaultTaskData = {
@@ -64,17 +65,55 @@ const TaskRegPage = () => {
   });
 
   const dispatch = useDispatch();
+  const navigate = useNavigate() ;
 
-  const entpNoArr = window.location.search.substring(1).split("=");
+  const selectedCustProps     = useSelector((state) => state?.modal.data.data?.selectedCust);
+  const selectedTaskMembProps = useSelector((state) => state?.modal.data.data?.selectedTaskMemb);
+  const selectedEntpProps     = useSelector((state) => state?.modal.data.data?.selectedEntpProps);
 
-  const selectedCustProps     = useSelector((state) => state?.modal.data.selectedCust);
-  const selectedTaskMembProps = useSelector((state) => state?.modal.data.selectedTaskMemb);
+  const queryString = window.location.search.substring(1).split("=");
+  let entpNoArr = '';
+  let taskNoArr = '';
+
+  if(queryString[0] === 'entp_unq') {
+    entpNoArr = window.location.search.substring(1).split("=");
+  }else if(queryString[0] === 'task_unq') {
+    taskNoArr = window.location.search.substring(1).split("=");
+  }
 
   useEffect(() => {
-    getEnterpriseDtlInfo(entpNoArr[1]).then((response) => {
-      setEnterpriseData(response.enterpriseData);
-    });
-    dispatch(initModal());
+    if(entpNoArr !== '') {
+      getEnterpriseDtlInfo(entpNoArr[1]).then((response) => {
+        setEnterpriseData(response.enterpriseData);
+      })
+      .catch((err) => {
+        alert(`API Error: ${err}`);
+      });
+      dispatch(initModal());
+
+    }else if(taskNoArr !== '') {
+      getTaskDtlInfoAPI(taskNoArr[1]).then((response) => {
+        const rsTaskData = response.taskData;
+
+        setTaskData({...rsTaskData,
+          task_st_dt: new Date(rsTaskData.task_st_dt),
+          task_ed_dt: new Date(rsTaskData.task_ed_dt),
+        });
+        setSelectedCust({...response.enterpriseCustData});
+        setSelectedTaskMemb({...rsTaskData});
+        setEnterpriseData({...response.enterpriseData});
+        setAtchFiles([...response.taskAtchData]);
+        setInputTime({
+          startHour  : rsTaskData.task_st_tm.split(':')[0],
+          startMinute: rsTaskData.task_st_tm.split(':')[1],
+          endHour    : rsTaskData.task_ed_tm.split(':')[0],
+          endMinute  : rsTaskData.task_ed_tm.split(':')[1],
+        });
+      })
+      .catch((err) => {
+        alert(`API Error: ${err}`);
+      });
+    }
   }, [])
 
   useEffect(() => {
@@ -84,7 +123,9 @@ const TaskRegPage = () => {
     if(selectedTaskMembProps) {
       setSelectedTaskMemb(selectedTaskMembProps);
     }
-
+    if(selectedEntpProps) {
+      setEnterpriseData(selectedEntpProps);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[useSelector((state) => state?.modal.data)])
 
@@ -95,7 +136,8 @@ const TaskRegPage = () => {
           openModal({
             modalType : modalType,
             isOpen    : true,
-            data: {'entp_unq' : entpNoArr[1]},
+            data: {'entp_unq' : enterpriseData.entp_unq},
+            // data: {'entp_unq' : entpNoArr[1]},
           })
         );
         break;
@@ -113,7 +155,8 @@ const TaskRegPage = () => {
           openModal({
             modalType : modalType,
             isOpen    : true,
-            data: {'entp_unq' : entpNoArr[1]},
+            // data: {'entp_unq' : entpNoArr[1]},
+            data: {'entp_unq' : enterpriseData.entp_unq},
           })
         );
     }
@@ -184,20 +227,47 @@ const TaskRegPage = () => {
       value = value.slice(0,2);
     }
 
+    if(name === 'startHour' || name === 'endHour') {
+      if(value > 24) {
+        alert('24를 초과 입력할 수 없습니다.');
+        return;
+      }
+    }
     setInputTime({...inputTime, [name] : value});
   }
 
+  const isInsertEssentialValue = (value) => {
+    if(value === '' || value === null || value === undefined) {
+      alert('필수사항을 입력해주세요.');
+      return false;
+    }
+    return true;
+  }
+
   const onClickInsertTaskInfo = () => {
+
+    const boolIsValue = isInsertEssentialValue(taskData.task_tp);
+
+    if(!boolIsValue) {
+      return;
+    }
+
+    if(totalFileSizeInByte > FILE_SIZE_MAX_LIMIT){
+      alert('파일 최대 용량은 20MB입니다.');
+      return;
+    }
+
     const newTaskData = taskData;
-    newTaskData['flag'] = 'I';
-    newTaskData['task_st_tm'] = `${inputTime.startHour.padStart(2, '0')}:${inputTime.startMinute.padStart(2, '0')}`;
-    newTaskData['task_ed_tm'] = `${inputTime.endHour.padStart(2, '0')}:${inputTime.endMinute.padStart(2, '0')}`;
+    newTaskData['flag']         = 'I';
+    newTaskData['task_st_tm']   = `${inputTime.startHour.padStart(2, '0')}:${inputTime.startMinute.padStart(2, '0')}`;
+    newTaskData['task_ed_tm']   = `${inputTime.endHour.padStart(2, '0')}:${inputTime.endMinute.padStart(2, '0')}`;
 
-    newTaskData['cust_unq']  = selectedCust.cust_unq;
-    newTaskData['entp_unq'] = selectedCust.entp_unq;
+    newTaskData['cust_unq']     = selectedCust.cust_unq;
+    newTaskData['entp_unq']     = selectedCust.entp_unq;
 
-    newTaskData['task_dept'] = selectedTaskMemb.task_dept;
-    newTaskData['task_usr_nm'] = selectedTaskMemb.task_usr_nm;
+    newTaskData['task_dept']    = selectedTaskMemb.task_dept;
+    newTaskData['task_usr_unq'] = selectedTaskMemb.task_usr_unq;
+    newTaskData['task_usr_nm']  = selectedTaskMemb.task_usr_nm;
 
     const date = new Date();
 
@@ -235,10 +305,11 @@ const TaskRegPage = () => {
     insertTaskInfoAPI(formData)
       .then((resolve) => {
         alert("작업 등록 완료");
+        navigate('/task');
       })
-      .catch((reject) => {
-        console.log('reject =>', reject);}
-      );
+      .catch((err) => {
+        alert(`API Error: ${err}`);
+      });
   }
 
   const onClickOneDeleteFile = (index) => {
@@ -262,6 +333,68 @@ const TaskRegPage = () => {
     return totalSize;
   }, [atchFiles])
 
+  const onClickModifyTaskInfo = () => {
+
+    if(totalFileSizeInByte > FILE_SIZE_MAX_LIMIT){
+      alert('파일 최대 용량은 20MB입니다.');
+      return;
+    }
+
+    const newTaskData = taskData;
+    newTaskData['flag']           = 'U';
+    newTaskData['delAtchFileNum'] = delFileArray.join(',');
+    newTaskData['task_st_tm']     = `${inputTime.startHour.padStart(2, '0')}:${inputTime.startMinute.padStart(2, '0')}`;
+    newTaskData['task_ed_tm']     = `${inputTime.endHour.padStart(2, '0')}:${inputTime.endMinute.padStart(2, '0')}`;
+
+    newTaskData['cust_unq']       = selectedCust.cust_unq;
+    newTaskData['entp_unq']       = selectedCust.entp_unq;
+
+    newTaskData['task_dept']      = selectedTaskMemb.task_dept;
+    newTaskData['task_usr_nm']    = selectedTaskMemb.task_usr_nm;
+    newTaskData['task_usr_unq']   = selectedTaskMemb.task_usr_unq;
+
+    const date = new Date();
+
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const twoDigitMonth = month.toString().padStart(2, '0');
+    const day = date.getDate();
+    const twoDigitDay = day.toString().padStart(2, '0');
+
+    const dateStr = `${year}-${twoDigitMonth}-${twoDigitDay}`;
+    const parseISODate = parseISO(dateStr);
+    const formattedDate = format(parseISODate, 'yyyy-MM-dd');
+
+    if(dateString.task_st_dt === '') {
+      newTaskData['task_st_dt'] = formattedDate;
+    }else {
+      newTaskData['task_st_dt'] = dateString.task_st_dt;
+    }
+
+    if(dateString.task_ed_dt === '') {
+      newTaskData['task_ed_dt'] = formattedDate;
+    }else {
+      newTaskData['task_ed_dt'] = dateString.task_ed_dt;
+    }
+
+
+    let formData = new FormData();
+
+    formData.append('taskData', JSON.stringify(newTaskData));
+
+    atchFiles?.forEach((atchFile) => {
+      formData.append('files', atchFile);
+    });
+
+    updateTaskInfoAPI(formData).then((response) => {
+      alert("작업 수정 완료");
+      navigate('/task');
+    })
+    .catch((err) => {
+      alert(`API Error: ${err}`);
+    })
+  }
+
   return (
     <>
       <div className={styles.register}>
@@ -272,11 +405,10 @@ const TaskRegPage = () => {
               <h4>작업 등록</h4>
             </div>
             <div>
-              {/* {entp_unq !== null || '' */}
-                {/* ? <Button value={'수정'} /> */}
-                {/* : <Button value={'등록'} /> */}
-                <Button value={'등록'} onClickEvent={onClickInsertTaskInfo}/>
-              {/* } */}
+              {taskNoArr !== null && taskNoArr !==''
+                ? <Button value={'저장'} onClickEvent={onClickModifyTaskInfo}/>
+                : <Button value={'등록'} onClickEvent={onClickInsertTaskInfo}/>
+              }
               <Button value={'취소'}/>
             </div>
           </div>
@@ -379,6 +511,7 @@ const TaskRegPage = () => {
                   </label>
                   <input
                     value       = {inputTime.startHour}
+                    placeholder = '24시간'
                     pattern     = '\d{2}'
                     onChange    = {(e) => limitInputTimeToTwoNum('startHour', e)}
                   />
@@ -409,6 +542,7 @@ const TaskRegPage = () => {
                   </label>
                   <input
                     value    = {inputTime.endHour}
+                    placeholder = '24시간'
                     pattern  = '\d{2}'
                     onChange = {(e) => limitInputTimeToTwoNum('endHour', e)}
                   />
@@ -506,7 +640,7 @@ const TaskRegPage = () => {
                 {atchFiles && atchFiles.map((file, index) => (
                   <div key={index}>
                     <div>
-                      <div>{file.name || file.atch_file_nm}</div>
+                      <div>{file.name || file.atch_file_org_nm}</div>
                     </div>
                     <button className={`${styles.closeBtn} ${styles.close}`} onClick={() => onClickOneDeleteFile(index)}>
                       <span className={`${styles['a11y--hidden']}`}>닫기</span>
@@ -523,3 +657,4 @@ const TaskRegPage = () => {
 }
 
 export { TaskRegPage };
+
