@@ -67,12 +67,13 @@ const ScheduleCalendar = () => {
   }
 
   const handleSelectEvent = (event) => {
+    //ToDo: 일정 이벤트 클릭시 상세 팝업 로직
     alert(event);
   }
 
-  const test = (props) => {
-    console.log("props = ", props);
-  }
+  // const test = (props) => {
+  //   console.log("props = ", props);
+  // }
 
   return (
     <DragAndDropCalendar
@@ -84,7 +85,7 @@ const ScheduleCalendar = () => {
       onSelectSlot  = {handleSelectSlot}
       onSelectEvent = {handleSelectEvent}
       selectable    = {true}
-      onNavigate    = {test}
+      // onNavigate    = {test}
       components = {{
         event: EventComponent,
       }}
