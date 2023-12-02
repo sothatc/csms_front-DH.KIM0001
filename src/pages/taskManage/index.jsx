@@ -41,9 +41,15 @@ const ButtonAtchFileRenderer = (param) => {
   }
 
   return (
-    <div className='grid__btn--atch'>
-      <Button image={'ATCHFILEICON'} onClickEvent={openAtchFileModal} />
-    </div>
+    <>
+      {param.data.atch_file_bool === true
+        ? <div className='grid__btn--atch'>
+            <Button image={'ATCHFILEICON'} onClickEvent={openAtchFileModal} />
+          </div>
+        : null
+      }
+    </>
+
   )
 }
 

@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { initModal, openModal } from 'reduxStore/modalSlice';
 
 
-const ButtonActionRenderer = (param) => {
+const ButtonMoveActionRenderer = (param) => {
   const navigate = useNavigate();
   const moveToEntpDtlPage = () => {
     navigate(`/enterprise/detail?entp_unq=${param.data.entp_unq}`);
@@ -69,7 +69,7 @@ const ColumnDefs = [
 	},
   {
     field : 'action',
-    cellRenderer: ButtonActionRenderer,
+    cellRenderer: ButtonMoveActionRenderer,
     cellStyle: {display: 'flex', alignItems: 'center'}
   }
 ];
