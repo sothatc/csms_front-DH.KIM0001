@@ -1,7 +1,7 @@
 import { format, parseISO } from 'date-fns';
 import moment from 'moment';
 import { getTaskScheduleListAPI } from 'pages/api/Task/TaskAPI';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -35,13 +35,15 @@ const ScheduleCalendar = () => {
     });
   },[])
 
-  const events = taskSchedules.map((taskSchedule) => ({
-    title    : taskSchedule.sch_title,
-    start    : new Date(taskSchedule.sch_st_dt),
-    end      : new Date(taskSchedule.sch_ed_dt),
-    resource : taskSchedule.sch_contents,
-  }));
-
+  const events = useMemo(() => (
+    taskSchedules.map((taskSchedule) => ({
+      title    : taskSchedule.sch_title,
+      start    : new Date(`${taskSchedule.sch_st_dt}T${taskSchedule.sch_st_tm}`),
+      end      : new Date(`${taskSchedule.sch_ed_dt}T${taskSchedule.sch_ed_tm}`),
+      resource : taskSchedule.sch_contents,
+    }))
+  ), [taskSchedules])
+console.log("events = ", events);
   const EventComponent = ({ event }) => (
     <div>
       <p>{event.title}</p>
