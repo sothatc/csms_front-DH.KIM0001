@@ -41,17 +41,6 @@ const getTaskScheduleListAPI = async(sch_st_dt) => {
     throw new Error(`Error: ${err}`);
   }
 }
-// const getTaskScheduleListAPI = async(sch_st_dt) => {
-//   try {
-//     const response = await axiosInstance.post(`/entp/task/getTaskScheduleList`, sch_st_dt
-//       // {
-//       //   sch_st_dt,
-//       // }
-//     );
-//   }catch(err) {
-//     throw new Error(`Error: ${err}`);
-//   }
-// }
 
 const insertTaskInfoAPI = async (object) => {
   const formData = object;
