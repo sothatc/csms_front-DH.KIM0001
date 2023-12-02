@@ -3,11 +3,12 @@ const { default: axiosInstance } = require("../axiosInstance");
 
 
 const getTaskDataListAPI = async (object) => {
-  const {entp_nm, task_tp, task_st_dt, noDate} = object;
+  const {entp_nm, task_tp, task_st_dt, noDate, limit_num} = object;
 
   const requestData = {
     entp_nm,
     task_tp,
+    limit_num,
   }
 
   if(!noDate) {
@@ -89,11 +90,49 @@ const downloadTaskAtchFileAPI = async (atch_file_unq) => {
   }
 }
 
+const deleteTaskInfo = async (task_unq) => {
+  try {
+    const response = await axiosInstance.post(`/entp/task/deleteTaskInfo`,
+      {
+        task_unq,
+      }
+    );
+
+    return response;
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
+
+const insertTaskScheduleAPI = async (scheduleInfo) => {
+  try{
+    const response = await axiosInstance.post(`/entp/task/insertTaskScheduleInfo`,scheduleInfo);
+
+    return response;
+
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
+
+const getTaskScheduleInfo = async () => {
+  try {
+    const response = await axiosInstance.post(`/entp/task/getTaskScheduleInfo`);
+
+    return response.data;
+  }catch(err) {
+    throw Error(`Axios API Error: ${err}`);
+  }
+
+}
+
 export {
   insertTaskInfoAPI,
   getTaskDataListAPI,
   getTaskDtlInfoAPI,
   updateTaskInfoAPI,
   downloadTaskAtchFileAPI,
+  deleteTaskInfo,
+  insertTaskScheduleAPI,
 };
 

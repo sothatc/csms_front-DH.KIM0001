@@ -10,14 +10,9 @@ import { useEffect, useMemo, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { initModal, openModal } from 'reduxStore/modalSlice';
 import styles from './TaskRegPage.module.scss';
-import { useNavigate } from 'react-router-dom';
-
-
-const defaultTaskData = {
-
-}
 
 const FILE_SIZE_MAX_LIMIT = 20 * 1024 * 1024;
 

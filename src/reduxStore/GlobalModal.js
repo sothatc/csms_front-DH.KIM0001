@@ -7,14 +7,16 @@ import { SearchEntpModal } from "components/organisms/Dialog/SearchEntpModal/Sea
 import { SearchMembModal } from "components/organisms/Dialog/SearchMembModal/SearchMembModal";
 import { SearchTaskMembModal } from "components/organisms/Dialog/SearchTaskMembModal/SearchTaskMembModal";
 import { AtchFileListModal } from "components/organisms/Dialog/AtchFileListModal/AtchFileListModal";
+import { InsertTaskScheduleModal } from "components/organisms/Dialog/InsertTaskScheduleModal/InsertTaskScheduleModal";
 
 const MODAL_TYPES = {
-  CustListModal   : 'CustListModal',
-  CustAddModal    : 'CustAddModal',
-  SearchEntpModal : 'SearchEntpModal',
-  SearchMembModal : 'SearchMembModal',
-  SearchTaskMembModal : 'SearchTaskMembModal',
-  AtchFileListModal : 'AtchFileListModal',
+  CustListModal           : 'CustListModal',
+  CustAddModal            : 'CustAddModal',
+  SearchEntpModal         : 'SearchEntpModal',
+  SearchMembModal         : 'SearchMembModal',
+  SearchTaskMembModal     : 'SearchTaskMembModal',
+  AtchFileListModal       : 'AtchFileListModal',
+  InsertTaskScheduleModal : 'InsertTaskScheduleModal',
 };
 
 const MODAL_COMPONENTS = [
@@ -41,6 +43,10 @@ const MODAL_COMPONENTS = [
   {
     type : MODAL_TYPES.AtchFileListModal,
     component : <AtchFileListModal />
+  },
+  {
+    type : MODAL_TYPES.InsertTaskScheduleModal,
+    component : <InsertTaskScheduleModal />
   },
 ];
 

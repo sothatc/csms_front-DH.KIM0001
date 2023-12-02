@@ -19,7 +19,7 @@ function App() {
       <GlobalModal />
         <Routes>
             <Route exact path="/"               element = {<HomePage />            } />
-            <Route path ="/enterprise"          element = {<EnterpriseManagePage />} />
+            <Route path ="/enterprise"          element = {<EnterpriseManagePage  />} />
             <Route path ="/enterprise/register" element = {<EnterpriseRegPage />   } />
             <Route path ="/enterprise/detail"   element = {<EnterpriseDtlPage />   } />
             <Route path ="/task"                element = {<TaskManagePage />      } />

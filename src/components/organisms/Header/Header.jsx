@@ -1,7 +1,7 @@
-import React, { useCallback, useState } from 'react'
 import { IconImage } from 'components/atoms';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { HeaderMenu } from 'pages/api/HeaderObject';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './Header.module.scss';
 
 

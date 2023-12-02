@@ -1,5 +1,5 @@
 import { Button } from 'components/atoms/Button/Button';
-import { downloadTaskAtchFileAPI, getTaskDtlInfoAPI } from 'pages/api/Task/TaskAPI';
+import { deleteTaskInfo, downloadTaskAtchFileAPI, getTaskDtlInfoAPI } from 'pages/api/Task/TaskAPI';
 import { TaskJobTypeObject, TaskSvcEfc, TaskTypeObject } from 'pages/api/TaskTypeObject';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -58,6 +58,28 @@ const TaskDtlPage = () => {
     });
   }
 
+  const handleClickMoveToMain = () => {
+    navigate('/task');
+  }
+
+  const onClickDeleteTask = () => {
+    const confirmed = window.confirm('작업을 삭제하시겠습니까?');
+
+    if(confirmed) {
+      deleteTaskInfo(taskData.task_unq).then((respose) => {
+
+      })
+      .catch((err) => {
+        alert(`Axios Error: ${err}`);
+      });
+
+      alert('삭제되었습니다.');
+      navigate('/task');
+    }else {
+      alert('취소하였습니다.');
+    }
+  }
+
   return (
     <>
       <div className={styles.detail}>
@@ -69,7 +91,8 @@ const TaskDtlPage = () => {
             </div>
             <div>
               <Button value={'수정'} onClickEvent={handleClickMoveToModify}/>
-              <Button value={'메인으로'}/>
+              <Button value={'삭제'} onClickEvent={onClickDeleteTask}/>
+              <Button value={'메인으로'} onClickEvent={handleClickMoveToMain} />
             </div>
           </div>
           <div className={styles.detail__content}>

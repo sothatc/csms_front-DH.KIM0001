@@ -1,0 +1,71 @@
+.homepage {
+  padding: 30px;
+
+  // >div:first-child {
+  //   min-width: 250px;
+  // }
+
+  >div:nth-child(2) {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-column-gap: 60px;
+
+    >div {
+      min-width: 250px;
+      padding: 20px;
+      border-radius: 20px;
+    }
+
+    .homepage__job {
+      background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      border: 2px solid #fff;
+
+      >div:first-child {
+        font-weight: 600;
+        margin-bottom: 30px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid black;
+      }
+
+      &--list {
+        display: grid;
+        grid-row-gap: 20px;
+        overflow: auto;
+        max-height: 500px;
+
+        >div {
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr 65px 1fr;
+          grid-column-gap: 10px;
+          border-bottom: 1px solid black;
+          cursor: pointer;
+          padding: 10px 0 5px;
+          box-sizing: content-box;
+
+          &:hover {
+            font-weight: 600;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+          }
+
+          >div:not(:nth-child(5)) {
+            // border-right: 1px solid black;
+          }
+        }
+      }
+    }
+
+    .homepage__calendar {
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+
+      >div:first-child {
+        font-weight: 600;
+        margin-bottom: 30px;
+      }
+    }
+
+    .homepage__etc {
+      background-color: blue;
+    }
+  }
+}

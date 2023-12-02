@@ -4,6 +4,7 @@ import { getEnterpriseDtlInfo, insertEnterprise, updateEnterprise } from 'pages/
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './EnterpriseRegPage.module.scss';
+import { AxiosError } from 'axios';
 
 
 
@@ -111,7 +112,13 @@ const EnterpriseRegPage = () => {
   }
 
   const onChangeCustInfoData = (name, e) => {
-    setCustData({...custData, [name] : e.target.value});
+    if(name === 'memb_tel') {
+      const memb_tel_num = e.target.value.replace(/[^0-9]/g, '').substring(0, 11);
+      setCustData({...custData, [name] : memb_tel_num});
+    }else {
+      setCustData({...custData, [name] : e.target.value});
+    }
+
   }
 
   const onChangeCustInfoCode = (name, value) => {
@@ -158,8 +165,8 @@ const EnterpriseRegPage = () => {
       validationBoolean = false;
       alert('필수 내용을 입력해주세요.');
     }else if(!numericPattern.test(custData.memb_tel)) {
-      // validationBoolean = false;
-      // alert('전화번호는 숫자만 입력해주세요.');
+      validationBoolean = false;
+      alert('전화번호는 숫자만 입력해주세요.');
     }else if(!emailPattern.test(custData.memb_email)) {
       validationBoolean = false;
       alert('이메일 형식에 맞게 입력해주세요.');
@@ -203,7 +210,12 @@ const EnterpriseRegPage = () => {
     formData.append('systemData', JSON.stringify(systemData));
     formData.append('custData', JSON.stringify(newCustData));
 
-    insertEnterprise(formData);
+    insertEnterprise(formData).then((response) => {
+
+    })
+    .catch((err) => {
+      alert(`AxiosError: ${err}`);
+    })
     alert('업체 등록 완료');
     navigate('/enterprise');
   }
@@ -250,7 +262,12 @@ const EnterpriseRegPage = () => {
     formData.append('systemData', JSON.stringify(systemData));
     formData.append('custData', JSON.stringify(custData));
 
-    updateEnterprise(formData);
+    updateEnterprise(formData).then((response) => {
+
+    })
+    .catch((err) => {
+      alert(`Axios Error: ${err}`);
+    })
 
     alert('업체 수정 완료');
     navigate('/enterprise');
@@ -297,6 +314,9 @@ const EnterpriseRegPage = () => {
     setSystemInputData(systemData[index]);
   }
 
+  const handlePhoneNumberInput = (input) => {
+    input.value = input.value.replace(/\D/g, '').substring(0, 11);
+  }
 
   return (
     <>
@@ -380,8 +400,8 @@ const EnterpriseRegPage = () => {
                     {value: 'L2' , text: "차장"  },
                     {value: 'L3' , text: "과장"  },
                     {value: 'L4' , text: "대리"  },
-                    {value: 'L6' , text: "사원"  },
-                    {value: 'L5' , text: "매니저"},
+                    {value: 'L5' , text: "사원"  },
+                    {value: 'L6' , text: "매니저"},
                   ]}
                 />
               </div>
@@ -390,7 +410,13 @@ const EnterpriseRegPage = () => {
                 연락처
               </div>
               <div>
-                <input type='tel' value={custData && custData.memb_tel} placeholder='숫자만 입력' onChange={(e) => onChangeCustInfoData('memb_tel', e)}/>
+                <input
+                  type        = 'tel'
+                  value       = {custData && custData.memb_tel}
+                  placeholder = '숫자만 입력'
+                  maxLength   = {11}
+                  onChange    = {(e) => onChangeCustInfoData('memb_tel', e)}
+                />
               </div>
             </div>
             <div>

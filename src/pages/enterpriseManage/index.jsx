@@ -2,6 +2,7 @@ import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
 import Grid from 'components/molecules/Grid/Grid';
 import { getEnterpriseList } from 'pages/api/Enterprise/EnterpriseAPI';
+import { EntpTypeObject, SvcTypeObject } from 'pages/api/EnterpriseTypeObject';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -87,11 +88,18 @@ const EnterpriseManagePage = () => {
   useEffect(() => {
     getEnterpriseListEvent(requestData);
 		dispatch(initModal());
-  },[]);
+  },[])
 
   const getEnterpriseListEvent = (requestData) => {
+
     getEnterpriseList(requestData).then((response) => {
-      setEnterpriseDataList(response.enterpriseList);
+      const entpDataList = [...response.enterpriseList];
+
+      entpDataList.forEach((entp) => {
+        entp.entp_tp = EntpTypeObject[`${entp.entp_tp}`];
+        entp.svc_tp  = SvcTypeObject[`${entp.svc_tp}`];
+      });
+      setEnterpriseDataList(entpDataList);
     })
     .catch((err) => {
       alert(`API Error: ${err}`);

@@ -5,6 +5,8 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { openModal } from 'reduxStore/modalSlice';
 import styles from './EnterpriseDtlPage.module.scss';
+import { EntpTypeObject, SvcTypeObject } from 'pages/api/EnterpriseTypeObject';
+import { CustTypeObject } from 'pages/api/CustTypeObject';
 
 const sysDataDivs = [
   {data : 'os_vers'      , type: 'I', label: 'OS'         }
@@ -128,9 +130,25 @@ const EnterpriseDtlPage = () => {
 
 
   const onClickDeleteEntp = () => {
-    deleteEnterpriseInfo(enterpriseData.entp_unq);
 
-    alert('삭제완료');
+    const confirmed = window.confirm('업체를 삭제하시겠습니까?');
+
+    if(confirmed) {
+      deleteEnterpriseInfo(enterpriseData.entp_unq).then((response) => {
+
+      })
+      .catch((err) => {
+        alert(`Asios Error: ${err}`);
+      });
+      alert('삭제완료');
+      navigate('/enterprise');
+    }else {
+      alert('취소하였습니다.');
+    }
+
+  }
+
+  const onClickMoveToMain = () => {
     navigate('/enterprise');
   }
 
@@ -144,9 +162,9 @@ const EnterpriseDtlPage = () => {
               <h4>업체 상세 정보</h4>
             </div>
             <div>
-              <Button value={'수정'} onClickEvent={handleClickModifyEvent}/>
-              <Button value={'삭제'} onClickEvent={onClickDeleteEntp}/>
-              <Button value={'메인으로'} />
+              <Button value={'수정'}     onClickEvent={handleClickModifyEvent}/>
+              <Button value={'삭제'}     onClickEvent={onClickDeleteEntp}/>
+              <Button value={'메인으로'} onClickEvent={onClickMoveToMain} />
             </div>
           </div>
           <div className={styles.register__content}>
@@ -157,7 +175,7 @@ const EnterpriseDtlPage = () => {
                 구분
               </div>
               <div>
-                <div>{enterpriseData?.entp_tp === 'C' ? '고객사' : '협력사'}</div>
+                <div>{EntpTypeObject[`${enterpriseData?.entp_tp}`]}</div>
               </div>
             </div>
             <div>
@@ -192,7 +210,7 @@ const EnterpriseDtlPage = () => {
                 직위
               </div>
               <div>
-                <div>{principalCustData?.memb_pst_nm}</div>
+                <div>{CustTypeObject[`${principalCustData?.memb_pst_nm}`]}</div>
               </div>
               <div>
                 <span className={styles.compulsory}>*</span>
@@ -215,7 +233,7 @@ const EnterpriseDtlPage = () => {
                 서비스 형태
               </div>
               <div>
-                <div>{enterpriseData?.svc_tp}</div>
+                <div>{SvcTypeObject[`${enterpriseData?.svc_tp}`]}</div>
               </div>
             </div>
             <div>
@@ -301,10 +319,10 @@ const EnterpriseDtlPage = () => {
             </div>)
           })}
         </div>
-        <div className={styles.system__etc}>
+        {/* <div className={styles.system__etc}>
           <div>추가정보</div>
           <div></div>
-        </div>
+        </div> */}
       </div>
     </>
   )

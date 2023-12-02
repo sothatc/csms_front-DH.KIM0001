@@ -24,7 +24,8 @@
           font-size: 14px;
           font-weight: 600;
           border-style: none;
-          background-color: #EEE0C9;
+          background-color: #FFC436;
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         }
       }
     }
@@ -33,6 +34,7 @@
       display: grid;
       grid-template-rows: repeat(1fr);
       border: 1px solid #E5E5E5;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 
       > div {
         &:not(:first-child) {
@@ -177,6 +179,7 @@
       display: grid;
       grid-template-columns: 20% 80%;
       border: 1px solid #E5E5E5;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 
       &--th {
         display: flex;
