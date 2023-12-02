@@ -18,7 +18,7 @@ const ScheduleCalendar = () => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
+  const FormatingcurrentDate = () => {
     const date = new Date();
     const year = date.getFullYear();
     const month = date.getMonth()+1;
@@ -27,7 +27,12 @@ const ScheduleCalendar = () => {
     const parseISODate = parseISO(dateString);
     const formattedDate = format(parseISODate, 'yyyy-MM');
 
-    getTaskScheduleListAPI(formattedDate).then((response) => {
+    return formattedDate;
+  }
+
+  useEffect(() => {
+
+    getTaskScheduleListAPI(FormatingcurrentDate()).then((response) => {
       setTaskSchedules(response);
     })
     .catch((err) => {
@@ -43,7 +48,7 @@ const ScheduleCalendar = () => {
       resource : taskSchedule.sch_contents,
     }))
   ), [taskSchedules])
-console.log("events = ", events);
+
   const EventComponent = ({ event }) => (
     <div>
       <p>{event.title}</p>
