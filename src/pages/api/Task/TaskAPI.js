@@ -24,6 +24,35 @@ const getTaskDataListAPI = async (object) => {
   }
 }
 
+const getTaskScheduleListAPI = async(sch_st_dt) => {
+  try {
+    const response = await axiosInstance.post(
+      `/entp/task/getTaskScheduleList`,
+      null,
+      {
+        params: {
+          sch_st_dt: sch_st_dt,
+        },
+      }
+    );
+
+    return response.data.data;
+  }catch(err) {
+    throw new Error(`Error: ${err}`);
+  }
+}
+// const getTaskScheduleListAPI = async(sch_st_dt) => {
+//   try {
+//     const response = await axiosInstance.post(`/entp/task/getTaskScheduleList`, sch_st_dt
+//       // {
+//       //   sch_st_dt,
+//       // }
+//     );
+//   }catch(err) {
+//     throw new Error(`Error: ${err}`);
+//   }
+// }
+
 const insertTaskInfoAPI = async (object) => {
   const formData = object;
   try{
@@ -115,16 +144,6 @@ const insertTaskScheduleAPI = async (scheduleInfo) => {
   }
 }
 
-const getTaskScheduleInfo = async () => {
-  try {
-    const response = await axiosInstance.post(`/entp/task/getTaskScheduleInfo`);
-
-    return response.data;
-  }catch(err) {
-    throw Error(`Axios API Error: ${err}`);
-  }
-
-}
 
 export {
   insertTaskInfoAPI,
@@ -134,5 +153,6 @@ export {
   downloadTaskAtchFileAPI,
   deleteTaskInfo,
   insertTaskScheduleAPI,
+  getTaskScheduleListAPI,
 };
 

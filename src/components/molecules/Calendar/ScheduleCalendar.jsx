@@ -1,5 +1,7 @@
+import { format, parseISO } from 'date-fns';
 import moment from 'moment';
-import { useState } from 'react';
+import { getTaskScheduleListAPI } from 'pages/api/Task/TaskAPI';
+import { useEffect, useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -12,25 +14,33 @@ const DragAndDropCalendar = withDragAndDrop(Calendar);
 
 
 const ScheduleCalendar = () => {
-  const [taskSchedule, setTaskSchedule] = useState({});
-  const [myEvents, setMyEvents] = useState([]);
+  const [taskSchedules, setTaskSchedules] = useState([]);
 
   const dispatch = useDispatch();
 
-  const events = [
-    {
-      title: '회의', // 일정 제목
-      start: new Date(2023, 10, 29, 10, 0), // 시작 시간
-      end: new Date(2023, 10, 29, 12, 0), // 종료 시간
-      resource: 'dfasfdfasdfdasfffffffffffffffffffffff',
-    },
-    {
-      title: '점심', // 일정 제목
-      start: new Date(2023, 10, 2, 12, 0), // 시작 시간
-      end: new Date(2023, 10, 2, 13, 0), // 종료 시간
-      resource: 'dfsfsd'
-    },
-  ];
+  useEffect(() => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth()+1;
+
+    const dateString = `${year}-${month}`;
+    const parseISODate = parseISO(dateString);
+    const formattedDate = format(parseISODate, 'yyyy-MM');
+
+    getTaskScheduleListAPI(formattedDate).then((response) => {
+      setTaskSchedules(response);
+    })
+    .catch((err) => {
+      alert(`Axios Error: ${err}`);
+    });
+  },[])
+
+  const events = taskSchedules.map((taskSchedule) => ({
+    title    : taskSchedule.sch_title,
+    start    : new Date(taskSchedule.sch_st_dt),
+    end      : new Date(taskSchedule.sch_ed_dt),
+    resource : taskSchedule.sch_contents,
+  }));
 
   const EventComponent = ({ event }) => (
     <div>
@@ -53,19 +63,24 @@ const ScheduleCalendar = () => {
     alert(event);
   }
 
+  const test = (props) => {
+    console.log("props = ", props);
+  }
+
   return (
     <DragAndDropCalendar
-      style={{ height: 500 }}
-      localizer={localizer}
-      events={events}
-      startAccessor="start"
-      endAccessor="end"
-      components={{
+      style         = {{ height: 500 }}
+      localizer     = {localizer}
+      events        = {events}
+      startAccessor = "start"
+      endAccessor   = "end"
+      onSelectSlot  = {handleSelectSlot}
+      onSelectEvent = {handleSelectEvent}
+      selectable    = {true}
+      onNavigate    = {test}
+      components = {{
         event: EventComponent,
       }}
-      onSelectSlot={handleSelectSlot}
-      onSelectEvent={handleSelectEvent}
-      selectable={true}
     />
   )
 }
