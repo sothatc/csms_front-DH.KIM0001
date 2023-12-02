@@ -1,5 +1,6 @@
 import { format, parseISO } from 'date-fns';
 import moment from 'moment';
+import 'moment/locale/ko';
 import { getTaskScheduleListAPI } from 'pages/api/Task/TaskAPI';
 import { useEffect, useMemo, useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
@@ -8,7 +9,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useDispatch } from 'react-redux';
 import { openModal } from 'reduxStore/modalSlice';
 
-moment.locale('ko-KR');
+moment.locale('ko');
 const localizer = momentLocalizer(moment);
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
