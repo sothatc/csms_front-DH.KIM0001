@@ -55,7 +55,7 @@ const ButtonAtchFileRenderer = (param) => {
 const ColumnDefs = [
 	{headerName : 'No.'             , field : ''             },
 	{headerName : '사업자등록번호'  , field : 'entp_unq'     },
-	{headerName : '구분'            , field : 'entp_tp'      },
+	{headerName : '업체 구분'       , field : 'entp_tp'      },
 	{headerName : '업체명'          , field : 'entp_nm'      },
 	{headerName : '서비스 구분'     , field : 'svc_tp'       },
 	{headerName : '월 STT 처리 건수', field : 'stt_month_cnt'},
