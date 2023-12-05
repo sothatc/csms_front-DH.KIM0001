@@ -128,7 +128,6 @@ const EnterpriseDtlPage = () => {
     )
   }
 
-
   const onClickDeleteEntp = () => {
 
     const confirmed = window.confirm('업체를 삭제하시겠습니까?');
@@ -145,7 +144,16 @@ const EnterpriseDtlPage = () => {
     }else {
       alert('취소하였습니다.');
     }
+  }
 
+  const deleteSystemRow = () => {
+    let newData = systemData.filter((_, index) => index !== systemRowIndex);
+
+    setSystemData(newData);
+    setSystemRowIndex(systemData.length-2);
+
+    //ToDo 시스템 정보 삭제시 다음 선택된 정보에 버그
+    setSystemInputData(systemData[systemData.length-2]);
   }
 
   const onClickMoveToMain = () => {
@@ -260,6 +268,9 @@ const EnterpriseDtlPage = () => {
           <div>
             <h4>{'>'}</h4>
             <h4>시스템 정보</h4>
+          </div>
+          <div>
+            <Button value={'삭제'} onClickEvent={deleteSystemRow} />
           </div>
         </div>
         <div className={styles.system__info}>

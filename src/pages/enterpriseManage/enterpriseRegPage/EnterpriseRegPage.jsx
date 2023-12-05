@@ -4,7 +4,6 @@ import { getEnterpriseDtlInfo, insertEnterprise, updateEnterprise } from 'pages/
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './EnterpriseRegPage.module.scss';
-import { AxiosError } from 'axios';
 
 
 
@@ -287,11 +286,13 @@ const EnterpriseRegPage = () => {
   }
 
   const deleteSystemRow = () => {
-    let newdata = JSON.parse(JSON.stringify(systemData));
-    newdata = newdata.filter((data, index) => index !== systemRowIndex);
+    let newData = systemData.filter((_, index) => index !== systemRowIndex);
 
-    setSystemData(newdata);
+    setSystemData(newData);
     setSystemRowIndex(systemData.length-2);
+
+    //ToDo 시스템 정보 삭제시 다음 선택된 정보에 버그
+    setSystemInputData(systemData[systemData.length-2]);
   }
 
   const addNewSystemRow = () => {

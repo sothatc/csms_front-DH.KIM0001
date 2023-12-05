@@ -9,7 +9,6 @@ const HomePage = () => {
   const [requestData , setRequestData ] = useState({
     entp_nm   : '',
     task_tp   : '',
-    task_st_dt: '',
     noDate    : true,
     limit_num : 20,
   });

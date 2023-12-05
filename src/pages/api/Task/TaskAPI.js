@@ -3,7 +3,7 @@ const { default: axiosInstance } = require("../axiosInstance");
 
 
 const getTaskDataListAPI = async (object) => {
-  const {entp_nm, task_tp, task_st_dt, noDate, limit_num} = object;
+  const {entp_nm, task_tp, searchDateFrom, searchDateTo, noDate, limit_num, paging} = object;
 
   const requestData = {
     entp_nm,
@@ -12,7 +12,12 @@ const getTaskDataListAPI = async (object) => {
   }
 
   if(!noDate) {
-    requestData.task_st_dt = task_st_dt;
+    requestData.searchDateFrom = searchDateFrom;
+    requestData.searchDateTo   = searchDateTo;
+  }
+
+  if(paging) {
+    requestData.paging = paging;
   }
 
   try {

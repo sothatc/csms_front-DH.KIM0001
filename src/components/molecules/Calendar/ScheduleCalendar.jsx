@@ -20,19 +20,18 @@ const ScheduleCalendar = () => {
   const dispatch = useDispatch();
 
   const FormatingcurrentDate = () => {
-    const date = new Date();
-    const year = date.getFullYear();
+    const date  = new Date();
+    const year  = date.getFullYear();
     const month = date.getMonth()+1;
 
-    const dateString = `${year}-${month}`;
-    const parseISODate = parseISO(dateString);
+    const dateString    = `${year}-${month}`;
+    const parseISODate  = parseISO(dateString);
     const formattedDate = format(parseISODate, 'yyyy-MM');
 
     return formattedDate;
   }
 
   useEffect(() => {
-
     getTaskScheduleListAPI(FormatingcurrentDate()).then((response) => {
       setTaskSchedules(response);
     })
