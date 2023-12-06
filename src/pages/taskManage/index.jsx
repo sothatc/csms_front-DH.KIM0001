@@ -6,7 +6,7 @@ import { format, parseISO } from 'date-fns';
 import ko from 'date-fns/locale/ko';
 import { getTaskDataListAPI } from "pages/api/Task/TaskAPI";
 import { TaskJobTypeObject, TaskTypeObject } from 'pages/api/TaskTypeObject';
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import { useDispatch } from 'react-redux';
 import { useNavigate } from "react-router-dom";
@@ -84,7 +84,7 @@ const TaskManagePage = () => {
     task_tp        : '', //지원유형별 검색
     searchDateFrom : '', // 기간 범위 조건 검색
     searchDateTo   : '',
-    noDate         : true, //날짜조건여부
+    noDate         : true, //날짜 조건여부
     paging : {
       limit : 10,
       offset: 1,
@@ -97,7 +97,7 @@ const TaskManagePage = () => {
   useEffect(() => {
     getTaskDataListEvent(requestData);
     dispatch(initModal());
-  },[])
+  },[currentPage])
 
   const getTaskDataListEvent = () => {
     let reqData = {
@@ -181,34 +181,44 @@ const TaskManagePage = () => {
     setRequestData({...requestData,  // API위한 formated date
       'searchDateFrom': dateFrom,
       'searchDateTo': dateTo,
-    })
+    });
     setSelectedRange(dates);        //DatePicker value
   }
 
-  const pageNumbers = useMemo(() => {
-    let pageNumbers = [];
+  const onClickPaging = (page) => {
+    setCurrentPage(page);
+  };
 
-    for(let i = 0; i < pagingData.page_cnt; i ++) {
-      pageNumbers.push(i+1);
+  const renderPageNumbers = () => {
+
+    const totalPages = pagingData.page_cnt; // 전체 페이지 수
+    const visiblePages = 5; // 보이는 번호 갯수
+
+    const pageNumbers = [];
+    const halfVisiblePages = Math.floor(visiblePages / 2);
+
+     let start = currentPage - halfVisiblePages;
+     let end = currentPage + halfVisiblePages;
+
+     if (start <= 0) {
+       start = 1;
+       end = Math.min(totalPages, visiblePages);
+     }
+
+     if (end > totalPages) {
+       end = totalPages;
+       start = Math.max(1, totalPages - visiblePages + 1);
+     }
+
+     for (let i = start; i <= end; i++) {
+      pageNumbers.push(
+        <li key={i} className={i === currentPage ? 'task__pagination--active' : ''} onClick={() => onClickPaging(i)}>
+          {i}
+        </li>
+      );
     }
-
-    return pageNumbers.filter((arr) => {
-      return arr >= ((Math.ceil(currentPage / 5) - 1) * 5) +1 && Math.ceil(currentPage / 5) * 5 >= arr
-    })
-  }, [pagingData, currentPage]);
-
-  const pagingNumBtn = useMemo(() => {
-    return pageNumbers.map((page) => {
-      return (
-        <Button
-          key   = {page}
-          value = {page}
-          ext   = {currentPage === page ? 'pagination__btn--active' : ''}
-          onClickEvent = { () => setCurrentPage(page) }
-        />
-      )
-    })
-  }, [pageNumbers, currentPage])
+    return pageNumbers;
+  };
 
   return (
     <>
@@ -283,14 +293,20 @@ const TaskManagePage = () => {
             <div className='task__pagination--arrow task__pagination--pre'>
               <Button
                 image="ARROW-LEFT"
+                onClickEvent = {() => setCurrentPage((prev) => Math.max( prev - 1, 1 ))}
+                backgroundColor = ''
+                disabled     = {currentPage === 1}
               />
             </div>
             <div className='task__pagination--num'>
-              {pagingNumBtn}
+              {renderPageNumbers()}
             </div>
             <div className='task__pagination--arrow task__pagination--next'>
               <Button
                 image="ARROW-RIGHT"
+                onClickEvent = {() => setCurrentPage((prev) => Math.min( prev + 1, pagingData.page_cnt ))}
+                disabled     = {currentPage === pagingData.page_cnt}
+                backgroundColor = ''
               />
             </div>
           </div>

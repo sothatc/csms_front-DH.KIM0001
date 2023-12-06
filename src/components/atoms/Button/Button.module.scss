@@ -10,4 +10,9 @@
 			background-color: #E5E5E5;
 		}
 	}
+  &:disabled{
+    opacity: 20%;
+    cursor: not-allowed;
+  }
 }
+

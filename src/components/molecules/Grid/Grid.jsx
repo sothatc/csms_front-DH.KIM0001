@@ -20,7 +20,7 @@ const Grid = forwardRef((props, ref) => {
   }
 
 	return (
-		<div className={"ag-theme-alpine"} style={{width:'100%', height: '500px'}}>
+		<div className={"ag-theme-alpine"} style={{height: '450px'}}>
 			<AgGridReact
 				rowData       = {data}
 				columnDefs    = {header}

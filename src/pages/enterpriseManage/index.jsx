@@ -55,7 +55,7 @@ const ButtonAtchFileRenderer = (param) => {
 const ColumnDefs = [
 	{headerName : 'No.'             , field : ''             },
 	{headerName : '사업자등록번호'  , field : 'entp_unq'     },
-	{headerName : '업체 구분'       , field : 'entp_tp'      },
+	{headerName : '구분'            , field : 'entp_tp'      },
 	{headerName : '업체명'          , field : 'entp_nm'      },
 	{headerName : '서비스 구분'     , field : 'svc_tp'       },
 	{headerName : '월 STT 처리 건수', field : 'stt_month_cnt'},
@@ -76,10 +76,16 @@ const ColumnDefs = [
 
 const EnterpriseManagePage = () => {
   const [enterpriseDataList, setEnterpriseDataList] = useState([]);
-	const [requestData, setRequestData] = useState({
+  const [pagingData   , setPagingData   ] = useState({});
+  const [currentPage  , setCurrentPage  ] = useState(1);
+	const [requestData  , setRequestData  ] = useState({
 		entp_nm : '',
 		entp_tp : '',
 		svc_tp  : '',
+    paging : {
+      limit : 10,
+      offset: 1,
+    }
 	});
 
 	const navigate = useNavigate();
@@ -88,7 +94,7 @@ const EnterpriseManagePage = () => {
   useEffect(() => {
     getEnterpriseListEvent(requestData);
 		dispatch(initModal());
-  },[])
+  },[currentPage])
 
   const getEnterpriseListEvent = (requestData) => {
 
@@ -100,6 +106,7 @@ const EnterpriseManagePage = () => {
         entp.svc_tp  = SvcTypeObject[`${entp.svc_tp}`];
       });
       setEnterpriseDataList(entpDataList);
+      setPagingData(response.paging);
     })
     .catch((err) => {
       alert(`API Error: ${err}`);
@@ -120,6 +127,41 @@ const EnterpriseManagePage = () => {
 	const handleClickSearch = () => {
 		getEnterpriseListEvent(requestData);
 	}
+
+  const onClickPaging = (page) => {
+    setCurrentPage(page);
+  };
+
+  const renderPageNumbers = () => {
+
+    const totalPages = pagingData.page_cnt; // 전체 페이지 수
+    const visiblePages = 5; // 보이는 번호 갯수
+
+    const pageNumbers = [];
+    const halfVisiblePages = Math.floor(visiblePages / 2);
+
+     let start = currentPage - halfVisiblePages;
+     let end = currentPage + halfVisiblePages;
+
+     if (start <= 0) {
+       start = 1;
+       end = Math.min(totalPages, visiblePages);
+     }
+
+     if (end > totalPages) {
+       end = totalPages;
+       start = Math.max(1, totalPages - visiblePages + 1);
+     }
+
+     for (let i = start; i <= end; i++) {
+      pageNumbers.push(
+        <li key={i} className={i === currentPage ? 'client__pagination--active' : ''} onClick={() => onClickPaging(i)}>
+          {i}
+        </li>
+      );
+    }
+    return pageNumbers;
+  };
 
 	return (
 		<>
@@ -178,6 +220,29 @@ const EnterpriseManagePage = () => {
 						header = {ColumnDefs}
 					/>
 				</div>
+        <div className='client__pagination'>
+          <div>
+            <div className='client__pagination--arrow client__pagination--pre'>
+              <Button
+                image="ARROW-LEFT"
+                onClickEvent = {() => setCurrentPage((prev) => Math.max( prev - 1, 1 ))}
+                backgroundColor = ''
+                disabled     = {currentPage === 1}
+              />
+            </div>
+            <div className='client__pagination--num'>
+              {renderPageNumbers()}
+            </div>
+            <div className='client__pagination--arrow client__pagination--next'>
+              <Button
+                image="ARROW-RIGHT"
+                onClickEvent = {() => setCurrentPage((prev) => Math.min( prev + 1, pagingData.page_cnt ))}
+                disabled     = {currentPage === pagingData.page_cnt}
+                backgroundColor = ''
+              />
+            </div>
+          </div>
+        </div>
 			</div>
 		</>
 	)

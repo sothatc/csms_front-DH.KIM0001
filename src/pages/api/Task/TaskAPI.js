@@ -8,7 +8,10 @@ const getTaskDataListAPI = async (object) => {
   const requestData = {
     entp_nm,
     task_tp,
-    limit_num,
+  }
+
+  if(limit_num) {
+    requestData.limit_num = limit_num;
   }
 
   if(!noDate) {

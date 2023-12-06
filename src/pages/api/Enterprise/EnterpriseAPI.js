@@ -2,17 +2,21 @@ const { default: axiosInstance } = require("../axiosInstance")
 
 
 const getEnterpriseList = async (object) => {
-  const{entp_tp, svc_tp, entp_nm} = object;
+  const{entp_tp, svc_tp, entp_nm, paging} = object;
+
+  const requestData = {
+    entp_tp,
+    svc_tp,
+    entp_nm,
+  }
+
+  if(paging) {
+    requestData.paging = paging;
+  }
 
   try {
     const response = await axiosInstance.post(
-      `/entp/enterprise/getEnterpriseList`,
-      {
-        entp_tp,
-        svc_tp,
-        entp_nm,
-      },
-    );
+      `/entp/enterprise/getEnterpriseList`, requestData);
     return response.data.data;
   }catch(error) {
     throw new Error(`Error: ${error}`);

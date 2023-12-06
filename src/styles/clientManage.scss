@@ -119,4 +119,62 @@
       }
     }
   }
+
+  .client__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+
+    >div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0 20px;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+
+      .client__pagination--num {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 30px;
+
+        >li{
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          font-size: 14px;
+          font-weight: 600;
+          background-color: transparent;
+          cursor: pointer;
+        }
+
+        .client__pagination--active {
+          background-color: #1D267D;
+          color: #fff;
+        }
+      }
+
+      .client__pagination--arrow {
+
+        >button {
+          width: 40px;
+          height: 40px;
+          border-style: none;
+          background-color: transparent;
+        }
+      }
+
+      .client__pagination--pre {
+
+      }
+      .client__pagination--next {
+
+      }
+    }
+  }
 }

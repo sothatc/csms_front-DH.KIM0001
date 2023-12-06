@@ -179,20 +179,27 @@
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 
       .task__pagination--num {
-        // display: grid;
-        // grid-template-columns: repeat(5, 1fr);
-        // grid-column-gap: 15px;
         display: flex;
         justify-content: center;
         align-items: center;
         padding: 0 30px;
 
-        >button{
+        >li{
+          display: flex;
+          justify-content: center;
+          align-items: center;
           width: 30px;
           height: 30px;
           border-radius: 50%;
-          border-style: none;
+          font-size: 14px;
+          font-weight: 600;
           background-color: transparent;
+          cursor: pointer;
+        }
+
+        .task__pagination--active {
+          background-color: #1D267D;
+          color: #fff;
         }
       }
 
@@ -215,5 +222,8 @@
     }
   }
 }
+
+
+
 
 
