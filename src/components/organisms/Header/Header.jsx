@@ -4,42 +4,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Header.module.scss';
 
-
-// const Nav = React.memo(()=>{
-//   // const location = useLocation();
-//   const navigate = useNavigate();
-//   const [hover, setHover] = useState(false);
-
-//   const moveToPage = () => {
-//     setHover(false);
-//     // navigate("/");
-//   }
-
-//   // const submitLogout = useCallback(() => {
-//   //     deleteCookie('token');
-//   //     deleteCookie('userId');
-//   //     navigate('/');
-//   // }, [])
-
-//   return (
-
-//   )
-// });
-
 const Header = React.memo(() => {
   const navigate = useNavigate();
-  const [hover, setHover] = useState(false);
-
-  const moveToPage = () => {
-    setHover(false);
-    // navigate("/");
-  }
-
-  // const submitLogout = useCallback(() => {
-  //     deleteCookie('token');
-  //     deleteCookie('userId');
-  //     navigate('/');
-  // }, [])
 
   return (
     <header>
@@ -50,11 +16,18 @@ const Header = React.memo(() => {
         <div className={styles.nav__menu}>
           <ul className={styles.nav__menu__bar}>
             {HeaderMenu.filter((menu) => menu.mnu_type_cd === '01').map((menu, key) => (
-              <li key={key} onClick={() => navigate(menu.prgr_path)}>
-                {menu.name}
-              </li>
+              <>
+                <li key={key} onClick={() => navigate(menu.prgr_path)}>
+                  {menu.name}
+                </li>
+                <div></div>
+              </>
             ))}
           </ul>
+        </div>
+        <div className={styles.nav__user}>
+          <div>itfact</div>
+          <div>아이콘</div>
         </div>
       </nav>
     </header>

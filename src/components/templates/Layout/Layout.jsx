@@ -1,5 +1,5 @@
+import Footer from 'components/organisms/Footer/Footer';
 import Header from 'components/organisms/Header/Header';
-import React from 'react'
 import styles from './Layout.module.scss';
 
 const Layout = ({ children }) => {
@@ -9,6 +9,7 @@ const Layout = ({ children }) => {
       <main>
         {children}
       </main>
+      <Footer />
     </div>
   )
 }

@@ -64,7 +64,6 @@ const HomePage = () => {
     return headerValues;
   };
 
-
   return (
     <div className='homepage'>
       <div></div>
