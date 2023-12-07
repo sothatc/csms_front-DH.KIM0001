@@ -4,6 +4,8 @@ import Calendar from 'assets/images/common/Calendar.svg';
 import AtchFileIcon from 'assets/images/common/AtchFileIcon.svg';
 import ArrowLeft from 'assets/images/common/ArrowLeft.svg';
 import ArrowRight from 'assets/images/common/ArrowRight.svg';
+import NomalUser from 'assets/images/user/NomalUser.svg';
+import Admin from 'assets/images/user/Admin.svg';
 
 const isDiscernIcon = ({ icon }) => {
     switch (icon) {
@@ -17,6 +19,10 @@ const isDiscernIcon = ({ icon }) => {
         return ArrowLeft;
       case 'ARROW-RIGHT' :
         return ArrowRight;
+      case 'NOMAL-USER'  :
+        return NomalUser;
+      case 'ADMIN'       :
+        return Admin;
       default:
           break;
     }
@@ -29,7 +35,7 @@ const IconImage = React.memo(({ id, icon, onClickEvent}) => {
     }
     return (
         <>
-            <img id={id} src={Icon} alt="아이콘" onClick={onClickHandler} />
+          <img id={id} src={Icon} alt="아이콘" onClick={onClickHandler} />
         </>
     )
 });

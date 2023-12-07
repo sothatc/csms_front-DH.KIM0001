@@ -6,6 +6,8 @@ import { format, parseISO } from 'date-fns';
 import { ko } from 'date-fns/esm/locale';
 import { getEnterpriseDtlInfo } from 'pages/api/Enterprise/EnterpriseAPI';
 import { getTaskDtlInfoAPI, insertTaskInfoAPI, updateTaskInfoAPI } from 'pages/api/Task/TaskAPI';
+import { TaskSvcEfc, TaskTypeObject } from 'pages/api/TaskTypeObject';
+import { GenerateOptions } from 'pages/api/common/dataSet/dataSet';
 import { useEffect, useMemo, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
@@ -45,6 +47,7 @@ const TaskRegPage = () => {
     task_ed_dt : new Date(),
     task_st_tm : '',
     task_ed_tm : '',
+    task_job_tp: 'VST',
   });
   const [selectedCust    , setSelectedCust    ] = useState({});
   const [selectedTaskMemb, setSelectedTaskMemb] = useState({});
@@ -75,6 +78,9 @@ const TaskRegPage = () => {
   }else if(queryString[0] === 'task_unq') {
     taskNoArr = window.location.search.substring(1).split("=");
   }
+
+  const taskTpOptions = useMemo(() => GenerateOptions(TaskTypeObject), []);
+  const svcEfcOptions = useMemo(() => GenerateOptions(TaskSvcEfc), []);
 
   useEffect(() => {
     if(entpNoArr !== '') {
@@ -132,7 +138,6 @@ const TaskRegPage = () => {
             modalType : modalType,
             isOpen    : true,
             data: {'entp_unq' : enterpriseData.entp_unq},
-            // data: {'entp_unq' : entpNoArr[1]},
           })
         );
         break;
@@ -150,7 +155,6 @@ const TaskRegPage = () => {
           openModal({
             modalType : modalType,
             isOpen    : true,
-            // data: {'entp_unq' : entpNoArr[1]},
             data: {'entp_unq' : enterpriseData.entp_unq},
           })
         );
@@ -421,18 +425,10 @@ const TaskRegPage = () => {
               </div>
               <div>
                 <Select
-                  name  = 'task_tp'
-                  value = {taskData.task_tp}
+                  name    = 'task_tp'
+                  value   = {taskData.task_tp}
+                  dataSet = {taskTpOptions}
                   onChangeEvent = {onChangeTaskInfoCode}
-                  dataSet = {[
-                    {value: 'INS', text: "정기정검"   },
-                    {value: 'ISS', text: "이슈"       },
-                    {value: 'SET', text: "설정변경"   },
-                    {value: 'TRN', text: "학습수행"   },
-                    {value: 'ACC', text: "인식률 측정"},
-                    {value: 'DEV', text: "개발적용"   },
-                    {value: 'EDT', text: "수정적용"   },
-                  ]}
                 />
               </div>
             </div>
@@ -560,7 +556,8 @@ const TaskRegPage = () => {
                 <Select
                   name    = {'task_job_tp'}
                   value   = {taskData.task_job_tp}
-                  onChangeEvent = {onChangeTaskInfoCode}
+                  onChangeEvent  = {onChangeTaskInfoCode}
+                  isDefaultValue = {true}
                   dataSet = {[
                     {value: 'VST', text: '방문'},
                     {value: 'RMT', text: '원격'},
@@ -575,12 +572,7 @@ const TaskRegPage = () => {
                   name  = 'svc_efc'
                   value = {taskData.svc_efc}
                   onChangeEvent={onChangeTaskInfoCode}
-                  dataSet = {[
-                    {value: '3', text: "상"  },
-                    {value: '2', text: "중"  },
-                    {value: '1', text: "하"  },
-                    {value: '0', text: "없음"},
-                  ]}
+                  dataSet = {svcEfcOptions}
                 />
               </div>
             </div>

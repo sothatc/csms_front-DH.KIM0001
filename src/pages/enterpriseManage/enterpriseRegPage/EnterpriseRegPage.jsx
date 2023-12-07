@@ -1,9 +1,12 @@
 import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
 import { getEnterpriseDtlInfo, insertEnterprise, updateEnterprise } from 'pages/api/Enterprise/EnterpriseAPI';
+import { EntpTypeObject, SvcTypeObject } from 'pages/api/EnterpriseTypeObject';
+import { GenerateOptions } from 'pages/api/common/dataSet/dataSet';
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './EnterpriseRegPage.module.scss';
+import { CustTypeObject } from 'pages/api/CustTypeObject';
 
 
 
@@ -51,7 +54,7 @@ const defaultSysData = {
 }
 const defaultEntpData = {
   entp_nm : '',
-  entp_tp : '',
+  entp_tp : 'C',
   svc_tp  : '',
 }
 
@@ -80,6 +83,10 @@ const EnterpriseRegPage = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const entp_unq = searchParams.get('entp_unq');
+
+  const entpOptions = useMemo(() => GenerateOptions(EntpTypeObject), []);
+  const custOptions = useMemo(() => GenerateOptions(CustTypeObject), []);
+  const svcOptions = useMemo(() => GenerateOptions(SvcTypeObject), []);
 
   if(entp_unq) {
     getEnterpriseDtlInfo(entp_unq).then((response) => {
@@ -346,18 +353,15 @@ const EnterpriseRegPage = () => {
             <div>
               <div>
                 <span className={styles.compulsory}>*</span>
-                구분
+                업체 구분
               </div>
               <div>
                 <Select
-                  name  = 'entp_tp'
-                  value = {enterpriseData && enterpriseData.entp_tp}
-                  onChangeEvent = {onChangeEnterpriseCode}
-                  // 공통 dataSet으로 만들 예정
-                  dataSet = {[
-                    {value: 'C', text: "고객사"},
-                    {value: 'S', text: "협력사"},
-                  ]}
+                  name    = 'entp_tp'
+                  value   = {enterpriseData && enterpriseData.entp_tp}
+                  dataSet = {entpOptions}
+                  isDefaultValue = {true}
+                  onChangeEvent  = {onChangeEnterpriseCode}
                 />
               </div>
             </div>
@@ -396,14 +400,7 @@ const EnterpriseRegPage = () => {
                   name          = 'memb_pst_nm'
                   value         = {custData && custData.memb_pst_nm}
                   onChangeEvent = {onChangeCustInfoCode}
-                  dataSet={[
-                    {value: 'L1' , text: "부장"  },
-                    {value: 'L2' , text: "차장"  },
-                    {value: 'L3' , text: "과장"  },
-                    {value: 'L4' , text: "대리"  },
-                    {value: 'L5' , text: "사원"  },
-                    {value: 'L6' , text: "매니저"},
-                  ]}
+                  dataSet={custOptions}
                 />
               </div>
               <div>
@@ -436,11 +433,7 @@ const EnterpriseRegPage = () => {
                 <Select
                   value   = {enterpriseData && enterpriseData.svc_tp}
                   name    = 'svc_tp'
-                  dataSet = {[
-                    {value: 'R' , text: "실시간"  },
-                    {value: 'SR', text: "준실시간"},
-                    {value: 'B' , text: "배치"    },
-                  ]}
+                  dataSet = {svcOptions}
                   onChangeEvent={onChangeEnterpriseCode}
                 />
               </div>

@@ -6,7 +6,8 @@ import { format, parseISO } from 'date-fns';
 import ko from 'date-fns/locale/ko';
 import { getTaskDataListAPI } from "pages/api/Task/TaskAPI";
 import { TaskJobTypeObject, TaskTypeObject } from 'pages/api/TaskTypeObject';
-import { useEffect, useState } from "react";
+import { GenerateOptions } from 'pages/api/common/dataSet/dataSet';
+import { useEffect, useMemo, useState } from "react";
 import DatePicker from "react-datepicker";
 import { useDispatch } from 'react-redux';
 import { useNavigate } from "react-router-dom";
@@ -49,37 +50,37 @@ const ButtonAtchFileRenderer = (param) => {
         : null
       }
     </>
-
   )
 }
 
 const ColumnDefs = [
-  {headerName : 'No.'        , field : 'task_unq'   },
-	{headerName : '고객사'     , field : 'entp_nm'    },
-	{headerName : '지원유형'   , field : 'task_tp'    },
-	{headerName : '작업방식'   , field : 'task_job_tp'},
-	{headerName : '작업 담당자', field : 'task_usr_nm'},
-	{headerName : '작업 시작일', field : 'task_st_dt' },
-	{headerName : '작업 종료일', field : 'task_ed_dt' },
+  {headerName : 'No.'        , field : 'task_unq'    },
+	{headerName : '고객사'     , field : 'entp_nm'     },
+	{headerName : '지원유형'   , field : 'task_tp'     },
+	{headerName : '작업방식'   , field : 'task_job_tp' },
+	{headerName : '작업 담당자', field : 'task_usr_nm' },
+	{headerName : '작업 시작일', field : 'task_st_dtm' },
+	{headerName : '작업 종료일', field : 'task_ed_dtm' },
   {
-		headerName : '첨부파일',
-		field : 'atch_file_nm',
-		cellRenderer : ButtonAtchFileRenderer,
-    cellStyle: {display: 'flex', alignItems: 'center'}
+		headerName  : '첨부파일',
+		field       : 'atch_file_nm',
+		cellRenderer: ButtonAtchFileRenderer,
+    cellStyle   : {display: 'flex', alignItems: 'center'}
 	},
+  {headerName : '등록일'     , field : 'reg_dtm'     },
   {
-    field : 'action',
+    field       : 'action',
     cellRenderer: ButtonActionRenderer,
-		cellStyle: {display: 'flex', alignItems: 'center'}
+		cellStyle   : {display: 'flex', alignItems: 'center'}
   }
 ];
 
 const TaskManagePage = () => {
-  const [taskDataList , setTaskDataList ] = useState([]);
-  const [selectedRange, setSelectedRange] = useState([null, null]);
-  const [pagingData   , setPagingData   ] = useState({});
-  const [currentPage  , setCurrentPage  ] = useState(1);
-  const [requestData  , setRequestData  ] = useState({
+  const [transformedTaskList , setTransformedTaskList ] = useState([]);
+  const [selectedRange       , setSelectedRange       ] = useState([null, null]);
+  const [pagingData          , setPagingData          ] = useState({});
+  const [currentPage         , setCurrentPage         ] = useState(1);
+  const [requestData         , setRequestData         ] = useState({
     entp_nm        : '', //업체 이름별 검색
     task_tp        : '', //지원유형별 검색
     searchDateFrom : '', // 기간 범위 조건 검색
@@ -93,6 +94,8 @@ const TaskManagePage = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const taskTpOptions = useMemo(() => GenerateOptions(TaskTypeObject), []);
 
   useEffect(() => {
     getTaskDataListEvent(requestData);
@@ -109,14 +112,20 @@ const TaskManagePage = () => {
     }
 
     getTaskDataListAPI(reqData).then((response) => {
-			const updatedTaskDataList = [...response.taskList];
+			const taskDataList = [...response.taskList];
 
-			updatedTaskDataList.forEach(task => {
+			taskDataList.forEach(task => {
+        let task_st_tm_without_sec = task.task_st_tm.split(':').slice(0, -1).join(':');
+        let task_ed_tm_without_sec = task.task_ed_tm.split(':').slice(0, -1).join(':');
+
 				task.task_tp     = TaskTypeObject[`${task.task_tp}`];
 				task.task_job_tp = TaskJobTypeObject[`${task.task_job_tp}`];
+        task.reg_dtm     = task.reg_dtm.split(" ")[0];
+        task.task_st_dtm = `${task.task_st_dt} / ${task_st_tm_without_sec}`
+        task.task_ed_dtm = `${task.task_ed_dt} / ${task_ed_tm_without_sec}`
 			});
 
-			setTaskDataList(updatedTaskDataList);
+			setTransformedTaskList(taskDataList);
       setPagingData(response.paging);
     })
     .catch((err) => {
@@ -190,7 +199,6 @@ const TaskManagePage = () => {
   };
 
   const renderPageNumbers = () => {
-
     const totalPages = pagingData.page_cnt; // 전체 페이지 수
     const visiblePages = 5; // 보이는 번호 갯수
 
@@ -256,17 +264,9 @@ const TaskManagePage = () => {
 							<div>지원유형</div>
 							<Select
 								name    = 'task_tp'
+                label   = {'전체'}
 								value   = {requestData.task_tp}
-								dataSet = {[
-									{value: ''   , text: "전체"       },
-									{value: 'INS', text: "정기정검"   },
-									{value: 'ISS', text: "이슈"       },
-									{value: 'SET', text: "설정변경"   },
-									{value: 'TRN', text: "학습수행"   },
-									{value: 'ACC', text: "인식률 측정"},
-									{value: 'DEV', text: "개발적용"   },
-									{value: 'EDT', text: "수정적용"   },
-								]}
+								dataSet = {taskTpOptions}
 								onChangeEvent={handleChangeSearchData}
 							/>
 						</div>
@@ -284,7 +284,7 @@ const TaskManagePage = () => {
 				</div>
 				<div className="task__list">
 					<Grid
-						data   = {taskDataList}
+						data   = {transformedTaskList}
 						header = {ColumnDefs}
 					/>
 				</div>
@@ -292,10 +292,10 @@ const TaskManagePage = () => {
           <div>
             <div className='task__pagination--arrow task__pagination--pre'>
               <Button
-                image="ARROW-LEFT"
+                image        = "ARROW-LEFT"
                 onClickEvent = {() => setCurrentPage((prev) => Math.max( prev - 1, 1 ))}
-                backgroundColor = ''
                 disabled     = {currentPage === 1}
+                backgroundColor = ''
               />
             </div>
             <div className='task__pagination--num'>
@@ -303,7 +303,7 @@ const TaskManagePage = () => {
             </div>
             <div className='task__pagination--arrow task__pagination--next'>
               <Button
-                image="ARROW-RIGHT"
+                image        = "ARROW-RIGHT"
                 onClickEvent = {() => setCurrentPage((prev) => Math.min( prev + 1, pagingData.page_cnt ))}
                 disabled     = {currentPage === pagingData.page_cnt}
                 backgroundColor = ''

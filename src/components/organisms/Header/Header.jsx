@@ -1,6 +1,6 @@
 import { IconImage } from 'components/atoms';
 import { HeaderMenu } from 'pages/api/HeaderObject';
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Header.module.scss';
 
@@ -27,7 +27,7 @@ const Header = React.memo(() => {
         </div>
         <div className={styles.nav__user}>
           <div>itfact</div>
-          <div>아이콘</div>
+          <IconImage icon='ADMIN' />
         </div>
       </nav>
     </header>

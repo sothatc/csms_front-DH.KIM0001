@@ -3,7 +3,8 @@ import { Select } from 'components/atoms/Select/Select';
 import Grid from 'components/molecules/Grid/Grid';
 import { getEnterpriseList } from 'pages/api/Enterprise/EnterpriseAPI';
 import { EntpTypeObject, SvcTypeObject } from 'pages/api/EnterpriseTypeObject';
-import { useEffect, useState } from 'react';
+import { GenerateOptions } from 'pages/api/common/dataSet/dataSet';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { initModal, openModal } from 'reduxStore/modalSlice';
@@ -55,7 +56,7 @@ const ButtonAtchFileRenderer = (param) => {
 const ColumnDefs = [
 	{headerName : 'No.'             , field : ''             },
 	{headerName : '사업자등록번호'  , field : 'entp_unq'     },
-	{headerName : '구분'            , field : 'entp_tp'      },
+	{headerName : '업체 구분'       , field : 'entp_tp'      },
 	{headerName : '업체명'          , field : 'entp_nm'      },
 	{headerName : '서비스 구분'     , field : 'svc_tp'       },
 	{headerName : '월 STT 처리 건수', field : 'stt_month_cnt'},
@@ -90,6 +91,9 @@ const EnterpriseManagePage = () => {
 
 	const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const entpOptions = useMemo(() => GenerateOptions(EntpTypeObject), []);
+  const svcOptions  = useMemo(() => GenerateOptions(SvcTypeObject), []);
 
   useEffect(() => {
     getEnterpriseListEvent(requestData);
@@ -178,11 +182,7 @@ const EnterpriseManagePage = () => {
 								name    = 'entp_tp'
 								label   = {'전체'}
 								value   = {requestData && requestData.entp_tp}
-								dataSet = {[
-									{value: '' , text:'전체'   },
-									{value: 'C', text: "고객사"},
-									{value: 'S', text: "협력사"},
-								]}
+                dataSet = {entpOptions}
 								onChangeEvent={handleChangeSearchData}
 							/>
 						</div>
@@ -192,13 +192,7 @@ const EnterpriseManagePage = () => {
 								name    = 'svc_tp'
 								label   = {'전체'}
 								value   = {requestData && requestData.svc_tp}
-								dataSet = {[
-									{value: ''  , text:'전체'           },
-									{value: 'R' , text:'실시간'         },
-									{value: 'SR', text:'준실시간'       },
-									{value: 'B' , text:'배치'           },
-									{value: 'S' , text:'self(수동/단건)'},
-								]}
+								dataSet = {svcOptions}
 								onChangeEvent={handleChangeSearchData}
 							/>
 						</div>
@@ -212,6 +206,11 @@ const EnterpriseManagePage = () => {
 					</div>
 				</div>
 				<div className='client__btn'>
+          <div>
+            <Button value={'전체 솔루션'} />
+            <Button value={'STT'} image={''}/>
+            <Button value={'CRM'} image={''}/>
+          </div>
 					<Button value='업체 등록' onClickEvent={moveToNoticePage} />
 				</div>
 				<div className="client__list">
