@@ -31,6 +31,9 @@ const Grid = forwardRef((props, ref) => {
           e.api.sizeColumnsToFit()
         }}
         onCellClicked = {onCellClickedHandler}
+        onGridSizeChanged = {(event) => {
+          event.api.sizeColumnsToFit();
+        }}
 			/>
 		</div>
 	)
