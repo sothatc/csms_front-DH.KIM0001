@@ -77,8 +77,9 @@ const ColumnDefs = [
 
 const EnterpriseManagePage = () => {
   const [enterpriseDataList, setEnterpriseDataList] = useState([]);
-  const [pagingData   , setPagingData   ] = useState({});
-  const [currentPage  , setCurrentPage  ] = useState(1);
+  const [pagingData        , setPagingData        ] = useState({});
+  const [currentPage       , setCurrentPage       ] = useState(1);
+  const [selectedSolution  , setSelectedSolution  ] = useState();
 	const [requestData  , setRequestData  ] = useState({
 		entp_nm : '',
 		entp_tp : '',
@@ -167,6 +168,10 @@ const EnterpriseManagePage = () => {
     return pageNumbers;
   };
 
+  const onClickSelSolution = (solutionType) => {
+    setSelectedSolution(solutionType);
+  }
+console.log(selectedSolution);
 	return (
 		<>
 			<div className='client'>
@@ -207,9 +212,9 @@ const EnterpriseManagePage = () => {
 				</div>
 				<div className='client__btn'>
           <div>
-            <Button value={'전체 솔루션'} />
-            <Button value={'STT'} image={''}/>
-            <Button value={'CRM'} image={''}/>
+            <Button value={'전체 솔루션'} onClickEvent={()=>onClickSelSolution('ALL')} backgroundColor={selectedSolution === 'ALL' && 'blue'}/>
+            <Button value={'STT'} image={''} onClickEvent={()=>onClickSelSolution('STT')} backgroundColor={selectedSolution === 'STT' && 'blue'}/>
+            <Button value={'CRM'} image={''} onClickEvent={()=>onClickSelSolution('CRM')} backgroundColor={selectedSolution === 'CRM' && 'blue'}/>
           </div>
 					<Button value='업체 등록' onClickEvent={moveToNoticePage} />
 				</div>

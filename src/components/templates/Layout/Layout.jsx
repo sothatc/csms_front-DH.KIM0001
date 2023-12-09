@@ -3,9 +3,10 @@ import Header from 'components/organisms/Header/Header';
 import styles from './Layout.module.scss';
 
 const Layout = ({ children }) => {
+
   return (
     <div className={styles.layout}>
-      <Header />
+      <Header childrenElemant={children[1].props.children}/>
       <main>
         {children}
       </main>
