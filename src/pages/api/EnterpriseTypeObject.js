@@ -9,8 +9,8 @@ export const SolutionTypeObject = {
 }
 
 export const SvcTypeObject = {
-  'R'  : 'STT/실시간',
-  'SR' : 'STT/준실시간',
-  'B'  : 'STT/배치',
-  'S'  : 'STT/self(수동/단건)',
+  'R'  : '실시간',
+  'SR' : '준실시간',
+  'B'  : '배치',
+  'S'  : 'self(수동/단건)',
 }

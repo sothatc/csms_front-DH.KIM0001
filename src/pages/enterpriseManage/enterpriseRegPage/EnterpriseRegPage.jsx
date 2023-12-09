@@ -408,7 +408,7 @@ const EnterpriseRegPage = () => {
                 담당자
               </div>
               <div>
-                <input type='text' value={custData && custData.memb_nm} onChange={(e) => onChangeCustInfoData('memb_nm', e)}/>
+                <input type='text' placeholder='(업체측)' value={custData && custData.memb_nm} onChange={(e) => onChangeCustInfoData('memb_nm', e)}/>
               </div>
               <div>
                 <span className={styles.compulsory}>*</span>
@@ -455,13 +455,14 @@ const EnterpriseRegPage = () => {
               </div>
               <div>
                 <span className={styles.compulsory}>*</span>
-                서비스 형태
+                STT 서비스 형태
               </div>
               <div>
                 <Select
-                  value   = {enterpriseData && enterpriseData.svc_tp}
-                  name    = 'svc_tp'
-                  dataSet = {svcOptions}
+                  value    = {enterpriseData && enterpriseData.svc_tp}
+                  name     = 'svc_tp'
+                  dataSet  = {svcOptions}
+                  disabled ={enterpriseData.solution_tp !== 'STT' && true}
                   onChangeEvent={onChangeEnterpriseCode}
                 />
               </div>

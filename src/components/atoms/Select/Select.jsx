@@ -14,7 +14,7 @@ const Select = ({ name, dataSet=[{}], onChangeEvent=()=>{}, disabled, value, lab
   return (
     <div className={styles.select}>
       <button
-        className = {`${styles['select__name']} ${selectedOption && styles['select--active']}`}
+        className = {`${styles['select__name']} ${selectedOption && styles['select--active']} ${ disabled && styles['select--disabled']}`}
         onClick   = { () =>{ !disabled && setToggle((prev) => !prev)} }
       >
         <div>
