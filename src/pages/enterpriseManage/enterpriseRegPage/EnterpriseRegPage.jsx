@@ -53,11 +53,14 @@ const defaultSysData = {
   reg_dtm      : ''
 }
 const defaultEntpData = {
-  entp_unq    : '7118700663',
-  entp_nm     : '',
-  entp_tp     : 'C',
-  svc_tp      : '',
-  solution_tp : 'STT'
+  entp_nm            : '',
+  entp_tp            : 'C',
+  svc_tp             : '',
+  solution_tp        : 'STT',
+  /** 사업자등록번호 API 필수 param */
+  entp_unq           : '', //사업자등록번호
+  president_nm       : '', //업체 대표
+  entp_established_dt: '', //업체 설립일
 }
 
 const defaultCustData = {
@@ -116,8 +119,24 @@ const EnterpriseRegPage = () => {
       return {...prev, [name] : value};
     });
   }
+
   const onChangeEnterpriseInfoData = (name, e) => {
-    setEnterpriseData({...enterpriseData, [name] : e.target.value});
+    const value = e.target.value;
+
+    switch(name) {
+      case 'entp_unq':
+        const entp_unq = value.replace(/[^0-9]/g, '').substring(0, 10);
+        setEnterpriseData({...enterpriseData, [name] : entp_unq});
+        break;
+
+      case 'entp_established_dt':
+        const established_dt = value.replace(/[^0-9]/g, '').substring(0, 8);
+        setEnterpriseData({...enterpriseData, [name] : established_dt});
+        break;
+
+      default:
+        setEnterpriseData({...enterpriseData, [name] : value});
+    }
   }
 
   const onChangeCustInfoData = (name, e) => {
@@ -167,6 +186,7 @@ const EnterpriseRegPage = () => {
   const onClickInsertEntp = () => {
     let validationBoolean = true;
 
+    /** 사업자등록번호 조회 API */
     searchCorRegNumberAPI(enterpriseData.entp_unq).then((response) => {
 
       if(response.valid !== '01') {
@@ -176,9 +196,15 @@ const EnterpriseRegPage = () => {
       const numericPattern = /^[0-9]+$/;
       const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-      if(enterpriseData.entp_nm === '' || enterpriseData.entp_tp === '' || custData.memb_dept_nm === '' || custData.memb_nm === '' || custData.memb_pst_nm === '' || enterpriseData.svc_tp === '') {
+      if(enterpriseData.entp_unq === '' || enterpriseData.entp_nm === '' || enterpriseData.entp_tp === '' || custData.memb_dept_nm === '' || custData.memb_nm === '' || custData.memb_pst_nm === '') {
         validationBoolean = false;
         alert('필수 내용을 입력해주세요.');
+      }else if(!numericPattern.test(enterpriseData.entp_unq)) {
+        validationBoolean = false;
+        alert('사업자등록번호는 숫자만 입력해주세요.');
+      }else if(enterpriseData.solution_tp === 'STT' && enterpriseData.svc_tp === ''  ) {
+        validationBoolean = false;
+        alert('STT 서비스 형태를 성택해주세요.');
       }else if(!numericPattern.test(custData.memb_tel)) {
         validationBoolean = false;
         alert('전화번호는 숫자만 입력해주세요.');
@@ -337,10 +363,6 @@ const EnterpriseRegPage = () => {
     setSystemInputData(systemData[index]);
   }
 
-  const handlePhoneNumberInput = (input) => {
-    input.value = input.value.replace(/\D/g, '').substring(0, 11);
-  }
-
   return (
     <>
       <div className={styles.register}>
@@ -400,6 +422,34 @@ const EnterpriseRegPage = () => {
               </div>
               <div>
                 <input type='text' value={enterpriseData && enterpriseData.entp_nm} onChange={(e) => onChangeEnterpriseInfoData('entp_nm', e)}/>
+              </div>
+              <div>
+                <span className={styles.compulsory}>*</span>
+                사업자등록번호
+              </div>
+              <div>
+                <input
+                  type        = 'text'
+                  value       = {enterpriseData && enterpriseData.entp_unq}
+                  onChange    = {(e) => onChangeEnterpriseInfoData('entp_unq', e)}
+                  placeholder = "'-'생략"
+                  maxLength   = {10}/>
+              </div>
+            </div>
+            <div>
+              <div>
+                <span className={styles.compulsory}>*</span>
+                대표자명
+              </div>
+              <div>
+                <input type='text' value={enterpriseData && enterpriseData.president_nm} onChange={(e) => onChangeEnterpriseInfoData('president_nm', e)}/>
+              </div>
+              <div>
+                <span className={styles.compulsory}>*</span>
+                설립일
+              </div>
+              <div>
+                <input type='text' value={enterpriseData && enterpriseData.entp_established_dt} onChange={(e) => onChangeEnterpriseInfoData('entp_established_dt', e)} placeholder='Ex) 20231205'/>
               </div>
             </div>
             <div>
