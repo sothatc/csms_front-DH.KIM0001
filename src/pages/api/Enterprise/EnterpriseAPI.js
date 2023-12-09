@@ -175,14 +175,18 @@ const deleteEnterpriseInfo = async (entp_unq) => {
 }
 
 const searchCorRegNumberAPI = async (object) => {
+  const {entp_unq, president_nm, established_dt} = object;
+  console.log(entp_unq);
+  console.log(president_nm);
+  console.log(established_dt);
   try {
     const response = await axiosInstance.post(`http://api.odcloud.kr/api/nts-businessman/v1/validate?serviceKey=WFpXHChn9E6wSTgXW%2FyJ0ELJY2HFpmx79hPFVEBwiFAzJZmLnFzIeRlH8YPwLd42%2B5%2F21fx2sF4rGUjIbGLFMA%3D%3D`,
       {
         "businesses": [
           {
-            "b_no": "7155700663",
-            "start_dt": "20170615",
-            "p_nm": "CHUANG NATHAN MICHAEL",
+            "b_no": entp_unq,
+            "start_dt": established_dt,
+            "p_nm": president_nm,
             "p_nm2": "",
             "b_nm": "",
             "corp_no": "",
