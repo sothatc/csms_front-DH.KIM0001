@@ -16,7 +16,9 @@ const getEnterpriseList = async (object) => {
 
   try {
     const response = await axiosInstance.post(
-      `/entp/enterprise/getEnterpriseList`, requestData);
+      `/entp/enterprise/getEnterpriseList`, requestData
+    );
+
     return response.data.data;
   }catch(error) {
     throw new Error(`Error: ${error}`);

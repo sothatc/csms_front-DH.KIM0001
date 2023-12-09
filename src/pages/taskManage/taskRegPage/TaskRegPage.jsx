@@ -557,7 +557,6 @@ const TaskRegPage = () => {
                   name    = {'task_job_tp'}
                   value   = {taskData.task_job_tp}
                   onChangeEvent  = {onChangeTaskInfoCode}
-                  isDefaultValue = {true}
                   dataSet = {[
                     {value: 'VST', text: '방문'},
                     {value: 'RMT', text: '원격'},

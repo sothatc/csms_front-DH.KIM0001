@@ -2,7 +2,7 @@ import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
 import { CustTypeObject } from 'pages/api/CustTypeObject';
 import { getEnterpriseDtlInfo, insertEnterprise, searchCorRegNumberAPI, updateEnterprise } from 'pages/api/Enterprise/EnterpriseAPI';
-import { EntpTypeObject, SvcTypeObject } from 'pages/api/EnterpriseTypeObject';
+import { EntpTypeObject, SolutionTypeObject, SvcTypeObject } from 'pages/api/EnterpriseTypeObject';
 import { GenerateOptions } from 'pages/api/common/dataSet/dataSet';
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -53,10 +53,11 @@ const defaultSysData = {
   reg_dtm      : ''
 }
 const defaultEntpData = {
-  entp_unq: '7118700663',
-  entp_nm : '',
-  entp_tp : 'C',
-  svc_tp  : '',
+  entp_unq    : '7118700663',
+  entp_nm     : '',
+  entp_tp     : 'C',
+  svc_tp      : '',
+  solution_tp : 'STT'
 }
 
 const defaultCustData = {
@@ -88,6 +89,7 @@ const EnterpriseRegPage = () => {
   const entpOptions = useMemo(() => GenerateOptions(EntpTypeObject), []);
   const custOptions = useMemo(() => GenerateOptions(CustTypeObject), []);
   const svcOptions = useMemo(() => GenerateOptions(SvcTypeObject), []);
+  const solutionOptoins = useMemo(() => GenerateOptions(SolutionTypeObject), []);
 
   if(entp_unq) {
     getEnterpriseDtlInfo(entp_unq).then((response) => {
@@ -373,7 +375,20 @@ const EnterpriseRegPage = () => {
                   name    = 'entp_tp'
                   value   = {enterpriseData && enterpriseData.entp_tp}
                   dataSet = {entpOptions}
-                  isDefaultValue = {true}
+                  onChangeEvent  = {onChangeEnterpriseCode}
+                />
+              </div>
+            </div>
+            <div>
+              <div>
+                <span className={styles.compulsory}>*</span>
+                솔루션 구분
+              </div>
+              <div>
+                <Select
+                  name    = 'solution_tp'
+                  value   = {enterpriseData && enterpriseData.solution_tp}
+                  dataSet = {solutionOptoins}
                   onChangeEvent  = {onChangeEnterpriseCode}
                 />
               </div>

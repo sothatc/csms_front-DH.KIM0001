@@ -79,8 +79,8 @@ const EnterpriseManagePage = () => {
   const [enterpriseDataList, setEnterpriseDataList] = useState([]);
   const [pagingData        , setPagingData        ] = useState({});
   const [currentPage       , setCurrentPage       ] = useState(1);
-  const [selectedSolution  , setSelectedSolution  ] = useState();
-	const [requestData  , setRequestData  ] = useState({
+  const [selectedSolution  , setSelectedSolution  ] = useState('ALL');
+	const [requestData       , setRequestData       ] = useState({
 		entp_nm : '',
 		entp_tp : '',
 		svc_tp  : '',
@@ -99,7 +99,7 @@ const EnterpriseManagePage = () => {
   useEffect(() => {
     getEnterpriseListEvent(requestData);
 		dispatch(initModal());
-  },[currentPage])
+  },[currentPage, requestData])
 
   const getEnterpriseListEvent = (requestData) => {
 
@@ -170,8 +170,9 @@ const EnterpriseManagePage = () => {
 
   const onClickSelSolution = (solutionType) => {
     setSelectedSolution(solutionType);
+    setRequestData({...requestData, svc_tp: solutionType});
   }
-console.log(selectedSolution);
+
 	return (
 		<>
 			<div className='client'>

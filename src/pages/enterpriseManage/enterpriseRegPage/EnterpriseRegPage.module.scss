@@ -53,11 +53,7 @@
           }
         }
 
-        // &:nth-child(4) {
-
-        // }
-
-        &:nth-child(4), &:nth-child(5), &:nth-child(6) {
+        &:nth-child(5), &:nth-child(6), &:nth-child(7) {
           grid-template-columns: 20% 30% 20% 30%;
         }
 
