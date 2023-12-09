@@ -172,6 +172,31 @@ const deleteEnterpriseInfo = async (entp_unq) => {
   }
 }
 
+const searchCorRegNumberAPI = async (object) => {
+  try {
+    const response = await axiosInstance.post(`http://api.odcloud.kr/api/nts-businessman/v1/validate?serviceKey=WFpXHChn9E6wSTgXW%2FyJ0ELJY2HFpmx79hPFVEBwiFAzJZmLnFzIeRlH8YPwLd42%2B5%2F21fx2sF4rGUjIbGLFMA%3D%3D`,
+      {
+        "businesses": [
+          {
+            "b_no": "7155700663",
+            "start_dt": "20170615",
+            "p_nm": "CHUANG NATHAN MICHAEL",
+            "p_nm2": "",
+            "b_nm": "",
+            "corp_no": "",
+            "b_sector": "",
+            "b_type": "",
+            "b_adr": ""
+          }
+        ]
+      }
+    );
+
+    return response.data.data[0];
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
 
 export {getEnterpriseList,
         getEnterpriseDtlInfo,
@@ -184,4 +209,5 @@ export {getEnterpriseList,
         getTaskMembList,
         deleteCustInfo,
         deleteEnterpriseInfo,
+        searchCorRegNumberAPI,
 };

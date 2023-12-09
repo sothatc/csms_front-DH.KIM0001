@@ -1,12 +1,12 @@
 import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
-import { getEnterpriseDtlInfo, insertEnterprise, updateEnterprise } from 'pages/api/Enterprise/EnterpriseAPI';
+import { CustTypeObject } from 'pages/api/CustTypeObject';
+import { getEnterpriseDtlInfo, insertEnterprise, searchCorRegNumberAPI, updateEnterprise } from 'pages/api/Enterprise/EnterpriseAPI';
 import { EntpTypeObject, SvcTypeObject } from 'pages/api/EnterpriseTypeObject';
 import { GenerateOptions } from 'pages/api/common/dataSet/dataSet';
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './EnterpriseRegPage.module.scss';
-import { CustTypeObject } from 'pages/api/CustTypeObject';
 
 
 
@@ -53,6 +53,7 @@ const defaultSysData = {
   reg_dtm      : ''
 }
 const defaultEntpData = {
+  entp_unq: '7118700663',
   entp_nm : '',
   entp_tp : 'C',
   svc_tp  : '',
@@ -162,68 +163,80 @@ const EnterpriseRegPage = () => {
   }, [atchFiles])
 
   const onClickInsertEntp = () => {
-    const numericPattern = /^[0-9]+$/;
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
     let validationBoolean = true;
 
-    if(enterpriseData.entp_nm === '' || enterpriseData.entp_tp === '' || custData.memb_dept_nm === '' || custData.memb_nm === '' || custData.memb_pst_nm === '' || enterpriseData.svc_tp === '') {
-      validationBoolean = false;
-      alert('필수 내용을 입력해주세요.');
-    }else if(!numericPattern.test(custData.memb_tel)) {
-      validationBoolean = false;
-      alert('전화번호는 숫자만 입력해주세요.');
-    }else if(!emailPattern.test(custData.memb_email)) {
-      validationBoolean = false;
-      alert('이메일 형식에 맞게 입력해주세요.');
-    }else if(totalFileSizeInByte > FILE_SIZE_MAX_LIMIT){
-      validationBoolean = false;
-      alert('파일 최대 용량은 20MB입니다.');
-    }else {
-      systemData.forEach((item) => {
-        if (!numericPattern.test(item.cpu_cnt)) {
-          validationBoolean = false;
-          alert('CPU코어 수는 숫자만 입력해주세요.');
-        }
-        // if (!numericPattern.test(item.mem_sz)) {
-        //   validationBoolean = false;
-        //   alert('메모리 용량은 숫자만 입력해주세요.');
-        // }
-        // if (!numericPattern.test(item.disk_sz)) {
-        //   validationBoolean = false;
-        //   alert('디스크 용량은 숫자만 입력해주세요.');
-        // }
+    searchCorRegNumberAPI(enterpriseData.entp_unq).then((response) => {
+
+      if(response.valid !== '01') {
+        alert('존재하지 않는 업체입니다.');
+        validationBoolean = false;
+      }
+      const numericPattern = /^[0-9]+$/;
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+      if(enterpriseData.entp_nm === '' || enterpriseData.entp_tp === '' || custData.memb_dept_nm === '' || custData.memb_nm === '' || custData.memb_pst_nm === '' || enterpriseData.svc_tp === '') {
+        validationBoolean = false;
+        alert('필수 내용을 입력해주세요.');
+      }else if(!numericPattern.test(custData.memb_tel)) {
+        validationBoolean = false;
+        alert('전화번호는 숫자만 입력해주세요.');
+      }else if(!emailPattern.test(custData.memb_email)) {
+        validationBoolean = false;
+        alert('이메일 형식에 맞게 입력해주세요.');
+      }else if(totalFileSizeInByte > FILE_SIZE_MAX_LIMIT){
+        validationBoolean = false;
+        alert('파일 최대 용량은 20MB입니다.');
+      }else {
+        systemData.forEach((item) => {
+          if (!numericPattern.test(item.cpu_cnt)) {
+            validationBoolean = false;
+            alert('CPU코어 수는 숫자만 입력해주세요.');
+          }
+          // if (!numericPattern.test(item.mem_sz)) {
+          //   validationBoolean = false;
+          //   alert('메모리 용량은 숫자만 입력해주세요.');
+          // }
+          // if (!numericPattern.test(item.disk_sz)) {
+          //   validationBoolean = false;
+          //   alert('디스크 용량은 숫자만 입력해주세요.');
+          // }
+        });
+      }
+
+      if(!validationBoolean) {
+        return;
+      }
+
+      const newEnterpriseData = enterpriseData;
+      newEnterpriseData['flag'] = 'I';
+
+      const newCustData = custData;
+      newCustData['principal_tp'] = 'Y';
+
+      let formData = new FormData();
+
+      atchFiles?.forEach((atchFile) => {
+        formData.append('files', atchFile);
       });
-    }
 
-    if(!validationBoolean) {
-      return;
-    }
+      formData.append('enterpriseData', JSON.stringify(newEnterpriseData));
+      formData.append('systemData', JSON.stringify(systemData));
+      formData.append('custData', JSON.stringify(newCustData));
 
-    const newEnterpriseData = enterpriseData;
-    newEnterpriseData['flag'] = 'I';
+      insertEnterprise(formData).then((response) => {
+        alert('업체 등록 완료');
+      })
+      .catch((err) => {
+        alert(`AxiosError: ${err}`);
+      })
+      navigate('/enterprise');
+      })
 
-    const newCustData = custData;
-    newCustData['principal_tp'] = 'Y';
-
-    let formData = new FormData();
-
-    atchFiles?.forEach((atchFile) => {
-      formData.append('files', atchFile);
+    .catch((err) => {
+      alert(`Axios API Error: ${err}`);
     });
 
-    formData.append('enterpriseData', JSON.stringify(newEnterpriseData));
-    formData.append('systemData', JSON.stringify(systemData));
-    formData.append('custData', JSON.stringify(newCustData));
 
-    insertEnterprise(formData).then((response) => {
-
-    })
-    .catch((err) => {
-      alert(`AxiosError: ${err}`);
-    })
-    alert('업체 등록 완료');
-    navigate('/enterprise');
   }
 
   const onClickModifyEntp = () => {
