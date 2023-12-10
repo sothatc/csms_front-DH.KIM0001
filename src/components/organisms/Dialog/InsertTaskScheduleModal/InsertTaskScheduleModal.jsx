@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './InsertTaskScheduleModal.module.scss';
-import { closeModal } from 'reduxStore/modalSlice';
+import { closeModal, openModal } from 'reduxStore/modalSlice';
 import { Button } from 'components/atoms/Button/Button';
 import { IconImage } from 'components/atoms';
 import { useEffect, useState } from 'react';
@@ -83,6 +83,16 @@ const InsertTaskScheduleModal = () => {
     setScheduleInputInfo({...scheduleInputInfo, [name] : e.target.value});
   }
 
+  const onClickSearchEntp = (modalType) => {
+    dispatch(
+      openModal({
+        modalType : modalType,
+        isOpen    : true,
+        data: {},
+      })
+    );
+  }
+
   return (
     <div className={styles.background}>
       <div className={styles.modal}>
@@ -97,6 +107,15 @@ const InsertTaskScheduleModal = () => {
           <input type='time' max='23:59:59' onChange={(e)=>onChangeContents(e, 'sch_st_tm')}/>
           <div>~</div>
           <input type='time' max='23:59:59' onChange={(e)=>onChangeContents(e, 'sch_ed_tm')}/>
+        </div>
+        <div className={styles.modal__search}>
+          <div>
+            <IconImage icon={'ENTERPRISE'}/>
+          </div>
+          <div>
+            <div></div>
+            <Button value={'업체조회'} backgroundColor={'blue'} onClickEvent={() => onClickSearchEntp('SearchEntpModal')}/>
+          </div>
         </div>
         <div className={styles.modal__contents}>
           <input placeholder='일정 제목' onChange={(e)=>onChangeContents(e, 'sch_title')}/>

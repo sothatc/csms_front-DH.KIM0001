@@ -10,7 +10,16 @@ import styles from './SearchEntpModal.module.scss';
 const SearchEntpModal = () => {
   const [entpDataList    , setEntpDataList    ] = useState([]);
   const [requestData     , setRequestData     ] = useState({
-		entp_nm : '',
+		// entp_nm : '',
+    /** To-Do: 페이징 정보 없어도 조회할 수 있게 수정 */
+    entp_nm     : '',
+		entp_tp     : '',
+		svc_tp      : '',
+    solution_tp : '',
+    paging : {
+      limit : 10,
+      offset: 1,
+    }
 	});
 
 

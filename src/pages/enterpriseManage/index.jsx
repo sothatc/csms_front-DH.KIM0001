@@ -80,6 +80,7 @@ const EnterpriseManagePage = () => {
   const [pagingData        , setPagingData        ] = useState({});
   const [currentPage       , setCurrentPage       ] = useState(1);
   const [selectedSolution  , setSelectedSolution  ] = useState('ALL');
+  const [selSolutionBtn    , setSelSolutionBtn    ] = useState(); //requestData를 useEffect 디펜던시에 넣지 않기 위해
 	const [requestData       , setRequestData       ] = useState({
 		entp_nm     : '',
 		entp_tp     : '',
@@ -100,7 +101,7 @@ const EnterpriseManagePage = () => {
   useEffect(() => {
     getEnterpriseListEvent(requestData);
 		dispatch(initModal());
-  },[currentPage, requestData])
+  },[currentPage, selSolutionBtn])
 
   const getEnterpriseListEvent = (requestData) => {
 
@@ -178,6 +179,7 @@ const EnterpriseManagePage = () => {
       setSelectedSolution(solutionType);
       setRequestData({...requestData, solution_tp: ''});
     }
+    setSelSolutionBtn(solutionType);
   }
 
 	return (

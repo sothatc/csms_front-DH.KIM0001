@@ -6,6 +6,7 @@ import ArrowLeft from 'assets/images/common/ArrowLeft.svg';
 import ArrowRight from 'assets/images/common/ArrowRight.svg';
 import NomalUser from 'assets/images/user/NomalUser.svg';
 import Admin from 'assets/images/user/Admin.svg';
+import Enterprise from 'assets/images/common/Enterprise.svg';
 
 const isDiscernIcon = ({ icon }) => {
     switch (icon) {
@@ -23,6 +24,8 @@ const isDiscernIcon = ({ icon }) => {
         return NomalUser;
       case 'ADMIN'       :
         return Admin;
+      case 'ENTERPRISE'  :
+        return Enterprise;
       default:
           break;
     }

@@ -13,7 +13,7 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { initModal, openModal } from 'reduxStore/modalSlice';
+import { initModal, openModal, selectModals } from 'reduxStore/modalSlice';
 import styles from './TaskRegPage.module.scss';
 
 const FILE_SIZE_MAX_LIMIT = 20 * 1024 * 1024;
@@ -65,6 +65,10 @@ const TaskRegPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate() ;
 
+  // const selectedCustProps     = useSelector(selectModals);
+  // const selectedTaskMembProps = useSelector(selectModals);
+  // const selectedEntpProps     = useSelector(selectModals);
+  // console.log("selectedCustProps = ", selectedCustProps);
   const selectedCustProps     = useSelector((state) => state?.modal.data.data?.selectedCust);
   const selectedTaskMembProps = useSelector((state) => state?.modal.data.data?.selectedTaskMemb);
   const selectedEntpProps     = useSelector((state) => state?.modal.data.data?.selectedEntpProps);
@@ -155,7 +159,8 @@ const TaskRegPage = () => {
           openModal({
             modalType : modalType,
             isOpen    : true,
-            data: {'entp_unq' : enterpriseData.entp_unq},
+            // data: {'entp_unq' : enterpriseData.entp_unq},
+            data: {},
           })
         );
     }
