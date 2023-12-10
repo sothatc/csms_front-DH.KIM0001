@@ -2,12 +2,13 @@ const { default: axiosInstance } = require("../axiosInstance")
 
 
 const getEnterpriseList = async (object) => {
-  const{entp_tp, svc_tp, entp_nm, paging} = object;
+  const{entp_tp, svc_tp, entp_nm, solution_tp, paging} = object;
 
   const requestData = {
     entp_tp,
     svc_tp,
     entp_nm,
+    solution_tp,
   }
 
   if(paging) {
@@ -175,30 +176,21 @@ const deleteEnterpriseInfo = async (entp_unq) => {
 }
 
 const searchCorRegNumberAPI = async (object) => {
-  const {entp_unq, president_nm, established_dt} = object;
-  console.log(entp_unq);
-  console.log(president_nm);
-  console.log(established_dt);
+  const { entp_unq } = object;
+  /**
+   *  비즈노 사업자등록번호 조회 API 필수 쿼리파라미터
+   *  key    : 서비스키
+   * 	gb     : 검색구분 ( 1: 사업자등록번호검색, 2: 법인등록번호검색, 3: 상호명검색 )
+   *  q      : 검색어 ( gb가 1이면 사업자등록번호 )
+   *  type   : 출력포맷
+   *  status : 상태정보출력 여부 (검색속도 향상을 위해 default = N)
+   */
   try {
-    const response = await axiosInstance.post(`http://api.odcloud.kr/api/nts-businessman/v1/validate?serviceKey=WFpXHChn9E6wSTgXW%2FyJ0ELJY2HFpmx79hPFVEBwiFAzJZmLnFzIeRlH8YPwLd42%2B5%2F21fx2sF4rGUjIbGLFMA%3D%3D`,
-      {
-        "businesses": [
-          {
-            "b_no": entp_unq,
-            "start_dt": established_dt,
-            "p_nm": president_nm,
-            "p_nm2": "",
-            "b_nm": "",
-            "corp_no": "",
-            "b_sector": "",
-            "b_type": "",
-            "b_adr": ""
-          }
-        ]
-      }
+    const response = await axiosInstance.post(
+      `https://bizno.net/api/fapi?key=ZGtkbHRiZW0zN0BnbWFpbC5jb20g&gb=1&q=${entp_unq}&type=json&status=N`
     );
 
-    return response.data.data[0];
+    return response.data.items[0];
   }catch(err) {
     throw Error(`Error: ${err}`);
   }

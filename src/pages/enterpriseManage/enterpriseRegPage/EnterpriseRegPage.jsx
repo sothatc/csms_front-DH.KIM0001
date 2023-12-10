@@ -57,10 +57,7 @@ const defaultEntpData = {
   entp_tp        : 'C',
   svc_tp         : '',
   solution_tp    : 'STT',
-  /** 사업자등록번호 API 필수 param */
-  entp_unq       : '', //사업자등록번호
-  president_nm   : '', //업체 대표
-  established_dt : '', //업체 설립일
+  entp_unq       : '',
 }
 
 const defaultCustData = {
@@ -76,12 +73,13 @@ const delFileArray = [];
 const FILE_SIZE_MAX_LIMIT = 20 * 1024 * 1024;
 
 const EnterpriseRegPage = () => {
-  const [atchFiles      , setAtchFiles          ] = useState([]);
-  const [enterpriseData , setEnterpriseData     ] = useState({...defaultEntpData});
-  const [custData       , setCustData           ] = useState({...defaultCustData});
-  const [systemData     , setSystemData         ] = useState([]);
-  const [systemInputData, setSystemInputData    ] = useState({...defaultSysData});
-  const [systemRowIndex , setSystemRowIndex     ] = useState(-1);
+  const [atchFiles      , setAtchFiles      ] = useState([]);
+  const [enterpriseData , setEnterpriseData ] = useState({...defaultEntpData});
+  const [custData       , setCustData       ] = useState({...defaultCustData});
+  const [systemData     , setSystemData     ] = useState([]);
+  const [systemInputData, setSystemInputData] = useState({...defaultSysData});
+  const [systemRowIndex , setSystemRowIndex ] = useState(-1);
+  const [isCorRegNum    , setIsCorRegNum    ] = useState(false);
 
   const navigate = useNavigate();
 
@@ -123,19 +121,11 @@ const EnterpriseRegPage = () => {
   const onChangeEnterpriseInfoData = (name, e) => {
     const value = e.target.value;
 
-    switch(name) {
-      case 'entp_unq':
-        const entp_unq = value.replace(/[^0-9]/g, '').substring(0, 10);
-        setEnterpriseData({...enterpriseData, [name] : entp_unq});
-        break;
-
-      case 'established_dt':
-        const established_dt = value.replace(/[^0-9]/g, '').substring(0, 8);
-        setEnterpriseData({...enterpriseData, [name] : established_dt});
-        break;
-
-      default:
-        setEnterpriseData({...enterpriseData, [name] : value});
+    if(name === 'entp_unq') {
+      const entp_unq = value.replace(/[^0-9]/g, '').substring(0, 10);
+      setEnterpriseData({...enterpriseData, [name] : entp_unq});
+    }else {
+      setEnterpriseData({...enterpriseData, [name] : value});
     }
   }
 
@@ -186,87 +176,76 @@ const EnterpriseRegPage = () => {
   const onClickInsertEntp = () => {
     let validationBoolean = true;
 
-    /** 사업자등록번호 조회 API */
-    searchCorRegNumberAPI(enterpriseData).then((response) => {
+    if(!isCorRegNum) {
+      alert('사업자등록번호를 조회해주세요.');
+      validationBoolean = false;
+    }
 
-      if(response.valid !== '01') {
-        alert('존재하지 않는 업체입니다.');
-        validationBoolean = false;
-      }
-      const numericPattern = /^[0-9]+$/;
-      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const numericPattern = /^[0-9]+$/;
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-      if(enterpriseData.entp_unq === '' || enterpriseData.entp_nm === '' || enterpriseData.entp_tp === '' || custData.memb_dept_nm === '' || custData.memb_nm === '' || custData.memb_pst_nm === '') {
-        validationBoolean = false;
-        alert('필수 내용을 입력해주세요.');
-      }else if(!numericPattern.test(enterpriseData.entp_unq)) {
-        validationBoolean = false;
-        alert('사업자등록번호는 숫자만 입력해주세요.');
-      }else if(enterpriseData.solution_tp === 'STT' && enterpriseData.svc_tp === ''  ) {
-        validationBoolean = false;
-        alert('STT 서비스 형태를 성택해주세요.');
-      }else if(!numericPattern.test(custData.memb_tel)) {
-        validationBoolean = false;
-        alert('전화번호는 숫자만 입력해주세요.');
-      }else if(!emailPattern.test(custData.memb_email)) {
-        validationBoolean = false;
-        alert('이메일 형식에 맞게 입력해주세요.');
-      }else if(totalFileSizeInByte > FILE_SIZE_MAX_LIMIT){
-        validationBoolean = false;
-        alert('파일 최대 용량은 20MB입니다.');
-      }else {
-        systemData.forEach((item) => {
-          if (!numericPattern.test(item.cpu_cnt)) {
-            validationBoolean = false;
-            alert('CPU코어 수는 숫자만 입력해주세요.');
-          }
-          // if (!numericPattern.test(item.mem_sz)) {
-          //   validationBoolean = false;
-          //   alert('메모리 용량은 숫자만 입력해주세요.');
-          // }
-          // if (!numericPattern.test(item.disk_sz)) {
-          //   validationBoolean = false;
-          //   alert('디스크 용량은 숫자만 입력해주세요.');
-          // }
-        });
-      }
-
-      if(!validationBoolean) {
-        return;
-      }
-
-      const newEnterpriseData = enterpriseData;
-      const established_dt = enterpriseData.established_dt;
-      newEnterpriseData['flag'] = 'I';
-      newEnterpriseData['established_dt'] = `${established_dt.slice(0,4)}-${established_dt.slice(4,6)}-${established_dt.slice(6,8)}`
-
-      const newCustData = custData;
-      newCustData['principal_tp'] = 'Y';
-
-      let formData = new FormData();
-
-      atchFiles?.forEach((atchFile) => {
-        formData.append('files', atchFile);
+    if(enterpriseData.entp_unq === '' || enterpriseData.entp_nm === '' || enterpriseData.entp_tp === '' || custData.memb_dept_nm === '' || custData.memb_nm === '' || custData.memb_pst_nm === '') {
+      validationBoolean = false;
+      alert('필수 내용을 입력해주세요.');
+    }else if(!numericPattern.test(enterpriseData.entp_unq)) {
+      validationBoolean = false;
+      alert('사업자등록번호는 숫자만 입력해주세요.');
+    }else if(enterpriseData.solution_tp === 'STT' && enterpriseData.svc_tp === ''  ) {
+      validationBoolean = false;
+      alert('STT 서비스 형태를 성택해주세요.');
+    }else if(!numericPattern.test(custData.memb_tel)) {
+      validationBoolean = false;
+      alert('전화번호는 숫자만 입력해주세요.');
+    }else if(!emailPattern.test(custData.memb_email)) {
+      validationBoolean = false;
+      alert('이메일 형식에 맞게 입력해주세요.');
+    }else if(totalFileSizeInByte > FILE_SIZE_MAX_LIMIT){
+      validationBoolean = false;
+      alert('파일 최대 용량은 20MB입니다.');
+    }else {
+      systemData.forEach((item) => {
+        if (!numericPattern.test(item.cpu_cnt)) {
+          validationBoolean = false;
+          alert('CPU코어 수는 숫자만 입력해주세요.');
+        }
+        // if (!numericPattern.test(item.mem_sz)) {
+        //   validationBoolean = false;
+        //   alert('메모리 용량은 숫자만 입력해주세요.');
+        // }
+        // if (!numericPattern.test(item.disk_sz)) {
+        //   validationBoolean = false;
+        //   alert('디스크 용량은 숫자만 입력해주세요.');
+        // }
       });
+    }
 
-      formData.append('enterpriseData', JSON.stringify(newEnterpriseData));
-      formData.append('systemData', JSON.stringify(systemData));
-      formData.append('custData', JSON.stringify(newCustData));
+    if(!validationBoolean) {
+      return;
+    }
 
-      insertEnterprise(formData).then((response) => {
-        alert('업체 등록 완료');
-      })
-      .catch((err) => {
-        alert(`AxiosError: ${err}`);
-      })
-      navigate('/enterprise');
-      })
+    const newEnterpriseData = enterpriseData;
+    newEnterpriseData['flag'] = 'I';
 
-    .catch((err) => {
-      alert(`Axios API Error: ${err}`);
+    const newCustData = custData;
+    newCustData['principal_tp'] = 'Y';
+
+    let formData = new FormData();
+
+    atchFiles?.forEach((atchFile) => {
+      formData.append('files', atchFile);
     });
 
+    formData.append('enterpriseData', JSON.stringify(newEnterpriseData));
+    formData.append('systemData', JSON.stringify(systemData));
+    formData.append('custData', JSON.stringify(newCustData));
 
+    insertEnterprise(formData).then((response) => {
+      alert('업체 등록 완료');
+    })
+    .catch((err) => {
+      alert(`AxiosError: ${err}`);
+    })
+    navigate('/enterprise');
   }
 
   const onClickModifyEntp = () => {
@@ -365,6 +344,26 @@ const EnterpriseRegPage = () => {
     setSystemInputData(systemData[index]);
   }
 
+  const onClickSearchCorRegNum = () => {
+    if(!enterpriseData.entp_unq) {
+      return;
+    }
+    searchCorRegNumberAPI(enterpriseData).then((response) => {
+
+      if(!response) {
+        alert('존재하지 않는 사업자등록번호입니다.');
+        return;
+      }else {
+        alert('조회되었습니다.');
+        setEnterpriseData({...enterpriseData, ['entp_nm']: response.company})
+        setIsCorRegNum(true);
+      }
+    })
+    .catch((err) => {
+      alert(`Axios API Error: ${err}`);
+    });
+  }
+
   return (
     <>
       <div className={styles.register}>
@@ -420,13 +419,6 @@ const EnterpriseRegPage = () => {
             <div>
               <div>
                 <span className={styles.compulsory}>*</span>
-                회사명
-              </div>
-              <div>
-                <input type='text' value={enterpriseData && enterpriseData.entp_nm} onChange={(e) => onChangeEnterpriseInfoData('entp_nm', e)}/>
-              </div>
-              <div>
-                <span className={styles.compulsory}>*</span>
                 사업자등록번호
               </div>
               <div>
@@ -435,23 +427,20 @@ const EnterpriseRegPage = () => {
                   value       = {enterpriseData && enterpriseData.entp_unq}
                   onChange    = {(e) => onChangeEnterpriseInfoData('entp_unq', e)}
                   placeholder = "'-'생략"
-                  maxLength   = {10}/>
-              </div>
-            </div>
-            <div>
-              <div>
-                <span className={styles.compulsory}>*</span>
-                대표자명
-              </div>
-              <div>
-                <input type='text' value={enterpriseData && enterpriseData.president_nm} onChange={(e) => onChangeEnterpriseInfoData('president_nm', e)}/>
+                  maxLength   = {10}
+                />
+                <Button
+                  value           = {'조회'}
+                  onClickEvent    = {onClickSearchCorRegNum}
+                  backgroundColor = {enterpriseData.entp_unq ? 'blue' : 'default' }
+                />
               </div>
               <div>
                 <span className={styles.compulsory}>*</span>
-                설립일
+                회사명
               </div>
               <div>
-                <input type='text' value={enterpriseData && enterpriseData.established_dt} onChange={(e) => onChangeEnterpriseInfoData('established_dt', e)} placeholder='Ex) 20231205'/>
+                <div>{enterpriseData && enterpriseData.entp_nm}</div>
               </div>
             </div>
             <div>

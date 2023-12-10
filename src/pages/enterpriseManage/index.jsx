@@ -54,7 +54,7 @@ const ButtonAtchFileRenderer = (param) => {
 }
 
 const ColumnDefs = [
-	{headerName : 'No.'             , field : 'list_num'     },
+	{headerName : '솔루션'          , field : 'solution_tp'  },
 	{headerName : '사업자등록번호'  , field : 'entp_unq'     },
 	{headerName : '업체 구분'       , field : 'entp_tp'      },
 	{headerName : '업체명'          , field : 'entp_nm'      },
@@ -81,9 +81,10 @@ const EnterpriseManagePage = () => {
   const [currentPage       , setCurrentPage       ] = useState(1);
   const [selectedSolution  , setSelectedSolution  ] = useState('ALL');
 	const [requestData       , setRequestData       ] = useState({
-		entp_nm : '',
-		entp_tp : '',
-		svc_tp  : '',
+		entp_nm     : '',
+		entp_tp     : '',
+		svc_tp      : '',
+    solution_tp : '',
     paging : {
       limit : 10,
       offset: 1,
@@ -169,8 +170,14 @@ const EnterpriseManagePage = () => {
   };
 
   const onClickSelSolution = (solutionType) => {
-    setSelectedSolution(solutionType);
-    setRequestData({...requestData, svc_tp: solutionType});
+
+    if(solutionType !== 'ALL') {
+      setSelectedSolution(solutionType);
+      setRequestData({...requestData, solution_tp: solutionType});
+    }else {
+      setSelectedSolution(solutionType);
+      setRequestData({...requestData, solution_tp: ''});
+    }
   }
 
 	return (
