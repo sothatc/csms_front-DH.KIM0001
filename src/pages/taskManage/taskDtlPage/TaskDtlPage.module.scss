@@ -54,30 +54,10 @@
 
         &:nth-child(3) {
           grid-template-columns: 20% 30% 20% 30%;
-
-          >div:nth-child(even) {
-            display: grid;
-            grid-template-columns: 1fr 50px;
-            grid-column-gap: 5px;
-
-            >button {
-              height: 35px;
-            }
-          }
         }
 
         &:nth-child(4) {
           grid-template-columns: 20% 30% 20% 30%;
-
-          >div:nth-child(2) {
-            display: grid;
-            grid-template-columns: 1fr 50px;
-            grid-column-gap: 5px;
-
-            >button {
-              height: 35px;
-            }
-          }
         }
 
         &:nth-child(5), &:nth-child(7) {

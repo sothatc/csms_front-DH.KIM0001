@@ -4,16 +4,16 @@ import { closeModal, selectModal } from "./modalSlice";
 import { CustAddModal } from "components/organisms/Dialog/CustAddModal/CustAddModal";
 import { CustListModal } from "components/organisms/Dialog/CustListModal/CustListModal";
 import { SearchEntpModal } from "components/organisms/Dialog/SearchEntpModal/SearchEntpModal";
-import { SearchMembModal } from "components/organisms/Dialog/SearchMembModal/SearchMembModal";
 import { SearchTaskMembModal } from "components/organisms/Dialog/SearchTaskMembModal/SearchTaskMembModal";
 import { AtchFileListModal } from "components/organisms/Dialog/AtchFileListModal/AtchFileListModal";
 import { InsertTaskScheduleModal } from "components/organisms/Dialog/InsertTaskScheduleModal/InsertTaskScheduleModal";
+import { SearchCustModal } from "components/organisms/Dialog/SearchMembModal/SearchCustModal";
 
 const MODAL_TYPES = {
   CustListModal           : 'CustListModal',
   CustAddModal            : 'CustAddModal',
   SearchEntpModal         : 'SearchEntpModal',
-  SearchMembModal         : 'SearchMembModal',
+  SearchCustModal         : 'SearchCustModal',
   SearchTaskMembModal     : 'SearchTaskMembModal',
   AtchFileListModal       : 'AtchFileListModal',
   InsertTaskScheduleModal : 'InsertTaskScheduleModal',
@@ -33,8 +33,8 @@ const MODAL_COMPONENTS = [
     component : <SearchEntpModal />,
   },
   {
-    type : MODAL_TYPES.SearchMembModal,
-    component : <SearchMembModal />
+    type : MODAL_TYPES.SearchCustModal,
+    component : <SearchCustModal />
   },
   {
     type : MODAL_TYPES.SearchTaskMembModal,
@@ -60,10 +60,6 @@ export function GlobalModal() {
   const findModal = MODAL_COMPONENTS.find((modal) => {
     return modal.type === modalType;
   })
-
-  // const renderModal = () => {
-  //   return findModal.component;
-  // }
 
   const renderModal = () => {
     if (findModal) {

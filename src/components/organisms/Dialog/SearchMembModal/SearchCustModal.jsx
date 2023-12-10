@@ -3,10 +3,9 @@ import { getCustList, getTaskMembList } from "pages/api/Enterprise/EnterpriseAPI
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { closeModal } from "reduxStore/modalSlice";
-import styles from './SearchMembModal.module.scss';
+import styles from './SearchCustModal.module.scss';
 
-const SearchMembModal = ({data}) => {
-  // const {entp_unq} = data[0];
+const SearchCustModal = ({data}) => {
   const {entp_unq} = data;
 
   const [selectedCustMemb, setSelectedCustMemb] = useState({});
@@ -37,22 +36,6 @@ const SearchMembModal = ({data}) => {
   },[])
 
   const handleClose = () => {
-    // dispatch(closeModal({
-    //   data: {
-    //     "selectedCust"    : selectedCustMemb,
-    //     "selectedTaskMemb": selectedTaskMemb,
-    //   },
-    // }));
-
-    // if(entp_unq) {
-    //   dispatch(closeModal({
-    //     data: {"selectedCust": selectedCustMemb},
-    //   }));
-    // }else {
-    //   dispatch(closeModal({
-    //     data: {"selectedTaskMemb": selectedTaskMemb},
-    //   }));
-    // }
 
     dispatch(closeModal({
       data: {"selectedCust": selectedCustMemb},
@@ -90,24 +73,26 @@ const SearchMembModal = ({data}) => {
                   onClick={() => handleDivClick(item)}
                   className={selectedCustMemb.cust_unq === item.cust_unq ? styles.active : ''}
                 >
-                  <div>{index}</div>
+                  <div>{index + 1}</div>
                   <div>{item.memb_dept_nm}</div>
                   <div>{item.memb_nm}</div>
                   <div>{item.memb_pst_nm}</div>
                 </div>
               ))
-              : taskMembList.map((item, index) => (
-                <div
-                  key={index}
-                  onClick={() => handleDivClick(item)}
-                  className={selectedTaskMemb.memb_unq === item.memb_unq ? styles.active : ''}
-                >
-                  <div>{index}</div>
-                  <div>{item.memb_dept_nm}</div>
-                  <div>{item.memb_nm}</div>
-                  <div>{item.memb_pst_nm}</div>
-                </div>
-              ))}
+              // : taskMembList.map((item, index) => (
+              //   <div
+              //     key={index}
+              //     onClick={() => handleDivClick(item)}
+              //     className={selectedTaskMemb.memb_unq === item.memb_unq ? styles.active : ''}
+              //   >
+              //     <div>{index}</div>
+              //     <div>{item.memb_dept_nm}</div>
+              //     <div>{item.memb_nm}</div>
+              //     <div>{item.memb_pst_nm}</div>
+              //   </div>
+              // ))
+              : null
+              }
           </div>
         </div>
         <div className={styles.modal__btn}>
@@ -118,5 +103,5 @@ const SearchMembModal = ({data}) => {
   )
 }
 
-export { SearchMembModal };
+export { SearchCustModal };
 

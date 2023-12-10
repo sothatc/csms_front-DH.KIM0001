@@ -3,7 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   modalType: '',
   isOpen   : false,
-  // data     : [],
   data     : {},
 };
 
@@ -16,21 +15,18 @@ export const modalSlice = createSlice({
 
       state.modalType = modalType;
       state.isOpen    = true;
-      // state.data.push(data);
       state.data      =  data;
     },
     closeModal: (state, action) => {
       const data = action?.payload;
 
       state.isOpen = false;
-      // state.data.push(data);
       state.data   = data;
     },
     initModal: (state) => {
       state.modalType = '';
       state.isOpen = false;
       state.data = {};
-      // state.data = [];
     },
   },
 });

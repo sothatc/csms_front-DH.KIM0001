@@ -79,6 +79,7 @@ const TaskDtlPage = () => {
       alert('취소하였습니다.');
     }
   }
+  const currentPathName = window.location.pathname;
 
   return (
     <>

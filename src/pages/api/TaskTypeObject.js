@@ -1,5 +1,5 @@
 export const TaskTypeObject = {
-  "INS" : "정기정검",
+  "INS" : "정기점검",
   "ISS" : "이슈",
   "SET" : "설정변경",
   "TRN" : "학습수행",

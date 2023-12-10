@@ -447,7 +447,7 @@ const TaskRegPage = () => {
               </div>
               <div>
                 <div>{selectedCust?.memb_nm}</div>
-                <Button value={'조회'} onClickEvent={() => openSerachModal('SearchMembModal', '고객사담당')} />
+                <Button value={'조회'} onClickEvent={() => openSerachModal('SearchCustModal', '고객사담당')} />
               </div>
             </div>
             <div>
