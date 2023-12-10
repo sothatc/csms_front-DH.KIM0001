@@ -89,7 +89,7 @@ const HomePage = () => {
           </div>
         </div>
         <div className='homepage__calendar'>
-          <div>일정</div>
+          <div>유지보수 일정</div>
           <div>
             <ScheduleCalendar />
           </div>
