@@ -1,3 +1,4 @@
+import { IconImage } from 'components/atoms';
 import { ScheduleCalendar } from 'components/molecules/Calendar/ScheduleCalendar';
 import { getTaskDataListAPI } from 'pages/api/Task/TaskAPI';
 import { TaskJobTypeObject, TaskTypeObject } from 'pages/api/TaskTypeObject';
@@ -6,11 +7,12 @@ import { useNavigate } from 'react-router-dom';
 
 
 const HeaderName = {
+  icon        : '',
   task_st_dt  : "작업일",
   entp_nm     : "업체",
   task_job_tp : "지원 유형",
-  task_tp     : "방식",
-  task_usr_nm : "작업 담당자",
+  task_tp     : "작업방식",
+  task_usr_nm : "담당자",
 }
 
 const HomePage = () => {
@@ -77,6 +79,14 @@ const HomePage = () => {
             {taskDataList.length > 0 ?
               taskDataList.map((task, key) => (
                 <div key={key} onClick={() => onClickMoveToTaskDtl(task.task_unq)}>
+                  <div>
+                    {task.task_tp === '정기점검' &&
+                      <IconImage icon={'CHECK'} />
+                    }
+                    {task.task_tp === '이슈' &&
+                      <IconImage icon={'ERRORICON'} />
+                    }
+                  </div>
                   <div>{task.task_st_dt}</div>
                   <div>{task.entp_nm}</div>
                   <div>{task.task_tp}</div>

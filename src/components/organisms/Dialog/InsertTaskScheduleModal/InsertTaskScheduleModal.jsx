@@ -1,10 +1,10 @@
-import { useDispatch, useSelector } from 'react-redux';
-import styles from './InsertTaskScheduleModal.module.scss';
-import { closeModal, openModal } from 'reduxStore/modalSlice';
-import { Button } from 'components/atoms/Button/Button';
 import { IconImage } from 'components/atoms';
-import { useEffect, useState } from 'react';
+import { Button } from 'components/atoms/Button/Button';
 import { insertTaskScheduleAPI } from 'pages/api/Task/TaskAPI';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { closeModal, openModal } from 'reduxStore/modalSlice';
+import styles from './InsertTaskScheduleModal.module.scss';
 
 const InsertTaskScheduleModal = () => {
   const [scheduleInputInfo, setScheduleInputInfo] = useState({
@@ -145,4 +145,4 @@ const InsertTaskScheduleModal = () => {
   )
 }
 
-export {InsertTaskScheduleModal};
+export { InsertTaskScheduleModal };

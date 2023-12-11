@@ -26,7 +26,8 @@
 
       >div:nth-child(2) {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 65px 1fr;
+        grid-template-columns: 30px 1fr 1fr 1fr 1fr 1fr;
+        grid-column-gap: 10px;
         font-weight: 600;
       }
 
@@ -38,7 +39,7 @@
 
         >div {
           display: grid;
-          grid-template-columns: 1fr 1fr 1fr 65px 1fr;
+          grid-template-columns: 30px 1fr 1fr 1fr 65px 1fr;
           grid-column-gap: 10px;
           box-sizing: content-box;
           padding: 10px 0 5px;

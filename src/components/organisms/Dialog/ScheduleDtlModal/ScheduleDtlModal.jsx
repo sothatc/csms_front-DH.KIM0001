@@ -1,7 +1,7 @@
 import { IconImage } from 'components/atoms';
 import { Button } from 'components/atoms/Button/Button';
 import { format } from 'date-fns';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from 'reduxStore/modalSlice';
 import styles from './ScheduleDtlModal.module.scss';
@@ -13,6 +13,7 @@ const ScheduleDtlModal = () => {
   const [disabledEdit, setDisabledEdit] = useState(true);
 
   const dispatch = useDispatch();
+  const textareaEl = useRef(null);
 
   const eventProps = useSelector((state) => state.modal.modals[0].data);
 
@@ -21,6 +22,12 @@ const ScheduleDtlModal = () => {
       setScheduleData(eventProps);
     }
   },[])
+
+  useEffect(() => {
+    if(!disabledEdit && textareaEl.current) {
+      textareaEl.current.focus();
+    }
+  },[disabledEdit])
 
   const handleClose = () => {
     dispatch(closeModal({
@@ -72,6 +79,7 @@ const ScheduleDtlModal = () => {
           <textarea
             value={scheduleData.conts}
             disabled={disabledEdit}
+            ref={textareaEl}
           />
         </div>
         <div className={styles.modal__btn}>

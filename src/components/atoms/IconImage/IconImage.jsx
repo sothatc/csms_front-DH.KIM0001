@@ -8,6 +8,10 @@ import Time from 'assets/images/common/Time.svg';
 import Logo from 'assets/images/logo.png';
 import Admin from 'assets/images/user/Admin.svg';
 import NomalUser from 'assets/images/user/NomalUser.svg';
+import Wifi from 'assets/images/task/Wifi.svg';
+import Walk from 'assets/images/task/Walk.svg';
+import ErrorIcon from 'assets/images/task/ErrorIcon.svg';
+import Check from 'assets/images/task/Check.svg';
 import React from 'react';
 
 const isDiscernIcon = ({ icon }) => {
@@ -40,6 +44,18 @@ const isDiscernIcon = ({ icon }) => {
 
       case 'EDIT'        :
         return Edit;
+
+      case 'WIFI'        :
+        return Wifi;
+
+      case 'WALK'        :
+        return Walk;
+
+      case 'CHECK'       :
+        return Check;
+
+      case 'ERRORICON'       :
+        return ErrorIcon;
 
       default:
           break;
