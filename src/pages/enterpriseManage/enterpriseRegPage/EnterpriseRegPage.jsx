@@ -19,14 +19,14 @@ const sysDataDivs = [
 
 , {data : 'gpu_model'    , type: 'I', label: 'GPU'        }
 , {data : 'cpu_cnt'      , type: 'I', label: 'CPU 코어'   }
-, {data : 'total_mem_sz' , type: 'I', label: 'Memory'     }
-, {data : 'total_disk_sz', type: 'I', label: 'Disk'       }
+, {data : 'trn_use_flag' , type: 'S', label: '학습 사용'  }
+, {data : 'use_flag'     , type: 'S', label: '사용 여부'  }
 , {data : 'resc_use_flag', type: 'S', label: '리소스 사용'}
 , {data : 'base_path'    , type: 'I', label: '기본경로'   }
 , {data : 'log_path'     , type: 'I', label: '로그경로'   }
 
-, {data : 'trn_use_flag' , type: 'S', label: '학습 사용'  }
-, {data : 'use_flag'     , type: 'S', label: '사용 여부'  }
+, {data : 'total_mem_sz' , type: 'I', label: 'Memory'     }
+, {data : 'total_disk_sz', type: 'I', label: 'Disk'       }
 ];
 
 const defaultSysData = {
@@ -569,10 +569,10 @@ const EnterpriseRegPage = () => {
                           <input
                             value       = {item.label === 'Disk' ? systemInputData['used_disk_sz'] : systemInputData['used_mem_sz']}
                             disabled    = {systemRowIndex === -1}
-                            placeholder = 'used'
+                            placeholder = ''
                             onChange    = {(e) => item.label === 'Disk' ? setSystemInputData({...systemInputData, ['used_disk_sz']:e.target.value}) : setSystemInputData({...systemInputData, ['used_mem_sz']:e.target.value}) }
                           />
-                          <span>G</span>
+                          <span></span>
                           <span>/</span>
                           <input
                             value       = {systemInputData[item.data]}

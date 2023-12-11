@@ -131,6 +131,7 @@ const deleteTaskInfo = async (task_unq) => {
 }
 
 const insertTaskScheduleAPI = async (scheduleInfo) => {
+  console.log("scheduleInfo = ", scheduleInfo);
   try{
     const response = await axiosInstance.post(`/entp/task/insertTaskScheduleInfo`,scheduleInfo);
 

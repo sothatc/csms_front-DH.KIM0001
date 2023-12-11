@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 import { insertTaskScheduleAPI } from 'pages/api/Task/TaskAPI';
 
 const InsertTaskScheduleModal = () => {
-  const [scheduleInfo     , setScheduleInfo     ] = useState([]);
   const [scheduleInputInfo, setScheduleInputInfo] = useState({
     sch_title    : '',
     sch_contents : '',
@@ -19,15 +18,23 @@ const InsertTaskScheduleModal = () => {
 
   const dispatch = useDispatch();
 
-  const slotInfo = useSelector((state) => state.modal.data);
+  const slotInfoProps = useSelector((state) => state.modal.modals[0].data);
+  const entpInfoProps = useSelector((state) => state.modal?.data);
 
   useEffect(() => {
     formatDateFn();
   },[])
 
+  useEffect(() => {
+    if(entpInfoProps) {
+      setScheduleInputInfo({...scheduleInputInfo, entp_unq: entpInfoProps.entp_unq});
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[useSelector((state) => state.modal)])
+
   const formatDateFn = () => {
-    const startDate = new Date(slotInfo.slots[0]);
-    const endDate   = new Date(slotInfo.slots[slotInfo.slots.length -1]);
+    const startDate = new Date(slotInfoProps.slots[0]);
+    const endDate   = new Date(slotInfoProps.slots[slotInfoProps.slots.length -1]);
 
     const startYear = startDate.getFullYear();
     const startMonth = String(startDate.getMonth() + 1).padStart(2, '0');
@@ -47,31 +54,39 @@ const InsertTaskScheduleModal = () => {
 
 
   const formattedStartDate = new Intl.DateTimeFormat('ko-KR', {
-    year: 'numeric',
+    year : 'numeric',
     month: 'long',
-    day: 'numeric',
-  }).format(new Date(slotInfo.slots[0]));
+    day  : 'numeric',
+  }).format(new Date(slotInfoProps.slots[0]));
 
   const formattedEndDate = new Intl.DateTimeFormat('ko-KR', {
-    year: 'numeric',
+    year : 'numeric',
     month: 'long',
-    day: 'numeric',
-  }).format(new Date(slotInfo.slots[slotInfo.slots.length - 1]));
+    day  : 'numeric',
+  }).format(new Date(slotInfoProps.slots[slotInfoProps.slots.length - 1]));
 
   const handleClose = () => {
     dispatch(closeModal({
-      // data:
-    }))
+      modalTypeToClose: 'InsertTaskScheduleModal',
+    }));
   }
 
   const onClickInsertSchedule = () => {
+
+    if(!entpInfoProps.entp_nm) {
+      alert('업체를 조회해주세요');
+      return;
+    }else if(!scheduleInputInfo.sch_title || !scheduleInputInfo.sch_contents) {
+      alert('제목 또는 내용을 입력해주세요');
+      return;
+    }
 
     const confirmed = window.confirm('일정 등록을 하시겠습니까?');
 
     if(confirmed) {
       insertTaskScheduleAPI(scheduleInputInfo).then((response) => {
-        alert('등록 완료.');
-        dispatch(closeModal());
+        alert('일정 등록 완료');
+        handleClose();
       })
       .catch((err) => {
         alert(`Axios API Error: ${err}`);
@@ -113,7 +128,7 @@ const InsertTaskScheduleModal = () => {
             <IconImage icon={'ENTERPRISE'}/>
           </div>
           <div>
-            <div></div>
+            <div>{entpInfoProps && entpInfoProps.entp_nm}</div>
             <Button value={'업체조회'} backgroundColor={'blue'} onClickEvent={() => onClickSearchEntp('SearchEntpModal')}/>
           </div>
         </div>

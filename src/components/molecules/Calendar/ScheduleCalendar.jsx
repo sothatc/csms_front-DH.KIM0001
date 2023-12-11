@@ -67,13 +67,21 @@ const ScheduleCalendar = () => {
   }
 
   const handleSelectEvent = (event) => {
-    //ToDo: 일정 이벤트 클릭시 상세 팝업 로직
-    alert(event);
-  }
+    const eventData = {
+      start: event.start,
+      end: event.end,
+      conts: event.resource,
+      title: event.title
+    };
 
-  // const test = (props) => {
-  //   console.log("props = ", props);
-  // }
+    dispatch(
+      openModal({
+        modalType : 'ScheduleDtlModal',
+        isOpen    : true,
+        data      : eventData,
+      })
+    )
+  }
 
   return (
     <DragAndDropCalendar

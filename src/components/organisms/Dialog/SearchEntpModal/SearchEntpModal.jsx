@@ -37,9 +37,15 @@ const SearchEntpModal = () => {
   const dispatch = useDispatch();
 
   const handleClose = (selectedEntpProps) => {
+    // dispatch(closeModal({
+    //   data: {"selectedEntpProps": selectedEntpProps},
+    // }));
+
     dispatch(closeModal({
-      data: {"selectedEntpProps": selectedEntpProps},
+      modalTypeToClose: 'SearchEntpModal',
+      data: selectedEntpProps,
     }));
+
   }
 
   const onChangeSearchEntpName = (e) => {

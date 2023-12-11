@@ -1,12 +1,14 @@
-import React from 'react';
-import Logo from 'assets/images/logo.png';
-import Calendar from 'assets/images/common/Calendar.svg';
-import AtchFileIcon from 'assets/images/common/AtchFileIcon.svg';
 import ArrowLeft from 'assets/images/common/ArrowLeft.svg';
 import ArrowRight from 'assets/images/common/ArrowRight.svg';
-import NomalUser from 'assets/images/user/NomalUser.svg';
-import Admin from 'assets/images/user/Admin.svg';
+import AtchFileIcon from 'assets/images/common/AtchFileIcon.svg';
+import Calendar from 'assets/images/common/Calendar.svg';
+import Edit from 'assets/images/common/Edit.svg';
 import Enterprise from 'assets/images/common/Enterprise.svg';
+import Time from 'assets/images/common/Time.svg';
+import Logo from 'assets/images/logo.png';
+import Admin from 'assets/images/user/Admin.svg';
+import NomalUser from 'assets/images/user/NomalUser.svg';
+import React from 'react';
 
 const isDiscernIcon = ({ icon }) => {
     switch (icon) {
@@ -14,18 +16,31 @@ const isDiscernIcon = ({ icon }) => {
         return Logo;
       case 'CALENDAR'    :
         return Calendar;
+
       case 'ATCHFILEICON':
         return AtchFileIcon;
+
       case 'ARROW-LEFT'  :
         return ArrowLeft;
+
       case 'ARROW-RIGHT' :
         return ArrowRight;
+
       case 'NOMAL-USER'  :
         return NomalUser;
+
       case 'ADMIN'       :
         return Admin;
+
       case 'ENTERPRISE'  :
         return Enterprise;
+
+      case 'TIME'        :
+        return Time;
+
+      case 'EDIT'        :
+        return Edit;
+
       default:
           break;
     }
