@@ -91,7 +91,7 @@ const EnterpriseRegPage = () => {
   const custOptions = useMemo(() => GenerateOptions(CustTypeObject), []);
   const svcOptions = useMemo(() => GenerateOptions(SvcTypeObject), []);
   const solutionOptoins = useMemo(() => GenerateOptions(SolutionTypeObject), []);
-
+console.log("entp_unq = ", entp_unq);
   if(entp_unq) {
     getEnterpriseDtlInfo(entp_unq).then((response) => {
       setEnterpriseData(response.enterpriseData);
@@ -426,13 +426,15 @@ const EnterpriseRegPage = () => {
                   type        = 'text'
                   value       = {enterpriseData && enterpriseData.entp_unq}
                   onChange    = {(e) => onChangeEnterpriseInfoData('entp_unq', e)}
+                  disabled    = {entp_unq && true}
                   placeholder = "'-'생략"
                   maxLength   = {10}
                 />
                 <Button
                   value           = {'조회'}
                   onClickEvent    = {onClickSearchCorRegNum}
-                  backgroundColor = {enterpriseData.entp_unq ? 'blue' : 'default' }
+                  backgroundColor = {enterpriseData.entp_unq && entp_unq === null ? 'blue' : 'default' }
+                  disabled        = {entp_unq !== null && true}
                 />
               </div>
               <div>
