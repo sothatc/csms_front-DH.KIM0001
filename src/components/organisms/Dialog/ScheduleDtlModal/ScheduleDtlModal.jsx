@@ -19,8 +19,7 @@ const ScheduleDtlModal = () => {
   const textareaEl = useRef(null);
 
   const eventProps = useSelector((state) => state.modal.modals[0].data);
-  const eventProps2 = useSelector((state) => state.modal.modals);
-console.log("eventProps2 = ", eventProps2);
+
   useEffect(() => {
     if(eventProps) {
       setScheduleData(eventProps);
@@ -81,8 +80,9 @@ console.log("eventProps2 = ", eventProps2);
   const onClickModify = () => {
 
     const newScheduleData = scheduleData;
-    newScheduleData['flag'] = 'U';
-    newScheduleData['sch_title'] = scheduleData.title;
+    newScheduleData['flag']         = 'U';
+    newScheduleData['sch_unq']      = scheduleData.id;
+    newScheduleData['sch_title']    = scheduleData.title;
     newScheduleData['sch_contents'] = scheduleData.conts;
 
     const eventStartDate = new Date(scheduleData.start);
@@ -99,13 +99,13 @@ console.log("eventProps2 = ", eventProps2);
         alert('일정 변경이 완료되었습니다.');
         dispatch(closeModal({
           modalTypeToClose: 'ScheduleDtlModal',
+          data: 'reRendering'
         }));
       })
       .catch((err) => {
         alert(`Axios API Error: ${err}`);
       });
     }
-
   }
 
   return (

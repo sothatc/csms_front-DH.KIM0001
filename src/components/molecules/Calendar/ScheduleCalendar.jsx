@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from 'reduxStore/modalSlice';
 
 moment.locale('ko');
@@ -19,7 +19,7 @@ const ScheduleCalendar = () => {
 
   const dispatch = useDispatch();
 
-  // const updatedSchInfo = useSelector((state) =>state.modal.data);
+  const reRendering = useSelector((state) =>state);
 
   const FormatingcurrentDate = () => {
     const date  = new Date();
@@ -40,10 +40,11 @@ const ScheduleCalendar = () => {
     .catch((err) => {
       alert(`Axios Error: ${err}`);
     });
-  },[])
+  },[reRendering])
 
   const events = useMemo(() => (
     taskSchedules.map((taskSchedule) => ({
+      id       : taskSchedule.sch_unq,
       title    : taskSchedule.sch_title,
       start    : new Date(`${taskSchedule.sch_st_dt}T${taskSchedule.sch_st_tm}`),
       end      : new Date(`${taskSchedule.sch_ed_dt}T${taskSchedule.sch_ed_tm}`),
@@ -70,6 +71,7 @@ const ScheduleCalendar = () => {
 
   const handleSelectEvent = (event) => {
     const eventData = {
+      id   : event.id,
       start: event.start,
       end  : event.end,
       conts: event.resource,

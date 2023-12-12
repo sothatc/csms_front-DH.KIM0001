@@ -24,6 +24,7 @@ const SearchTaskMembModal = () => {
 
   const handleClose = () => {
     dispatch(closeModal({
+      modalTypeToClose: 'SearchTaskMembModal',
       data: {"selectedTaskMemb": selectedTaskMemb},
     }));
   }

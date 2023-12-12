@@ -32,7 +32,10 @@ const AtchFileListModal = () => {
   },[])
 
   const handleClose = () => {
-    dispatch(closeModal({data : null}));
+    // dispatch(closeModal({data : null}));
+    dispatch(closeModal({
+      modalTypeToClose: 'AtchFileListModal',
+    }));
   }
 
   const atchFileDownFormat = (response) => {

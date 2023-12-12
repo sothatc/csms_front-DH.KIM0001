@@ -28,7 +28,10 @@ const CustListModal = ({data}) => {
   },[custData, insertCustInfo, deleteCustInfo]);
 
   const handleClose = () => {
-    dispatch(closeModal());
+    // dispatch(closeModal());
+    dispatch(closeModal({
+      modalTypeToClose: 'CustListModal',
+    }));
   }
 
   const onClickAddCust = () => {

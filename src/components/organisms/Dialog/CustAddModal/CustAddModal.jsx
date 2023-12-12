@@ -9,7 +9,10 @@ const CustAddModal = () => {
   const dispatch = useDispatch();
 
   const handleClose = () => {
-    dispatch(closeModal());
+    // dispatch(closeModal());
+    dispatch(closeModal({
+      modalTypeToClose: 'CustAddModal',
+    }));
   }
 
 

@@ -36,8 +36,8 @@ const SearchCustModal = ({data}) => {
   },[])
 
   const handleClose = () => {
-
     dispatch(closeModal({
+      modalTypeToClose: 'SearchCustModal',
       data: {"selectedCust": selectedCustMemb},
     }));
 

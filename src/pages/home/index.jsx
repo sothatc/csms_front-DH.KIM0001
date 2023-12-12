@@ -3,7 +3,6 @@ import { ScheduleCalendar } from 'components/molecules/Calendar/ScheduleCalendar
 import { getTaskDataListAPI } from 'pages/api/Task/TaskAPI';
 import { TaskJobTypeObject, TaskTypeObject } from 'pages/api/TaskTypeObject';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 

@@ -65,9 +65,9 @@ const TaskRegPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate() ;
 
-  const selectedCustProps     = useSelector((state) => state?.modal.data.data?.selectedCust);
-  const selectedTaskMembProps = useSelector((state) => state?.modal.data.data?.selectedTaskMemb);
-  const selectedEntpProps     = useSelector((state) => state?.modal.data.data?.selectedEntpProps);
+  const selectedCustProps     = useSelector((state) => state?.modal.data?.selectedCust);
+  const selectedTaskMembProps = useSelector((state) => state?.modal.data?.selectedTaskMemb);
+  const selectedEntpProps     = useSelector((state) => state?.modal.data?.selectedEntpProps);
 
   const queryString = window.location.search.substring(1).split("=");
   let entpNoArr = '';
