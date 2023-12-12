@@ -19,6 +19,8 @@ const ScheduleCalendar = () => {
 
   const dispatch = useDispatch();
 
+  // const updatedSchInfo = useSelector((state) =>state.modal.data);
+
   const FormatingcurrentDate = () => {
     const date  = new Date();
     const year  = date.getFullYear();
@@ -69,7 +71,7 @@ const ScheduleCalendar = () => {
   const handleSelectEvent = (event) => {
     const eventData = {
       start: event.start,
-      end: event.end,
+      end  : event.end,
       conts: event.resource,
       title: event.title
     };
@@ -93,7 +95,6 @@ const ScheduleCalendar = () => {
       onSelectSlot  = {handleSelectSlot}
       onSelectEvent = {handleSelectEvent}
       selectable    = {true}
-      // onNavigate    = {test}
       components = {{
         event: EventComponent,
       }}
@@ -103,3 +104,4 @@ const ScheduleCalendar = () => {
 
 
 export { ScheduleCalendar };
+

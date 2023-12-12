@@ -131,12 +131,21 @@ const deleteTaskInfo = async (task_unq) => {
 }
 
 const insertTaskScheduleAPI = async (scheduleInfo) => {
-  console.log("scheduleInfo = ", scheduleInfo);
   try{
-    const response = await axiosInstance.post(`/entp/task/insertTaskScheduleInfo`,scheduleInfo);
+    const response = await axiosInstance.post(`/entp/task/setTaskScheduleInfo`,scheduleInfo);
 
     return response;
 
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
+
+const updateTaskScheduleAPI = async (scheduleInfo) => {
+  try {
+    const response = await axiosInstance.post(`/entp/task/setTaskScheduleInfo`, scheduleInfo);
+
+    return response;
   }catch(err) {
     throw Error(`Error: ${err}`);
   }
@@ -152,5 +161,6 @@ export {
   deleteTaskInfo,
   insertTaskScheduleAPI,
   getTaskScheduleListAPI,
+  updateTaskScheduleAPI,
 };
 

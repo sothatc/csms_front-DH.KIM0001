@@ -249,7 +249,6 @@ const TaskManagePage = () => {
               </div>
               <label className={requestData.noDate === true ? 'disabled' : ''}>
                 <DatePicker
-                  selectsRange = {true}
                   startDate    = {selectedRange[0]}
                   endDate      = {selectedRange[1]}
                   dateFormat   = "yyyy년 MM월 dd일"

@@ -81,10 +81,13 @@ const InsertTaskScheduleModal = () => {
       return;
     }
 
+    const newScheduleData = scheduleInputInfo;
+    newScheduleData['flag'] = 'I';
+
     const confirmed = window.confirm('일정 등록을 하시겠습니까?');
 
     if(confirmed) {
-      insertTaskScheduleAPI(scheduleInputInfo).then((response) => {
+      insertTaskScheduleAPI(newScheduleData).then((response) => {
         alert('일정 등록 완료');
         handleClose();
       })

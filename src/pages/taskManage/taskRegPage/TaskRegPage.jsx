@@ -65,10 +65,6 @@ const TaskRegPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate() ;
 
-  // const selectedCustProps     = useSelector(selectModals);
-  // const selectedTaskMembProps = useSelector(selectModals);
-  // const selectedEntpProps     = useSelector(selectModals);
-  // console.log("selectedCustProps = ", selectedCustProps);
   const selectedCustProps     = useSelector((state) => state?.modal.data.data?.selectedCust);
   const selectedTaskMembProps = useSelector((state) => state?.modal.data.data?.selectedTaskMemb);
   const selectedEntpProps     = useSelector((state) => state?.modal.data.data?.selectedEntpProps);

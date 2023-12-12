@@ -3,6 +3,7 @@ import { ScheduleCalendar } from 'components/molecules/Calendar/ScheduleCalendar
 import { getTaskDataListAPI } from 'pages/api/Task/TaskAPI';
 import { TaskJobTypeObject, TaskTypeObject } from 'pages/api/TaskTypeObject';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -28,6 +29,7 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+
     getTaskDataListAPI(requestData).then((response) => {
       const updatedTaskDataList = [...response.taskList];
 
@@ -80,6 +82,7 @@ const HomePage = () => {
               taskDataList.map((task, key) => (
                 <div key={key} onClick={() => onClickMoveToTaskDtl(task.task_unq)}>
                   <div>
+                    {/* To-Do switch함수로 뺄 예정 */}
                     {task.task_tp === '정기점검' &&
                       <IconImage icon={'CHECK'} />
                     }
