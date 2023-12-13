@@ -5,7 +5,7 @@ import { Select } from 'components/atoms/Select/Select';
 import { format, parseISO } from 'date-fns';
 import { ko } from 'date-fns/esm/locale';
 import { getEnterpriseDtlInfo } from 'pages/api/Enterprise/EnterpriseAPI';
-import { getTaskDtlInfoAPI, insertTaskInfoAPI, updateTaskInfoAPI } from 'pages/api/Task/TaskAPI';
+import { getMappingTaskToScheduleAPI, getTaskDtlInfoAPI, insertTaskInfoAPI, updateTaskInfoAPI } from 'pages/api/Task/TaskAPI';
 import { TaskSvcEfc, TaskTypeObject } from 'pages/api/TaskTypeObject';
 import { GenerateOptions } from 'pages/api/common/dataSet/dataSet';
 import { useEffect, useMemo, useState } from 'react';
@@ -259,14 +259,6 @@ const TaskRegPage = () => {
     return formattedDate;
   },[])
 
-  console.log("dateString = ", dateString.task_st_dt);
-  console.log("initDateFormat = ", initDateFormat);
-  console.log("entp = ", enterpriseData.entp_unq);
-
-  useEffect(() => {
-
-  },[dateString, enterpriseData.entp_unq])
-
   const onClickInsertTaskInfo = () => {
 
     const boolIsValue = isInsertEssentialValue(taskData.task_tp);
@@ -312,14 +304,20 @@ const TaskRegPage = () => {
       formData.append('files', atchFile);
     });
 
-    insertTaskInfoAPI(formData)
-      .then((resolve) => {
-        alert("작업 등록 완료");
-        navigate('/task');
-      })
-      .catch((err) => {
-        alert(`API Error: ${err}`);
-      });
+    getMappingTaskToScheduleAPI(newTaskData).then((response) => {
+      console.log("response = ", response);
+    })
+    .catch((err) => {
+      alert(`Axios API Error: ${err}`);
+    });
+
+    insertTaskInfoAPI(formData).then((resolve) => {
+      alert("작업 등록 완료");
+      navigate('/task');
+    })
+    .catch((err) => {
+      alert(`API Error: ${err}`);
+    });
   }
 
   const onClickOneDeleteFile = (index) => {

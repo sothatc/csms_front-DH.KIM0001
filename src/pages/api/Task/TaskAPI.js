@@ -50,6 +50,23 @@ const getTaskScheduleListAPI = async(sch_st_dt) => {
   }
 }
 
+const getMappingTaskToScheduleAPI = async (object) => {
+const {task_st_dt, entp_unq} = object;
+
+  try {
+    const response = await axiosInstance.post(`/entp/task/setConfirmedSchedule`,
+      {
+        entp_unq,
+        sch_st_dt: task_st_dt,
+      }
+    );
+
+    return response;
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
+
 const insertTaskInfoAPI = async (object) => {
   const formData = object;
   try{
@@ -162,5 +179,6 @@ export {
   insertTaskScheduleAPI,
   getTaskScheduleListAPI,
   updateTaskScheduleAPI,
+  getMappingTaskToScheduleAPI,
 };
 
