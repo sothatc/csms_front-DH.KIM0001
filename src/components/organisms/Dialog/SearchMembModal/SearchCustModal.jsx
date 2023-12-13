@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { closeModal } from "reduxStore/modalSlice";
 import styles from './SearchCustModal.module.scss';
+import { CustTypeObject } from "pages/api/CustTypeObject";
 
 const SearchCustModal = ({data}) => {
   const {entp_unq} = data;
@@ -76,21 +77,9 @@ const SearchCustModal = ({data}) => {
                   <div>{index + 1}</div>
                   <div>{item.memb_dept_nm}</div>
                   <div>{item.memb_nm}</div>
-                  <div>{item.memb_pst_nm}</div>
+                  <div>{CustTypeObject[item.memb_pst_nm]}</div>
                 </div>
               ))
-              // : taskMembList.map((item, index) => (
-              //   <div
-              //     key={index}
-              //     onClick={() => handleDivClick(item)}
-              //     className={selectedTaskMemb.memb_unq === item.memb_unq ? styles.active : ''}
-              //   >
-              //     <div>{index}</div>
-              //     <div>{item.memb_dept_nm}</div>
-              //     <div>{item.memb_nm}</div>
-              //     <div>{item.memb_pst_nm}</div>
-              //   </div>
-              // ))
               : null
               }
           </div>

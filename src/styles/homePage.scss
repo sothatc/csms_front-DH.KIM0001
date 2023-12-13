@@ -62,8 +62,28 @@
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 
       >div:first-child {
-        font-weight: 600;
-        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+
+        >div {
+          font-weight: 600;
+          margin-bottom: 30px;
+        }
+
+        >div:last-child {
+          display: flex;
+          align-items: center;
+          font-size: 14px;
+
+          >div:nth-child(1) {
+            background-color: #FFC436;
+          }
+
+          >div:nth-child(3) {
+            margin-left: 12px;
+            background-color: #3174ad;
+          }
+        }
       }
     }
 
@@ -73,4 +93,12 @@
       align-items: center;
     }
   }
+}
+
+
+.circle {
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+  border-radius: 50%;
 }

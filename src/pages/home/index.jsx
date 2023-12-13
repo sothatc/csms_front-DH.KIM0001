@@ -101,7 +101,15 @@ const HomePage = () => {
           </div>
         </div>
         <div className='homepage__calendar'>
-          <div>유지보수 일정</div>
+          <div>
+            <div>유지보수 일정</div>
+            <div>
+              <div className='circle'/>
+              <div>완료</div>
+              <div className='circle'/>
+              <div>예정</div>
+            </div>
+          </div>
           <div>
             <ScheduleCalendar />
           </div>

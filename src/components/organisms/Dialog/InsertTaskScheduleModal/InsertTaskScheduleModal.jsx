@@ -19,7 +19,7 @@ const InsertTaskScheduleModal = () => {
   const dispatch = useDispatch();
 
   const slotInfoProps = useSelector((state) => state.modal.modals[0].data);
-  const entpInfoProps = useSelector((state) => state.modal?.data);
+  const entpInfoProps = useSelector((state) => state.modal?.data?.selectedEntpProps);
 
   useEffect(() => {
     formatDateFn();
@@ -93,7 +93,7 @@ const InsertTaskScheduleModal = () => {
       })
       .catch((err) => {
         alert(`Axios API Error: ${err}`);
-      })
+      });
     }
   }
 

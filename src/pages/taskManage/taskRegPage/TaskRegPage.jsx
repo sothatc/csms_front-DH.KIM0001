@@ -155,7 +155,6 @@ const TaskRegPage = () => {
           openModal({
             modalType : modalType,
             isOpen    : true,
-            // data: {'entp_unq' : enterpriseData.entp_unq},
             data: {},
           })
         );
@@ -244,6 +243,30 @@ const TaskRegPage = () => {
     return true;
   }
 
+  const initDateFormat = useMemo(() => {
+    const date = new Date();
+
+    const year  = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day   = date.getDate();
+    const twoDigitMonth = month.toString().padStart(2, '0');
+    const twoDigitDay   = day.toString().padStart(2, '0');
+
+    const dateStr = `${year}-${twoDigitMonth}-${twoDigitDay}`;
+    const parseISODate = parseISO(dateStr);
+    const formattedDate = format(parseISODate, 'yyyy-MM-dd');
+
+    return formattedDate;
+  },[])
+
+  console.log("dateString = ", dateString.task_st_dt);
+  console.log("initDateFormat = ", initDateFormat);
+  console.log("entp = ", enterpriseData.entp_unq);
+
+  useEffect(() => {
+
+  },[dateString, enterpriseData.entp_unq])
+
   const onClickInsertTaskInfo = () => {
 
     const boolIsValue = isInsertEssentialValue(taskData.task_tp);
@@ -269,30 +292,17 @@ const TaskRegPage = () => {
     newTaskData['task_usr_unq'] = selectedTaskMemb.task_usr_unq;
     newTaskData['task_usr_nm']  = selectedTaskMemb.task_usr_nm;
 
-    const date = new Date();
-
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const twoDigitMonth = month.toString().padStart(2, '0');
-    const day = date.getDate();
-    const twoDigitDay = day.toString().padStart(2, '0');
-
-    const dateStr = `${year}-${twoDigitMonth}-${twoDigitDay}`;
-    const parseISODate = parseISO(dateStr);
-    const formattedDate = format(parseISODate, 'yyyy-MM-dd');
-
     if(dateString.task_st_dt === '') {
-      newTaskData['task_st_dt'] = formattedDate;
+      newTaskData['task_st_dt'] = initDateFormat;          // 현재날짜
     }else {
-      newTaskData['task_st_dt'] = dateString.task_st_dt;
+      newTaskData['task_st_dt'] = dateString.task_st_dt;  // 선택한 날짜
     }
 
     if(dateString.task_ed_dt === '') {
-      newTaskData['task_ed_dt'] = formattedDate;
+      newTaskData['task_ed_dt'] = initDateFormat;
     }else {
       newTaskData['task_ed_dt'] = dateString.task_ed_dt;
     }
-
 
     let formData = new FormData();
 
@@ -405,7 +415,7 @@ const TaskRegPage = () => {
               <h4>작업 등록</h4>
             </div>
             <div>
-              {taskNoArr !== null && taskNoArr !==''
+              {taskNoArr !== null && taskNoArr !== ''
                 ? <Button value={'저장'} onClickEvent={onClickModifyTaskInfo}/>
                 : <Button value={'등록'} onClickEvent={onClickInsertTaskInfo}/>
               }

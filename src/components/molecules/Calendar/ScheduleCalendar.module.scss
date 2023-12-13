@@ -1,0 +1,58 @@
+.event {
+  >p {
+    font-size: 10px;
+  }
+}
+
+
+.toolbar {
+
+  button {
+    &:hover {
+      background-color: #46ECF0;
+    }
+  }
+
+  >div:first-child {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+
+    >div{
+      min-width: 80px;
+      margin-right: 10px;
+    }
+
+    >button {
+      border-style: none;
+
+      &:hover {
+
+        >img {
+          filter: brightness(0) invert(1) sepia(1) saturate(10000%) hue-rotate(5000deg);
+        }
+      }
+    }
+  }
+
+  >div:last-child {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 0 5px 0;
+
+    >button {
+      padding: 3px 5px;
+    }
+
+    >div {
+      display: flex;
+      justify-content: end;
+      align-items: center;
+
+      >button {
+        padding: 3px 5px;
+        margin-left: 10px;
+      }
+    }
+  }
+}

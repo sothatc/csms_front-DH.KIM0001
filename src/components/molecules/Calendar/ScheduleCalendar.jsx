@@ -1,3 +1,4 @@
+import { Button } from 'components/atoms/Button/Button';
 import { format, parseISO } from 'date-fns';
 import moment from 'moment';
 import 'moment/locale/ko';
@@ -8,6 +9,7 @@ import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from 'reduxStore/modalSlice';
+import styles from './ScheduleCalendar.module.scss';
 
 moment.locale('ko');
 const localizer = momentLocalizer(moment);
@@ -52,13 +54,6 @@ const ScheduleCalendar = () => {
     }))
   ), [taskSchedules])
 
-  const EventComponent = ({ event }) => (
-    <div>
-      <p>{event.title}</p>
-      <p>{event.resource}</p>
-    </div>
-  );
-
   const handleSelectSlot = (slotInfo) => {
     dispatch(
       openModal({
@@ -87,6 +82,35 @@ const ScheduleCalendar = () => {
     )
   }
 
+
+  const EventComponent = ({ event }) => (
+    <div className={styles.event}>
+      <p>{event.title}</p>
+      <p>{event.resource}</p>
+    </div>
+  );
+
+  const CustomToolbar = ({label, onNavigate, onView}) => {
+
+    return (
+      <div className={styles.toolbar}>
+        <div>
+          <div>{label}</div>
+          <Button image={'ARROW-LEFT'} onClickEvent={()=>onNavigate('PREV')}/>
+          <Button image={'ARROW-RIGHT'} onClickEvent={()=>onNavigate('NEXT')}/>
+        </div>
+        <div>
+          <Button value={'Today'} onClickEvent={()=>onNavigate('TODAY')}/>
+          <div>
+            <Button value={'월별'} onClickEvent={()=>onView('month')}/>
+            <Button value={'일별'} onClickEvent={()=>onView('day')}/>
+            <Button value={'일정'} onClickEvent={()=>onView('agenda')}/>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <DragAndDropCalendar
       style         = {{ height: 500 }}
@@ -99,6 +123,7 @@ const ScheduleCalendar = () => {
       selectable    = {true}
       components = {{
         event: EventComponent,
+        toolbar: CustomToolbar,
       }}
     />
   )

@@ -2,12 +2,12 @@ import { IconImage } from 'components/atoms';
 import { Button } from 'components/atoms/Button/Button';
 import { format } from 'date-fns';
 import moment from 'moment';
+import { updateTaskScheduleAPI } from 'pages/api/Task/TaskAPI';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import DatePicker from "react-datepicker";
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from 'reduxStore/modalSlice';
 import styles from './ScheduleDtlModal.module.scss';
-import { updateTaskScheduleAPI } from 'pages/api/Task/TaskAPI';
 
 
 
