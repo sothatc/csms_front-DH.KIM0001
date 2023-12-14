@@ -10,7 +10,7 @@ import styles from './EnterpriseRegPage.module.scss';
 
 
 
-const sysInfoDataDivs = [
+const sysDataDivs = [
   {data : 'os_vers'      , type: 'I', label: 'OS'         }
 , {data : 'svr_hst'      , type: 'I', label: '서버 호스트'}
 , {data : 'svr_ip'       , type: 'I', label: '서버 IP'    }
@@ -24,14 +24,9 @@ const sysInfoDataDivs = [
 , {data : 'resc_use_flag', type: 'S', label: '리소스 사용'}
 , {data : 'base_path'    , type: 'I', label: '기본경로'   }
 , {data : 'log_path'     , type: 'I', label: '로그경로'   }
-];
 
-const sysDataListDivs = [
-  {data : 'svr_hst'      , type: 'I', label: '서버 호스트'}
-, {data : 'svr_ip'       , type: 'I', label: '서버 IP'    }
-, {data : 'kern_vers'    , type: 'I', label: 'kenel'      }
-, {data : 'os_vers'      , type: 'I', label: 'OS'         }
-, {data : 'svr_cont'     , type: 'I', label: '서버 용도'  }
+, {data : 'total_mem_sz' , type: 'I', label: 'Memory'     }
+, {data : 'total_disk_sz', type: 'I', label: 'Disk'       }
 ];
 
 const defaultSysData = {
@@ -568,47 +563,91 @@ const EnterpriseRegPage = () => {
             <h4>{'>'}</h4>
             <h4>시스템 정보</h4>
           </div>
+          <div>
+            <Button value={'추가'} onClickEvent = {addNewSystemRow}/>
+            <Button value={'삭제'} onClickEvent = {deleteSystemRow}/>
+          </div>
         </div>
         <div className={styles.system__info}>
-          {sysInfoDataDivs.map((item) => {
-            return (
-              <div>
-                <div>{item.label}</div>
+          <div>
+            {sysDataDivs.map(item =>{
+              return (
                 <div>
-                  {item.type === 'I' ? (
-                    <input />
-                  ) : (
-                    <Select />
-                  )}
+                  <div>{item.label}</div>
+                  <div>
+                    {item.type === 'I' ? (
+                      ['Disk', 'Memory'].includes(item.label) ? (
+                        <>
+                          <input
+                            value       = {item.label === 'Disk' ? systemInputData['used_disk_sz'] : systemInputData['used_mem_sz']}
+                            disabled    = {systemRowIndex === -1}
+                            placeholder = ''
+                            onChange    = {(e) => item.label === 'Disk' ? setSystemInputData({...systemInputData, ['used_disk_sz']:e.target.value}) : setSystemInputData({...systemInputData, ['used_mem_sz']:e.target.value}) }
+                          />
+                          <span></span>
+                          <span>/</span>
+                          <input
+                            value       = {systemInputData[item.data]}
+                            disabled    = {systemRowIndex === -1}
+                            placeholder = 'total'
+                            onChange    = {(e) => onChangeSystemData(item.data, e)}
+                          />
+                          <span>G</span>
+                        </>
+                      ) : (
+                          <input value={systemInputData[item.data]} onChange={(e) => onChangeSystemData(item.data, e)} disabled={systemRowIndex === -1}/>
+                      )
+                    ) : (
+                      <Select
+                        name          = {item.data}
+                        value         = {systemInputData[item.data]}
+                        onChangeEvent = {onChangeSystemUseYnCode}
+                        disabled      = {systemRowIndex === -1}
+                        dataSet = {[
+                          {value: 'Y' , text: "사용"  },
+                          {value: 'N' , text: "미사용"},
+                        ]}
+                      />
+                    )}
+                  </div>
                 </div>
-              </div>
-            )
-          })}
-          {/* 임시 빈칸처리 */}
-          <div><div></div><div></div></div><div><div></div><div></div></div><div><div></div><div></div></div>
-        </div>
-        <div className={styles.system__btn}>
-          <Button value={'+'}/>
-          <Button value={'-'}/>
+              )
+            })}
+          </div>
         </div>
         <div className={styles.system__list}>
           <div>
-            {sysDataListDivs.map(item =>{
+            {sysDataDivs.map(item =>{
               return (<div>{item.label}</div>)
             })}
           </div>
           {systemData.map((sys, index) => {
             return (<div onClick={() => selectRowItem(index)} style={{backgroundColor: systemRowIndex === index ? '#00ffd08c' : 'transparent'}}>
-              {sysDataListDivs.map(item =>{
+              {sysDataDivs.map(item =>{
                 return (
                   <div>
-                    <div>{sys[item.data]}</div>
+                    {['Disk', 'Memory'].includes(item.label) ? (
+                      <>
+                        <div>{item.label === 'Disk' ? sys['used_disk_sz'] : sys['used_mem_sz']}</div>
+                        <span>G</span>
+                        <div>{sys[item.data]}</div>
+                        <span>G</span>
+                      </>
+                    )
+                    :
+                    (
+                      <div>{sys[item.data]}</div>
+                    )}
                   </div>
                 )
               })}
             </div>)
           })}
         </div>
+        {/* <div className={styles.system__etc}>
+          <div>추가정보</div>
+          <div></div>
+        </div> */}
       </div>
     </>
   )
