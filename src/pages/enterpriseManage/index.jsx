@@ -6,8 +6,8 @@ import { EntpTypeObject, SvcTypeObject } from 'pages/api/EnterpriseTypeObject';
 import { GenerateOptions } from 'pages/api/common/dataSet/dataSet';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { initModal, openModal } from 'reduxStore/modalSlice';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { openModal } from 'reduxStore/modalSlice';
 
 
 const ButtonMoveActionRenderer = (param) => {
@@ -93,15 +93,16 @@ const EnterpriseManagePage = () => {
 	});
 
 	const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const location = useLocation();
+  // const dispatch = useDispatch();
 
   const entpOptions = useMemo(() => GenerateOptions(EntpTypeObject), []);
   const svcOptions  = useMemo(() => GenerateOptions(SvcTypeObject), []);
 
   useEffect(() => {
     getEnterpriseListEvent(requestData);
-		dispatch(initModal());
-  },[currentPage, selSolutionBtn])
+		// dispatch(initModal());
+  },[currentPage, selSolutionBtn, location])
 
   const getEnterpriseListEvent = (requestData) => {
 

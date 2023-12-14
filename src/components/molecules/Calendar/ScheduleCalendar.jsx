@@ -18,20 +18,19 @@ const DragAndDropCalendar = withDragAndDrop(Calendar);
 
 const ScheduleCalendar = () => {
   const [taskSchedules, setTaskSchedules] = useState([]);
+  const [viewDate     , setViewDate     ] = useState(new Date());
 
   const dispatch = useDispatch();
 
   const reRendering = useSelector((state) =>state);
 
   const FormatingcurrentDate = () => {
-    const date  = new Date();
-    const year  = date.getFullYear();
-    const month = date.getMonth()+1;
+    const year  = viewDate.getFullYear();
+    const month = String(viewDate.getMonth()+1).padStart(2, '0');
 
     const dateString    = `${year}-${month}`;
     const parseISODate  = parseISO(dateString);
     const formattedDate = format(parseISODate, 'yyyy-MM');
-
     return formattedDate;
   }
 
@@ -42,17 +41,27 @@ const ScheduleCalendar = () => {
     .catch((err) => {
       alert(`Axios Error: ${err}`);
     });
-  },[reRendering])
+  },[reRendering, viewDate])
 
   const events = useMemo(() => (
     taskSchedules.map((taskSchedule) => ({
-      id       : taskSchedule.sch_unq,
-      title    : taskSchedule.sch_title,
-      start    : new Date(`${taskSchedule.sch_st_dt}T${taskSchedule.sch_st_tm}`),
-      end      : new Date(`${taskSchedule.sch_ed_dt}T${taskSchedule.sch_ed_tm}`),
-      resource : taskSchedule.sch_contents,
+      id          : taskSchedule.sch_unq,
+      title       : taskSchedule.sch_title,
+      start       : new Date(`${taskSchedule.sch_st_dt}T${taskSchedule.sch_st_tm}`),
+      end         : new Date(`${taskSchedule.sch_ed_dt}T${taskSchedule.sch_ed_tm}`),
+      resource    : taskSchedule.sch_contents,
+      finished_yn : taskSchedule.finished_yn,
+      backgroundColor : taskSchedule.finished_yn === 'Y' ? '#FFC436' : '',
     }))
   ), [taskSchedules])
+
+  const eventStyleGetter = (event) => {
+    const style = {
+      backgroundColor: event.backgroundColor,
+    };
+
+    return {style};
+  }
 
   const handleSelectSlot = (slotInfo) => {
     dispatch(
@@ -82,13 +91,15 @@ const ScheduleCalendar = () => {
     )
   }
 
+  const EventComponent = ({ event }) => {
 
-  const EventComponent = ({ event }) => (
-    <div className={styles.event}>
-      <p>{event.title}</p>
-      <p>{event.resource}</p>
-    </div>
-  );
+    return (
+      <div className={styles.event}>
+        <p>{event.title}</p>
+        <p>{event.resource}</p>
+      </div>
+    )
+  };
 
   const CustomToolbar = ({label, onNavigate, onView}) => {
 
@@ -111,20 +122,26 @@ const ScheduleCalendar = () => {
     )
   }
 
+  const onNavigate = (date) => {
+    setViewDate(date);
+  }
+
   return (
     <DragAndDropCalendar
-      style         = {{ height: 500 }}
-      localizer     = {localizer}
-      events        = {events}
-      startAccessor = "start"
-      endAccessor   = "end"
-      onSelectSlot  = {handleSelectSlot}
-      onSelectEvent = {handleSelectEvent}
-      selectable    = {true}
-      components = {{
-        event: EventComponent,
-        toolbar: CustomToolbar,
-      }}
+    style         = {{ height: 500 }}
+    localizer     = {localizer}
+    events        = {events}
+    startAccessor = "start"
+    endAccessor   = "end"
+    onSelectSlot  = {handleSelectSlot}
+    onSelectEvent = {handleSelectEvent}
+    selectable    = {true}
+    onNavigate    = {(date) => onNavigate(date)}
+    components = {{
+      event: EventComponent,
+      toolbar: CustomToolbar,
+    }}
+    eventPropGetter={eventStyleGetter}
     />
   )
 }

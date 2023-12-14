@@ -32,6 +32,16 @@ const InsertTaskScheduleModal = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[useSelector((state) => state.modal)])
 
+  useEffect(() => {
+    const st_tm = scheduleInputInfo.sch_st_tm;
+    const ed_tm = scheduleInputInfo.sch_ed_tm;
+
+    if(st_tm > ed_tm) {
+      setScheduleInputInfo({...scheduleInputInfo, sch_ed_tm: st_tm});
+    }
+
+  },[scheduleInputInfo.sch_st_tm, scheduleInputInfo.sch_ed_tm])
+
   const formatDateFn = () => {
     const startDate = new Date(slotInfoProps.slots[0]);
     const endDate   = new Date(slotInfoProps.slots[slotInfoProps.slots.length -1]);
@@ -122,9 +132,9 @@ const InsertTaskScheduleModal = () => {
         <div className={styles.modal__date}>
           <IconImage icon={'CALENDAR'}/>
           {formattedStartDate} - {formattedEndDate}
-          <input type='time' max='23:59:59' onChange={(e)=>onChangeContents(e, 'sch_st_tm')}/>
+          <input type='time' value={scheduleInputInfo.sch_st_tm} max='23:59:59' onChange={(e)=>onChangeContents(e, 'sch_st_tm')}/>
           <div>~</div>
-          <input type='time' max='23:59:59' onChange={(e)=>onChangeContents(e, 'sch_ed_tm')}/>
+          <input type='time' value={scheduleInputInfo.sch_ed_tm} max='23:59:59' onChange={(e)=>onChangeContents(e, 'sch_ed_tm')}/>
         </div>
         <div className={styles.modal__search}>
           <div>

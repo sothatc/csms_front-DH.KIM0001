@@ -9,8 +9,9 @@ import styles from './AtchFileListModal.module.scss';
 const AtchFileListModal = () => {
   const [atchFiles, setAtchFiles] = useState([]);
 
-  const task_unq = useSelector((state) => state?.modal.data.task_unq);
-  const entp_unq = useSelector((state) => state?.modal.data.entp_unq);
+  const task_unq = useSelector((state) => state.modal?.modals[0].data.task_unq);
+  const entp_unq = useSelector((state) => state.modal.modals[0].data.entp_unq);
+
   const dispatch = useDispatch();
 
   useEffect(() => {

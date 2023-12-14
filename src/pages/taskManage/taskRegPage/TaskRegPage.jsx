@@ -130,6 +130,21 @@ const TaskRegPage = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[useSelector((state) => state?.modal.data)])
 
+useEffect(() => {
+  const st_dt = dateString.task_st_dt;
+  const ed_dt = dateString.task_ed_dt;
+
+  const formattedStartDate = new Date(st_dt);
+  const formattedEndDate = new Date(ed_dt);
+
+  if(formattedStartDate > taskData.task_ed_dt) {
+    setTaskData({...taskData, task_ed_dt: formattedStartDate});
+  }
+  if(formattedEndDate < formattedStartDate) {
+    setDateString({...dateString, task_ed_dt: st_dt});
+  }
+},[dateString])
+
   const openSerachModal = (modalType, target) => {
     switch(target) {
       case '고객사담당':
@@ -182,7 +197,7 @@ const TaskRegPage = () => {
   const onChangeTaskInfoCode = (name, value) => {
     setTaskData((prev) => {
       return {...prev, [name]: value};
-    })
+    });
   }
 
   const onChangeSTTCnt = (name, e) => {
@@ -267,8 +282,20 @@ const TaskRegPage = () => {
       return;
     }
 
+    if(atchFiles.find((current) => current.name.split('.')[current.name.split('.').length - 1] === 'exe')
+      || atchFiles.find((current) => current.name.split('.')[current.name.split('.').length - 1] === 'svg')
+    ){
+      alert('exe·svg파일은 첨부할 수 없는 파일입니다.');
+      return;
+    }
+
     if(totalFileSizeInByte > FILE_SIZE_MAX_LIMIT){
       alert('파일 최대 용량은 20MB입니다.');
+      return;
+    }
+
+    if(atchFiles.length > 20) {
+      alert('업로드 파일 가능 최대는 20개입니다.');
       return;
     }
 
@@ -403,6 +430,16 @@ const TaskRegPage = () => {
     })
   }
 
+  const onClickCancel = () => {
+    const confirmed = window.confirm('취소하시겠습니까? 변경사항이 저장되지 않을 수 있습니다.');
+
+    if(confirmed) {
+      navigate('/task');
+    }else {
+      return;
+    }
+  }
+
   return (
     <>
       <div className={styles.register}>
@@ -417,7 +454,7 @@ const TaskRegPage = () => {
                 ? <Button value={'저장'} onClickEvent={onClickModifyTaskInfo}/>
                 : <Button value={'등록'} onClickEvent={onClickInsertTaskInfo}/>
               }
-              <Button value={'취소'}/>
+              <Button value={'취소'} onClickEvent={onClickCancel}/>
             </div>
           </div>
           <div className={styles.register__content}>

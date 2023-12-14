@@ -184,7 +184,7 @@ console.log("entp_unq = ", entp_unq);
     const numericPattern = /^[0-9]+$/;
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    if(enterpriseData.entp_unq === '' || enterpriseData.entp_nm === '' || enterpriseData.entp_tp === '' || custData.memb_dept_nm === '' || custData.memb_nm === '' || custData.memb_pst_nm === '') {
+    if(enterpriseData.entp_unq === '' || enterpriseData.entp_nm === '' || enterpriseData.entp_tp === '' || custData.memb_nm === '' || custData.memb_pst_nm === '') {
       validationBoolean = false;
       alert('필수 내용을 입력해주세요.');
     }else if(!numericPattern.test(enterpriseData.entp_unq)) {
@@ -241,11 +241,11 @@ console.log("entp_unq = ", entp_unq);
 
     insertEnterprise(formData).then((response) => {
       alert('업체 등록 완료');
+      navigate('/enterprise', {state: {from: '/enterprise/register'}});
     })
     .catch((err) => {
       alert(`AxiosError: ${err}`);
     })
-    navigate('/enterprise');
   }
 
   const onClickModifyEntp = () => {
@@ -364,6 +364,16 @@ console.log("entp_unq = ", entp_unq);
     });
   }
 
+  const onClickCancel = () => {
+    const confirmed = window.confirm('취소하시겠습니까? 변경사항이 저장되지 않을 수 있습니다.');
+
+    if(confirmed) {
+      navigate('/task');
+    }else {
+      return;
+    }
+  }
+
   return (
     <>
       <div className={styles.register}>
@@ -378,7 +388,7 @@ console.log("entp_unq = ", entp_unq);
                 ? <Button value={'수정'} onClickEvent={onClickModifyEntp}/>
                 : <Button value={'등록'} onClickEvent={onClickInsertEntp}/>
               }
-              <Button value={'취소'}/>
+              <Button value={'취소'} onClickEvent={onClickCancel}/>
             </div>
           </div>
           <div className={styles.register__content}>
@@ -454,7 +464,7 @@ console.log("entp_unq = ", entp_unq);
                 <input type='text' placeholder='(업체측)' value={custData && custData.memb_nm} onChange={(e) => onChangeCustInfoData('memb_nm', e)}/>
               </div>
               <div>
-                <span className={styles.compulsory}>*</span>
+                <span className={styles.compulsory}></span>
                 부서명
               </div>
               <div>

@@ -205,25 +205,25 @@ const TaskManagePage = () => {
     const pageNumbers = [];
     const halfVisiblePages = Math.floor(visiblePages / 2);
 
-     let start = currentPage - halfVisiblePages;
-     let end = currentPage + halfVisiblePages;
+      let start = currentPage - halfVisiblePages;
+      let end = currentPage + halfVisiblePages;
 
-     if (start <= 0) {
-       start = 1;
-       end = Math.min(totalPages, visiblePages);
-     }
+      if (start <= 0) {
+        start = 1;
+        end = Math.min(totalPages, visiblePages);
+      }
 
-     if (end > totalPages) {
-       end = totalPages;
-       start = Math.max(1, totalPages - visiblePages + 1);
-     }
+      if (end > totalPages) {
+        end = totalPages;
+        start = Math.max(1, totalPages - visiblePages + 1);
+      }
 
-     for (let i = start; i <= end; i++) {
-      pageNumbers.push(
-        <li key={i} className={i === currentPage ? 'task__pagination--active' : ''} onClick={() => onClickPaging(i)}>
-          {i}
-        </li>
-      );
+      for (let i = start; i <= end; i++) {
+        pageNumbers.push(
+          <li key={i} className={i === currentPage ? 'task__pagination--active' : ''} onClick={() => onClickPaging(i)}>
+            {i}
+          </li>
+        );
     }
     return pageNumbers;
   };
