@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { closeModal } from 'reduxStore/modalSlice';
 import styles from './CustListModal.module.scss';
+import { CustTypeObject } from 'pages/api/CustTypeObject';
 
 const CustListModal = ({data}) => {
   const {entpUnqProps, entpTpProps, custDataProps} = data;
@@ -23,29 +24,40 @@ const CustListModal = ({data}) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    getCustList(entpUnqProps).then((response) => {
+      setCustData(response.data);
+    })
+    .catch((err) => {
+      alert(`Axios API Error: ${err}`);
+    });
   },[custData, insertCustInfo, deleteCustInfo]);
 
   const handleClose = () => {
-    // dispatch(closeModal());
     dispatch(closeModal({
       modalTypeToClose: 'CustListModal',
     }));
   }
 
   const onClickAddCust = () => {
+    if(inputCustData.memb_nm === '' || inputCustData.memb_pst_nm === '' || inputCustData.memb_tel === '' || inputCustData.memb_email === '') {
+      alert('필수 정보를 모두 입력해주세요.');
+      return;
+    }
+
+    const confirmed = window.confirm('추가하시겠습니까?');
+
     const newCustData = inputCustData;
     newCustData['flag'] = 'I';
 
+    if(confirmed) {
+      insertCustInfo(newCustData).then((response) => {
+        alert('추가 완료 되었습니다.');
+      })
+      .catch((err) => {
+        alert(`Axios API Error: ${err}`);
+      });
 
-    insertCustInfo(newCustData);
-
-    alert('추가 완료 되었습니다.');
-
-    getCustList(entpUnqProps).then((response) => {
-      setCustData(response.data);
-    });
+    }
 
     setInputCustData({
       memb_nm     : '',
@@ -58,7 +70,14 @@ const CustListModal = ({data}) => {
   }
 
   const onChangeCustData = (name, e) => {
-    setInputCustData({...inputCustData, [name]: e.target.value});
+    const value = e.target.value;
+
+    if(name === 'memb_tel') {
+      const memb_tel_num = value.replace(/[^0-9]/g, '').substring(0, 11);
+      setInputCustData({...inputCustData, [name]: memb_tel_num});
+    }else {
+      setInputCustData({...inputCustData, [name]: value});
+    }
   }
 
   const onChangeSearchCustName = () => {
@@ -66,14 +85,15 @@ const CustListModal = ({data}) => {
   }
 
   const onClickDeleteCust = (cust_unq) => {
-
-    deleteCustInfo(cust_unq);
-
-    alert("삭제 완료 되었습니다.");
-
-    getCustList(entpUnqProps).then((response) => {
-      setCustData(response.data);
-    });
+    const confirmed = window.confirm('삭제하시겠습니까?');
+    if(confirmed) {
+      deleteCustInfo(cust_unq).then((response) => {
+        alert("삭제 완료 되었습니다.");
+      })
+      .catch((err) => {
+        alert(`Axios API Error: ${err}`);
+      });
+    }
   }
 
   return (
@@ -104,7 +124,7 @@ const CustListModal = ({data}) => {
             {custData && custData.map((item, key) => (
               <div key={key}>
                 <div>{item.memb_dept_nm}</div>
-                <div>{item.memb_pst_nm}</div>
+                <div>{CustTypeObject[item.memb_pst_nm]}</div>
                 <div>{item.memb_nm}</div>
                 <div>{item.memb_tel}</div>
                 <div>{item.memb_email}</div>
@@ -115,10 +135,16 @@ const CustListModal = ({data}) => {
         </div>
         <div className={styles.modal__add}>
           <input placeholder='부서이름' value={inputCustData.memb_dept_nm} onChange={(e)=>onChangeCustData('memb_dept_nm', e)}/>
-          <input placeholder='직위' value={inputCustData.memb_pst_nm} onChange={(e)=>onChangeCustData('memb_pst_nm', e)}/>
-          <input placeholder='담당자명' value={inputCustData.memb_nm} onChange={(e)=>onChangeCustData('memb_nm', e)}/>
-          <input placeholder='연락처' value={inputCustData.memb_tel} onChange={(e)=>onChangeCustData('memb_tel', e)}/>
-          <input placeholder='Email' value={inputCustData.memb_email} onChange={(e)=>onChangeCustData('memb_email', e)}/>
+          <input placeholder='*직위' value={inputCustData.memb_pst_nm} onChange={(e)=>onChangeCustData('memb_pst_nm', e)}/>
+          <input placeholder='*담당자명' value={inputCustData.memb_nm} onChange={(e)=>onChangeCustData('memb_nm', e)}/>
+          <input
+            type        = 'tel'
+            value       = {inputCustData.memb_tel}
+            maxLength   = {11}
+            onChange    = {(e)=>onChangeCustData('memb_tel', e)}
+            placeholder = '*연락처 (숫자만)'
+          />
+          <input placeholder='*Email' value={inputCustData.memb_email} onChange={(e)=>onChangeCustData('memb_email', e)}/>
           <Button value={'추가'} onClickEvent={onClickAddCust}/>
         </div>
         <div className={styles.modal__btn}>
