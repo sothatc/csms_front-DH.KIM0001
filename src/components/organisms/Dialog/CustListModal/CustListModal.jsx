@@ -44,6 +44,12 @@ const CustListModal = ({data}) => {
       return;
     }
 
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if(!emailPattern.test(inputCustData.memb_email)) {
+      alert('이메일 형식에 맞게 입력해주세요.');
+      return;
+    }
+
     const confirmed = window.confirm('추가하시겠습니까?');
 
     const newCustData = inputCustData;
