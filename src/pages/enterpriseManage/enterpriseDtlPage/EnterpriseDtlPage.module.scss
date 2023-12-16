@@ -39,6 +39,17 @@
       padding: 3px;
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 
+      >div:not(:last-child) {
+        >div{
+          &:nth-child(even) {
+            >div{
+              display: flex;
+              align-items: center;
+            }
+          }
+        }
+      }
+
       > div {
         display: grid;
         grid-template-columns: 20% 80%;
