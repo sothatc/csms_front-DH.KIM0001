@@ -3,8 +3,8 @@ import styles from './Button.module.scss';
 
 
 const Button = (props) => {
-	const { key, name, value, image, onClickEvent, active=false, disabled=false, color='white', backgroundColor='default', ext='' } = props;
-	const classNames = `${styles.btn} ${styles[`btn--background-${backgroundColor}`]} ${ext}`;
+	const { key, name, value, image, onClickEvent, active=false, disabled=false, color='white', backgroundColor='default' } = props;
+	const classNames = `${styles.btn} ${styles[`btn--background-${backgroundColor}`]}`;
 
 	const onClickEventHandler = (e) => {
 		onClickEvent && onClickEvent(name);

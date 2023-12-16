@@ -130,20 +130,20 @@ const TaskRegPage = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[useSelector((state) => state?.modal.data)])
 
-useEffect(() => {
-  const st_dt = dateString.task_st_dt;
-  const ed_dt = dateString.task_ed_dt;
+  useEffect(() => {
+    const st_dt = dateString.task_st_dt;
+    const ed_dt = dateString.task_ed_dt;
 
-  const formattedStartDate = new Date(st_dt);
-  const formattedEndDate = new Date(ed_dt);
+    const formattedStartDate = new Date(st_dt);
+    const formattedEndDate = new Date(ed_dt);
 
-  if(formattedStartDate > taskData.task_ed_dt) {
-    setTaskData({...taskData, task_ed_dt: formattedStartDate});
-  }
-  if(formattedEndDate < formattedStartDate) {
-    setDateString({...dateString, task_ed_dt: st_dt});
-  }
-},[dateString])
+    if(formattedStartDate > taskData.task_ed_dt) {
+      setTaskData({...taskData, task_ed_dt: formattedStartDate});
+    }
+    if(formattedEndDate < formattedStartDate) {
+      setDateString({...dateString, task_ed_dt: st_dt});
+    }
+  },[dateString])
 
   const openSerachModal = (modalType, target) => {
     switch(target) {
@@ -626,11 +626,19 @@ useEffect(() => {
               <div>
                 <div>
                   <div>총 건수</div>
-                  <input value={taskData.stt_month_total_cnt} />
+                  <div>{taskData.stt_month_total_cnt}</div>
                   <div>성공</div>
-                  <input value={taskData.stt_month_s_cnt} onChange={(e) => onChangeSTTCnt('stt_month_s_cnt', e)}/>
+                  <input
+                    value={taskData.stt_month_s_cnt}
+                    onChange={(e) => onChangeSTTCnt('stt_month_s_cnt', e)}
+                    disabled={enterpriseData.solution_tp === 'CRM'}
+                  />
                   <div>실패</div>
-                  <input value={taskData.stt_month_f_cnt} onChange={(e) => onChangeSTTCnt('stt_month_f_cnt', e)}/>
+                  <input
+                    value={taskData.stt_month_f_cnt}
+                    onChange={(e) => onChangeSTTCnt('stt_month_f_cnt', e)}
+                    disabled={enterpriseData.solution_tp === 'CRM'}
+                  />
                 </div>
               </div>
             </div>
@@ -639,11 +647,19 @@ useEffect(() => {
               <div>
                 <div>
                   <div>총 건수</div>
-                  <input value={taskData.stt_day_total_cnt} />
+                  <div>{taskData.stt_day_total_cnt}</div>
                   <div>성공</div>
-                  <input value={taskData.stt_day_s_cnt} onChange={(e) => onChangeSTTCnt('stt_day_s_cnt', e)}/>
+                  <input
+                    value={taskData.stt_day_s_cnt}
+                    onChange={(e) => onChangeSTTCnt('stt_day_s_cnt', e)}
+                    disabled={enterpriseData.solution_tp === 'CRM'}
+                  />
                   <div>실패</div>
-                  <input value={taskData.stt_day_f_cnt} onChange={(e) => onChangeSTTCnt('stt_day_f_cnt', e)}/>
+                  <input
+                    value={taskData.stt_day_f_cnt}
+                    onChange={(e) => onChangeSTTCnt('stt_day_f_cnt', e)}
+                    disabled={enterpriseData.solution_tp === 'CRM'}
+                  />
                 </div>
               </div>
             </div>

@@ -1,9 +1,12 @@
 .btn {
-  display: grid;
-  place-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 10px;
   border: 1px solid #C4C4C4;
   border-radius: 5px;
   background-color: #fff;
+  cursor: pointer;
 
 	&.btn--background {
 
@@ -21,6 +24,10 @@
   &:disabled{
     opacity: 20%;
     cursor: not-allowed;
+  }
+
+  >img {
+    margin-right: 2px;
   }
 }
 

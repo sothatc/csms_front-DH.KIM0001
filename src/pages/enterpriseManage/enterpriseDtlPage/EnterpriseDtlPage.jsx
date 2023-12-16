@@ -57,7 +57,7 @@ const EnterpriseDtlPage = () => {
   const [atchFiles          , setAtchFiles          ] = useState([]);
   const [custData           , setCustData           ] = useState([]);
   const [principalCustData  , setPrincipalCustData  ] = useState({});
-  const [systemData         , setSystemData         ] = useState([]);
+  // const [systemData         , setSystemData         ] = useState([]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -69,7 +69,7 @@ const EnterpriseDtlPage = () => {
       setEnterpriseData(response.enterpriseData);
       setAtchFiles(response.enterpriseAtchData);
       setCustData(response.enterpriseCustData);
-      setSystemData(response.enterpriseSvcData);
+      // setSystemData(response.enterpriseSvcData);
     });
   }, [])
 
@@ -82,7 +82,7 @@ const EnterpriseDtlPage = () => {
     })
   },[custData])
 
-  const handleClickModifyEvent = () => {
+  const onClickModifyEvent = () => {
     navigate(`/enterprise/register?entp_unq=${enterpriseData.entp_unq}&cust_unq=${principalCustData.cust_unq}`);
   }
 
@@ -122,7 +122,6 @@ const EnterpriseDtlPage = () => {
   }
 
   const onClickDeleteEntp = () => {
-
     const confirmed = window.confirm('업체를 삭제하시겠습니까?');
 
     if(confirmed) {
@@ -143,6 +142,15 @@ const EnterpriseDtlPage = () => {
     navigate('/enterprise');
   }
 
+  const openSysInfoModal = () => {
+    dispatch(
+      openModal({
+        modalType : 'SystemInfoModal',
+        isOpen    : true,
+      })
+    );
+  }
+
   return (
     <>
       <div className={styles.register}>
@@ -150,10 +158,11 @@ const EnterpriseDtlPage = () => {
           <div className={styles.register__title}>
             <div>
               <h4>{'>'}</h4>
-              <h4>업체 상세 정보</h4>
+              <h4>업체 정보</h4>
+              <Button value={'시스템 정보'} image={'SYSTEM'} onClickEvent={openSysInfoModal}/>
             </div>
             <div>
-              <Button value={'수정'}     onClickEvent={handleClickModifyEvent}/>
+              <Button value={'수정'}     onClickEvent={onClickModifyEvent}/>
               <Button value={'삭제'}     onClickEvent={onClickDeleteEntp}/>
               <Button value={'메인으로'} onClickEvent={onClickMoveToMain} />
             </div>

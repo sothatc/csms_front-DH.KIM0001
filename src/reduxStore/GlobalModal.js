@@ -9,6 +9,7 @@ import { SearchTaskMembModal } from "components/organisms/Dialog/SearchTaskMembM
 import { AtchFileListModal } from "components/organisms/Dialog/AtchFileListModal/AtchFileListModal";
 import { InsertTaskScheduleModal } from "components/organisms/Dialog/InsertTaskScheduleModal/InsertTaskScheduleModal";
 import { ScheduleDtlModal } from "components/organisms/Dialog/ScheduleDtlModal/ScheduleDtlModal";
+import { SystemInfoModal } from "components/organisms/Dialog/SystemInfoModal/SystemInfoModal";
 
 export function GlobalModal() {
   const modals = useSelector(selectModals); // 모달 상태 가져오기
@@ -33,6 +34,9 @@ export function GlobalModal() {
         return <InsertTaskScheduleModal key={index} data={modal.data} />;
       case 'ScheduleDtlModal' :
         return <ScheduleDtlModal key={index} data={modal.data} />
+      case 'SystemInfoModal' :
+        return <SystemInfoModal key={index} data={modal.data} />
+
       default:
         return null;
     }
