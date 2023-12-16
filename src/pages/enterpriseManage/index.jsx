@@ -89,7 +89,7 @@ const EnterpriseManagePage = () => {
     {headerName : '사업자등록번호'  , field : 'entp_unq'     , onCellClicked: onCellClicked},
     {headerName : '업체 구분'       , field : 'entp_tp'      , onCellClicked: onCellClicked},
     {headerName : '업체명'          , field : 'entp_nm'      , onCellClicked: onCellClicked},
-    {headerName : '서비스 구분'     , field : 'svc_tp'       },
+    {headerName : '서비스 구분'     , field : 'svc_tp'       , onCellClicked: onCellClicked},
     {headerName : '월 STT 처리 건수', field : 'stt_month_cnt'},
     {headerName : '일 STT 처리 건수', field : 'stt_day_cnt'  },
     {headerName : '업체 등록일시'   , field : 'reg_dtm'      },
