@@ -34,6 +34,8 @@
       display: grid;
       grid-template-rows: repeat(1fr);
       border: 1px solid #E5E5E5;
+      padding: 3px;
+      border-radius: 10px;
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 
       > div {
@@ -91,6 +93,7 @@
             font-size: 14px;
             font-weight: 600;
             color: #E5E5E5;
+            border-radius: 10px;
             background-color: #1c427e;
           }
 
@@ -109,14 +112,16 @@
           >input {
             width: 100%;
             height: 35px;
-            border: 1px solid #E5E5E5;
             padding: 2px 10px;
+            border-radius: 10px;
+            border: 1px solid #E5E5E5;
           }
 
           >textarea {
             width: 100%;
             height: 100%;
             padding: 10px;
+            border-radius: 10px;
             border: 1px solid #E5E5E5;
           }
 
@@ -134,21 +139,21 @@
     .register__file {
       display: grid;
       grid-template-columns: 20% 80%;
+      padding: 3px;
       border: 1px solid #E5E5E5;
+      border-radius: 10px;
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 
       &--th {
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: #1c427e;
+        border-radius: 10px;
         color: #fff;
-        height: 150px;
-
+        background-color: #1c427e;
       }
 
       &--td {
-        height: 150px;
         overflow: hidden;
 
         >div:first-child {
@@ -199,6 +204,82 @@
   }
 }
 
+.contect {
+  display: grid;
+  grid-template-rows: 24px calc(100% - 24px - 20px);
+  grid-row-gap: 20px;
+  max-width: 1280px;
+  margin: 30px auto;
+
+  .contect__title {
+    display: flex;
+  }
+
+  .contect__contents {
+    display: grid;
+    grid-template-rows: repeat(1fr);
+    padding: 3px;
+    border-radius: 10px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+
+    >div:not(:last-child) {
+      border-bottom: 1px solid #fff;
+    }
+
+    >div {
+      display: grid;
+      grid-template-columns: 20% 30% 20% 30%;
+      height: 41px;
+
+      >div {
+        &:nth-child(odd) {
+          background-color: #1c427e;
+          text-align: center;
+          line-height: 40px;
+          font-size: 14px;
+          font-weight: 600;
+          border-radius: 10px;
+          color: #fff;
+        }
+
+        &:nth-child(even) {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 0 3px;
+
+          >input {
+            width: 100%;
+            height: 30px;
+            padding: 0 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            border: 1px solid #E5E5E5;
+          }
+          >div {
+            width: 100%;
+            height: 30px;
+          }
+        }
+      }
+    }
+
+    >div:first-child {
+
+      >div:nth-child(2) {
+        display: grid;
+        grid-template-columns: 1fr 28px;
+        grid-column-gap: 5px;
+
+        >img {
+          border-radius: 50%;
+          background-color: #EEE0C9;
+        }
+      }
+    }
+  }
+}
+
 .closeBtn {
   background-color: #fff;
 
@@ -231,142 +312,8 @@
   }
 }
 
-.system {
-  max-width: 1280px;
-  margin: 60px auto;
-  display: grid;
-  grid-template-rows: 24px 150px 24px calc(100% - 24px - 24px - 150px - 20px * 3);
-  gap: 20px;
-
-  .system__title {
-    display: flex;
-    justify-content: space-between;
-
-    >div {
-      display: flex;
-
-      >button {
-        width: 90px;
-        height: 30px;
-        margin-left: 10px;
-        font-size: 14px;
-        font-weight: 600;
-        border-style: none;
-        background-color: #FFC436;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-      }
-    }
-  }
-
-  .system__info {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-
-    >div {
-      display: grid;
-      grid-template-rows: 20px 30px;
-
-      &:not(:nth-child(5), :nth-child(10)) {
-        border-right: 1px solid #fff;
-      }
-
-      >div {
-        &:first-child {
-          padding: 0 5px;
-          font-size: 14px;
-          color: #fff;
-          background-color: #1c427e;
-        }
-
-        &:last-child {
-
-          >input {
-            width: 100%;
-            height: 100%;
-            padding: 0 5px;
-            border: 1px solid #c4c4c4;
-          }
-
-          >div { //Select Box
-            width: 100%;
-          }
-        }
-      }
-    }
-  }
-
-  .system__btn {
-    display: flex;
-    justify-content: end;
-  }
-
-  .system__list {
-    display: grid;
-    grid-template-rows: repeat(1fr);
-    margin-bottom: 20px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-
-    >div {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      height: 40px;
-      font-size: 14px;
-
-      &:not(:first-child) {
-        border: 1px solid #c4c4c4;
-
-        >div {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          overflow: hidden;
-
-          >div {
-            width: 100%;
-            padding: 0 5px;
-          }
-
-          &:not(:last-child) {
-            border-right: 1px solid #c4c4c4;
-          }
-        }
-      }
-    }
-
-    >div:first-child {
-      color: #fff;
-      background-color: #1c427e;
-
-      >div {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        &:not(:last-child) {
-          border-right: 1px solid #fff;
-        }
-      }
-    }
-  }
 
 
-
-  .system__etc {
-    display: grid;
-    grid-template-columns: 20% 80%;
-
-    >div:first-child {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 14px;
-      font-weight: 600;
-      color: #fff;
-      background-color: #1c427e;
-    }
-  }
-}
 
 .close {
   display: grid;

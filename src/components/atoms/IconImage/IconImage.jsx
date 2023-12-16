@@ -12,6 +12,8 @@ import Wifi from 'assets/images/task/Wifi.svg';
 import Walk from 'assets/images/task/Walk.svg';
 import ErrorIcon from 'assets/images/task/ErrorIcon.svg';
 import Check from 'assets/images/task/Check.svg';
+import Plus from 'assets/images/common/Plus.svg';
+import Minus from 'assets/images/common/Minus.svg';
 import React from 'react';
 
 const isDiscernIcon = ({ icon }) => {
@@ -56,6 +58,12 @@ const isDiscernIcon = ({ icon }) => {
 
       case 'ERRORICON'       :
         return ErrorIcon;
+
+      case 'PLUS'       :
+        return Plus;
+
+      case 'MINUS'       :
+        return Minus;
 
       default:
           break;

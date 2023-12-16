@@ -7,6 +7,7 @@ import { GenerateOptions } from 'pages/api/common/dataSet/dataSet';
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './EnterpriseRegPage.module.scss';
+import { IconImage } from 'components/atoms';
 
 
 
@@ -65,14 +66,16 @@ const defaultEntpData = {
   entp_unq       : '',
 }
 
-const defaultCustData = {
-  memb_dept_nm : '',
-  memb_email   : '',
-  memb_nm      : '',
-  memb_pst_nm  : '',
-  memb_tel     : '',
-  principal_tp : '',
-}
+const defaultCustData = [
+  {
+    memb_dept_nm : '',
+    memb_email   : '',
+    memb_nm      : '',
+    memb_pst_nm  : '',
+    memb_tel     : '',
+    principal_tp : '',
+  }
+]
 const delFileArray = [];
 
 const FILE_SIZE_MAX_LIMIT = 20 * 1024 * 1024;
@@ -82,10 +85,8 @@ const EnterpriseRegPage = () => {
   const [enterpriseData , setEnterpriseData ] = useState({...defaultEntpData});
   const [custData       , setCustData       ] = useState({...defaultCustData});
   const [systemData     , setSystemData     ] = useState([]);
-  const [systemInputData, setSystemInputData] = useState({...defaultSysData});
-  const [systemRowIndex , setSystemRowIndex ] = useState(-1);
   const [isCorRegNum    , setIsCorRegNum    ] = useState(false);
-
+console.log("enterpriseData = ",enterpriseData.svc_tp);
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -118,9 +119,15 @@ const EnterpriseRegPage = () => {
   }
 
   const onChangeEnterpriseCode = (name, value) => {
-    setEnterpriseData((prev) => {
-      return {...prev, [name] : value};
-    });
+    if(name === 'entp_tp' && value === 'S') {
+      setEnterpriseData((prev) => {
+        return {...prev, [name] : value, svc_tp : ''};
+      });
+    }else {
+      setEnterpriseData((prev) => {
+        return {...prev, [name] : value};
+      });
+    }
   }
 
   const onChangeEnterpriseInfoData = (name, e) => {
@@ -148,24 +155,6 @@ const EnterpriseRegPage = () => {
     setCustData((prev) => {
       return {...prev, [name] : value};
     })
-  }
-
-  const onChangeSystemData = (name, e) => {
-    setSystemInputData({...systemInputData, [name] : e.target.value});
-
-    const newData = JSON.parse(JSON.stringify(systemData));
-    newData[systemRowIndex] = {...systemInputData, [name] : e.target.value}
-
-    setSystemData(newData);
-
-  }
-  const onChangeSystemUseYnCode = (name, value) => {
-    setSystemInputData({...systemInputData, [name] : value});
-
-    const newData = JSON.parse(JSON.stringify(systemData));
-    newData[systemRowIndex] = {...systemInputData, [name] : value}
-
-    setSystemData(newData);
   }
 
   const totalFileSizeInByte = useMemo(() => {
@@ -306,49 +295,6 @@ const EnterpriseRegPage = () => {
     navigate('/enterprise');
   }
 
-  const isAnyPropertyNotEmpty = (obj) => {
-    if(systemData.length < 1) {
-      return true;
-    }else {
-      for(const key in obj) {
-        if(systemInputData[key] !== '') {
-          return true;
-        }
-      }
-      return false;
-    }
-  }
-
-  const deleteSystemRow = () => {
-    let newData = systemData.filter((_, index) => index !== systemRowIndex);
-
-    setSystemData(newData);
-    setSystemRowIndex(systemData.length-2);
-
-    //ToDo 시스템 정보 삭제시 다음 선택된 정보에 버그
-    setSystemInputData(systemData[systemData.length-2]);
-  }
-
-  const addNewSystemRow = () => {
-    const isNotEmpty = isAnyPropertyNotEmpty(systemInputData);
-    let newData = JSON.parse(JSON.stringify(systemData));
-    newData.push(defaultSysData);
-
-    if(!isNotEmpty) {
-      alert("시스템 정보를 입력해주세요.");
-      return;
-    }
-
-    setSystemData(newData);
-    setSystemRowIndex(systemData.length);
-    setSystemInputData({...defaultSysData});
-  }
-
-  const selectRowItem = (index) => {
-    setSystemRowIndex(index);
-    setSystemInputData(systemData[index]);
-  }
-
   const onClickSearchCorRegNum = () => {
     if(!enterpriseData.entp_unq) {
       return;
@@ -377,6 +323,10 @@ const EnterpriseRegPage = () => {
     }else {
       return;
     }
+  }
+
+  const onClickAddMgr = () => {
+
   }
 
   return (
@@ -454,7 +404,7 @@ const EnterpriseRegPage = () => {
               </div>
               <div>
                 <span className={styles.compulsory}>*</span>
-                회사명
+                업체명
               </div>
               <div>
                 <div>{enterpriseData && enterpriseData.entp_nm}</div>
@@ -466,7 +416,7 @@ const EnterpriseRegPage = () => {
                 담당자
               </div>
               <div>
-                <input type='text' placeholder='(업체측)' value={custData && custData.memb_nm} onChange={(e) => onChangeCustInfoData('memb_nm', e)}/>
+                <input type='text' placeholder='(고객사 소속)' value={custData && custData.memb_nm} onChange={(e) => onChangeCustInfoData('memb_nm', e)}/>
               </div>
               <div>
                 <span className={styles.compulsory}></span>
@@ -511,16 +461,13 @@ const EnterpriseRegPage = () => {
               <div>
                 <input type='text' value={custData && custData.memb_email} placeholder='Ex) Email@gmail.com'onChange={(e) => onChangeCustInfoData('memb_email', e)}/>
               </div>
-              <div>
-                <span className={styles.compulsory}>*</span>
-                STT 서비스 형태
-              </div>
+              <div>STT 서비스 형태</div>
               <div>
                 <Select
                   value    = {enterpriseData && enterpriseData.svc_tp}
                   name     = 'svc_tp'
                   dataSet  = {svcOptions}
-                  disabled ={enterpriseData.solution_tp !== 'STT' && true}
+                  disabled = {(enterpriseData.solution_tp !== 'STT') || (enterpriseData.entp_tp === 'S') && true}
                   onChangeEvent={onChangeEnterpriseCode}
                 />
               </div>
@@ -562,52 +509,43 @@ const EnterpriseRegPage = () => {
           </div>
         </div>
       </div>
-      <div className={styles.system}>
-        <div className={styles.system__title}>
+      <div className={styles.contect}>
+        <div className={styles.contect__title}>
+          <h4>{'>'}</h4>
+          <h4>협력사</h4>
+        </div>
+        <div className={styles.contect__contents}>
           <div>
-            <h4>{'>'}</h4>
-            <h4>시스템 정보</h4>
+            <div>담당자</div>
+            <div>
+              <input />
+              <IconImage icon={'PLUS'}/>
+            </div>
+            <div>업체명</div>
+            <div>
+              <input />
+            </div>
           </div>
-        </div>
-        <div className={styles.system__info}>
-          {sysInfoDataDivs.map((item) => {
-            return (
-              <div>
-                <div>{item.label}</div>
-                <div>
-                  {item.type === 'I' ? (
-                    <input />
-                  ) : (
-                    <Select />
-                  )}
-                </div>
-              </div>
-            )
-          })}
-          {/* 임시 빈칸처리 */}
-          <div><div></div><div></div></div><div><div></div><div></div></div><div><div></div><div></div></div>
-        </div>
-        <div className={styles.system__btn}>
-          <Button value={'+'}/>
-          <Button value={'-'}/>
-        </div>
-        <div className={styles.system__list}>
           <div>
-            {sysDataListDivs.map(item =>{
-              return (<div>{item.label}</div>)
-            })}
+            <div>직위</div>
+            <div>
+              <Select />
+            </div>
+            <div>담당업무</div>
+            <div>
+              <input />
+            </div>
           </div>
-          {systemData.map((sys, index) => {
-            return (<div onClick={() => selectRowItem(index)} style={{backgroundColor: systemRowIndex === index ? '#00ffd08c' : 'transparent'}}>
-              {sysDataListDivs.map(item =>{
-                return (
-                  <div>
-                    <div>{sys[item.data]}</div>
-                  </div>
-                )
-              })}
-            </div>)
-          })}
+          <div>
+            <div>Tel</div>
+            <div>
+              <input />
+            </div>
+            <div>E-mail</div>
+            <div>
+              <input />
+            </div>
+          </div>
         </div>
       </div>
     </>

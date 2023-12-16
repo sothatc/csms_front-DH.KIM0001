@@ -96,8 +96,8 @@ const EnterpriseManagePage = () => {
   const location = useLocation();
   // const dispatch = useDispatch();
 
-  const entpOptions = useMemo(() => GenerateOptions(EntpTypeObject), []);
-  const svcOptions  = useMemo(() => GenerateOptions(SvcTypeObject), []);
+  const entpOptions = useMemo(() => GenerateOptions(EntpTypeObject, true), []); // 2번째 매개변수: SelectBox '전체' value 포함 여부
+  const svcOptions  = useMemo(() => GenerateOptions(SvcTypeObject , true), []);
 
   useEffect(() => {
     getEnterpriseListEvent(requestData);
