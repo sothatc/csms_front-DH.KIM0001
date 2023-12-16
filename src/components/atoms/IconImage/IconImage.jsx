@@ -14,6 +14,8 @@ import ErrorIcon from 'assets/images/task/ErrorIcon.svg';
 import Check from 'assets/images/task/Check.svg';
 import Plus from 'assets/images/common/Plus.svg';
 import Minus from 'assets/images/common/Minus.svg';
+import Close from 'assets/images/common/Close.svg';
+
 import React from 'react';
 
 const isDiscernIcon = ({ icon }) => {
@@ -64,6 +66,9 @@ const isDiscernIcon = ({ icon }) => {
 
       case 'MINUS'       :
         return Minus;
+
+      case 'CLOSE'       :
+        return Close;
 
       default:
           break;

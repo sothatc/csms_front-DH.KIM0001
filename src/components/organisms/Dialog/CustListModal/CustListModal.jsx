@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { closeModal } from 'reduxStore/modalSlice';
 import styles from './CustListModal.module.scss';
 import { CustTypeObject } from 'pages/api/CustTypeObject';
+import { IconImage } from 'components/atoms';
 
 const CustListModal = ({data}) => {
   const {entpUnqProps, entpTpProps, custDataProps} = data;
@@ -109,7 +110,7 @@ const CustListModal = ({data}) => {
           <div></div>
           <div>담당자 정보 조회</div>
           <div className={styles.close} onClick={handleClose}>
-            x
+            <IconImage icon={'CLOSE'} onClickEvent={handleClose} />
           </div>
         </div>
         <div className={styles.modal__search}>
@@ -119,22 +120,22 @@ const CustListModal = ({data}) => {
         </div>
         <div className={styles.modal__list}>
           <div>
-            <div>부서명</div>
             <div>직위</div>
             <div>담당자명</div>
             <div>연락처</div>
             <div>Email</div>
+            <div>부서명</div>
             <div></div>
           </div>
           <div>
             {custData && custData.map((item, key) => (
               <div key={key}>
-                <div>{item.memb_dept_nm}</div>
                 <div>{CustTypeObject[item.memb_pst_nm]}</div>
                 <div>{item.memb_nm}</div>
                 <div>{item.memb_tel}</div>
                 <div>{item.memb_email}</div>
-                <div className={`${styles['modal__list--btn']}`} onClick={() => onClickDeleteCust(item.cust_unq)}>x</div>
+                <div>{item.memb_dept_nm}</div>
+                <IconImage icon={'CLOSE'} onClickEvent={() => onClickDeleteCust(item.cust_unq)} />
               </div>
             ))}
           </div>
