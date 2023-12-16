@@ -53,28 +53,6 @@ const ButtonAtchFileRenderer = (param) => {
   )
 }
 
-const ColumnDefs = [
-  {headerName : 'No.'        , field : 'task_unq'    },
-	{headerName : '고객사'     , field : 'entp_nm'     },
-	{headerName : '지원유형'   , field : 'task_tp'     },
-	{headerName : '작업방식'   , field : 'task_job_tp' },
-	{headerName : '작업 담당자', field : 'task_usr_nm' },
-	{headerName : '작업 시작일', field : 'task_st_dtm' },
-	{headerName : '작업 종료일', field : 'task_ed_dtm' },
-  {
-		headerName  : '첨부파일',
-		field       : 'atch_file_nm',
-		cellRenderer: ButtonAtchFileRenderer,
-    cellStyle   : {display: 'flex', alignItems: 'center'}
-	},
-  {headerName : '등록일'     , field : 'reg_dtm'     },
-  {
-    field       : 'action',
-    cellRenderer: ButtonActionRenderer,
-		cellStyle   : {display: 'flex', alignItems: 'center'}
-  }
-];
-
 const TaskManagePage = () => {
   const [transformedTaskList , setTransformedTaskList ] = useState([]);
   const [selectedRange       , setSelectedRange       ] = useState([null, null]);
@@ -96,6 +74,33 @@ const TaskManagePage = () => {
   const navigate = useNavigate();
 
   const taskTpOptions = useMemo(() => GenerateOptions(TaskTypeObject), []);
+
+  const onCellClicked = (event) => {
+    navigate(`/task/detail?task_unq=${event.data.task_unq}`);
+
+  }
+
+  const ColumnDefs = [
+    {headerName : 'No.'        , field : 'task_unq'    , onCellClicked: onCellClicked},
+    {headerName : '고객사'     , field : 'entp_nm'     , onCellClicked: onCellClicked},
+    {headerName : '지원유형'   , field : 'task_tp'     , onCellClicked: onCellClicked},
+    {headerName : '작업방식'   , field : 'task_job_tp' , onCellClicked: onCellClicked},
+    {headerName : '작업 담당자', field : 'task_usr_nm' , onCellClicked: onCellClicked},
+    {headerName : '작업 시작일', field : 'task_st_dtm' },
+    {headerName : '작업 종료일', field : 'task_ed_dtm' },
+    {
+      headerName  : '첨부파일',
+      field       : 'atch_file_nm',
+      cellRenderer: ButtonAtchFileRenderer,
+      cellStyle   : {display: 'flex', alignItems: 'center'}
+    },
+    {headerName : '등록일'     , field : 'reg_dtm'     },
+    {
+      field       : 'action',
+      cellRenderer: ButtonActionRenderer,
+      cellStyle   : {display: 'flex', alignItems: 'center'}
+    }
+  ];
 
   useEffect(() => {
     getTaskDataListEvent(requestData);

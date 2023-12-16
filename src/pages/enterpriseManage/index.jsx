@@ -85,7 +85,7 @@ const EnterpriseManagePage = () => {
   }
 
   const ColumnDefs = [
-    {headerName : '솔루션'          , field : 'solution_tp'  },
+    {headerName : '솔루션'          , field : 'solution_tp'  , onCellClicked: onCellClicked},
     {headerName : '사업자등록번호'  , field : 'entp_unq'     , onCellClicked: onCellClicked},
     {headerName : '업체 구분'       , field : 'entp_tp'      , onCellClicked: onCellClicked},
     {headerName : '업체명'          , field : 'entp_nm'      , onCellClicked: onCellClicked},
