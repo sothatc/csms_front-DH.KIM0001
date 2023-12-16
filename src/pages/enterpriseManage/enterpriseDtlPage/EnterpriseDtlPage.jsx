@@ -1,12 +1,13 @@
 import { Button } from 'components/atoms/Button/Button';
+import { CustTypeObject } from 'pages/api/CustTypeObject';
 import { deleteEnterpriseInfo, downloadEntpAtchFileAPI, getEnterpriseDtlInfo } from 'pages/api/Enterprise/EnterpriseAPI';
+import { EntpTypeObject, SvcTypeObject } from 'pages/api/EnterpriseTypeObject';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { openModal } from 'reduxStore/modalSlice';
 import styles from './EnterpriseDtlPage.module.scss';
-import { EntpTypeObject, SvcTypeObject } from 'pages/api/EnterpriseTypeObject';
-import { CustTypeObject } from 'pages/api/CustTypeObject';
+import { IconImage } from 'components/atoms';
 
 const sysDataDivs = [
   {data : 'os_vers'      , type: 'I', label: 'OS'         }
@@ -58,9 +59,6 @@ const EnterpriseDtlPage = () => {
   const [principalCustData  , setPrincipalCustData  ] = useState({});
   const [systemData         , setSystemData         ] = useState([]);
 
-  const [systemInputData    , setSystemInputData    ] = useState({...defaultSysData});
-  const [systemRowIndex     , setSystemRowIndex     ] = useState(-1);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -83,11 +81,6 @@ const EnterpriseDtlPage = () => {
       }
     })
   },[custData])
-
-  const selectRowItem = (index) => {
-    setSystemRowIndex(index);
-    setSystemInputData(systemData[index]);
-  }
 
   const handleClickModifyEvent = () => {
     navigate(`/enterprise/register?entp_unq=${enterpriseData.entp_unq}&cust_unq=${principalCustData.cust_unq}`);
@@ -146,16 +139,6 @@ const EnterpriseDtlPage = () => {
     }
   }
 
-  const deleteSystemRow = () => {
-    let newData = systemData.filter((_, index) => index !== systemRowIndex);
-
-    setSystemData(newData);
-    setSystemRowIndex(systemData.length-2);
-
-    //ToDo 시스템 정보 삭제시 다음 선택된 정보에 버그
-    setSystemInputData(systemData[systemData.length-2]);
-  }
-
   const onClickMoveToMain = () => {
     navigate('/enterprise');
   }
@@ -176,10 +159,8 @@ const EnterpriseDtlPage = () => {
             </div>
           </div>
           <div className={styles.register__content}>
-            <div></div>
             <div>
               <div>
-                <span className={styles.compulsory}>*</span>
                 구분
               </div>
               <div>
@@ -188,7 +169,6 @@ const EnterpriseDtlPage = () => {
             </div>
             <div>
               <div>
-                <span className={styles.compulsory}>*</span>
                 회사명
               </div>
               <div>
@@ -197,15 +177,13 @@ const EnterpriseDtlPage = () => {
             </div>
             <div>
               <div>
-                <span className={styles.compulsory}>*</span>
                 담당자
               </div>
               <div>
                 <div>{principalCustData?.memb_nm}</div>
-                <Button value={'더보기'} onClickEvent={ handleOpenCustListModal } />
+                <IconImage icon={'PLUS'} onClickEvent={ handleOpenCustListModal } />
               </div>
               <div>
-                <span className={styles.compulsory}>*</span>
                 부서명
               </div>
               <div>
@@ -214,14 +192,12 @@ const EnterpriseDtlPage = () => {
             </div>
             <div>
               <div>
-                <span className={styles.compulsory}>*</span>
                 직위
               </div>
               <div>
                 <div>{CustTypeObject[`${principalCustData?.memb_pst_nm}`]}</div>
               </div>
               <div>
-                <span className={styles.compulsory}>*</span>
                 연락처
               </div>
               <div>
@@ -230,14 +206,12 @@ const EnterpriseDtlPage = () => {
             </div>
             <div>
               <div>
-                <span className={styles.compulsory}>*</span>
                 이메일
               </div>
               <div>
                 <div>{principalCustData?.memb_email}</div>
               </div>
               <div>
-                <span className={styles.compulsory}>*</span>
                 서비스 형태
               </div>
               <div>
@@ -262,78 +236,6 @@ const EnterpriseDtlPage = () => {
             </div>
           </div>
         </div>
-      </div>
-      <div className={styles.system}>
-        <div className={styles.system__title}>
-          <div>
-            <h4>{'>'}</h4>
-            <h4>시스템 정보</h4>
-          </div>
-          <div>
-            <Button value={'삭제'} onClickEvent={deleteSystemRow} />
-          </div>
-        </div>
-        <div className={styles.system__info}>
-          <div>
-          {sysDataDivs.map(item =>{
-              return (
-                <div>
-                  <div>{item.label}</div>
-                  <div>
-                    {item.type === 'I' ? (
-                      ['Disk', 'Memory'].includes(item.label) ? (
-                        <>
-                          <div>{item.label === 'Disk' ? systemInputData['used_disk_sz'] : systemInputData['used_mem_sz']}</div>
-                          <span>G</span>
-                          <span>/</span>
-                          <div>{systemInputData[item.data]}</div>
-                          <span>G</span>
-                        </>
-                      ) : (
-                          <div>{systemInputData[item.data]}</div>
-                      )
-                    ) : (
-                      <div>{systemInputData[item.data]}</div>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-        <div className={styles.system__list}>
-          <div>
-            {sysDataDivs.map(item =>{
-              return (<div>{item.label}</div>)
-            })}
-          </div>
-          {systemData.map((sys, index) => {
-            return (<div onClick={() => selectRowItem(index)} style={{backgroundColor: systemRowIndex === index ? '#00ffd08c' : 'transparent'}}>
-              {sysDataDivs.map(item =>{
-                return (
-                  <div>
-                    {['Disk', 'Memory'].includes(item.label) ? (
-                      <>
-                        <div>{item.label === 'Disk' ? sys['used_disk_sz'] : sys['used_mem_sz']}</div>
-                        <span>G</span>
-                        <div>{sys[item.data]}</div>
-                        <span>G</span>
-                      </>
-                    )
-                    :
-                    (
-                      <div>{sys[item.data]}</div>
-                    )}
-                  </div>
-                )
-              })}
-            </div>)
-          })}
-        </div>
-        {/* <div className={styles.system__etc}>
-          <div>추가정보</div>
-          <div></div>
-        </div> */}
       </div>
     </>
   )

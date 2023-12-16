@@ -325,10 +325,6 @@ console.log("enterpriseData = ",enterpriseData.svc_tp);
     }
   }
 
-  const onClickAddMgr = () => {
-
-  }
-
   return (
     <>
       <div className={styles.register}>
@@ -505,45 +501,6 @@ console.log("enterpriseData = ",enterpriseData.svc_tp);
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className={styles.contect}>
-        <div className={styles.contect__title}>
-          <h4>{'>'}</h4>
-          <h4>협력사</h4>
-        </div>
-        <div className={styles.contect__contents}>
-          <div>
-            <div>담당자</div>
-            <div>
-              <input />
-              <IconImage icon={'PLUS'}/>
-            </div>
-            <div>업체명</div>
-            <div>
-              <input />
-            </div>
-          </div>
-          <div>
-            <div>직위</div>
-            <div>
-              <Select />
-            </div>
-            <div>담당업무</div>
-            <div>
-              <input />
-            </div>
-          </div>
-          <div>
-            <div>Tel</div>
-            <div>
-              <input />
-            </div>
-            <div>E-mail</div>
-            <div>
-              <input />
             </div>
           </div>
         </div>
