@@ -53,27 +53,7 @@ const ButtonAtchFileRenderer = (param) => {
 	)
 }
 
-const ColumnDefs = [
-	{headerName : '솔루션'          , field : 'solution_tp'  },
-	{headerName : '사업자등록번호'  , field : 'entp_unq'     },
-	{headerName : '업체 구분'       , field : 'entp_tp'      },
-	{headerName : '업체명'          , field : 'entp_nm'      },
-	{headerName : '서비스 구분'     , field : 'svc_tp'       },
-	{headerName : '월 STT 처리 건수', field : 'stt_month_cnt'},
-	{headerName : '일 STT 처리 건수', field : 'stt_day_cnt'  },
-	{headerName : '업체 등록일시'   , field : 'reg_dtm'      },
-	{
-		headerName : '첨부파일',
-		field : 'atch_file_nm',
-		cellRenderer : ButtonAtchFileRenderer,
-    cellStyle: {display: 'flex', alignItems: 'center'}
-	},
-  {
-    field : 'action',
-    cellRenderer: ButtonMoveActionRenderer,
-    cellStyle: {display: 'flex', alignItems: 'center'}
-  }
-];
+
 
 const EnterpriseManagePage = () => {
   const [enterpriseDataList, setEnterpriseDataList] = useState([]);
@@ -92,12 +72,39 @@ const EnterpriseManagePage = () => {
     }
 	});
 
-	const navigate = useNavigate();
   const location = useLocation();
-  // const dispatch = useDispatch();
+
+  const navigate = useNavigate();
 
   const entpOptions = useMemo(() => GenerateOptions(EntpTypeObject, true), []); // 2번째 매개변수: SelectBox '전체' value 포함 여부
   const svcOptions  = useMemo(() => GenerateOptions(SvcTypeObject , true), []);
+
+
+  const onCellClicked = (event) => {
+    navigate(`/enterprise/detail?entp_unq=${event.data.entp_unq}`);
+  }
+
+  const ColumnDefs = [
+    {headerName : '솔루션'          , field : 'solution_tp'  },
+    {headerName : '사업자등록번호'  , field : 'entp_unq'     , onCellClicked: onCellClicked},
+    {headerName : '업체 구분'       , field : 'entp_tp'      , onCellClicked: onCellClicked},
+    {headerName : '업체명'          , field : 'entp_nm'      , onCellClicked: onCellClicked},
+    {headerName : '서비스 구분'     , field : 'svc_tp'       },
+    {headerName : '월 STT 처리 건수', field : 'stt_month_cnt'},
+    {headerName : '일 STT 처리 건수', field : 'stt_day_cnt'  },
+    {headerName : '업체 등록일시'   , field : 'reg_dtm'      },
+    {
+      headerName : '첨부파일',
+      field : 'atch_file_nm',
+      cellRenderer : ButtonAtchFileRenderer,
+      cellStyle: {display: 'flex', alignItems: 'center'}
+    },
+    {
+      field : 'action',
+      cellRenderer: ButtonMoveActionRenderer,
+      cellStyle: {display: 'flex', alignItems: 'center'}
+    }
+  ];
 
   useEffect(() => {
     getEnterpriseListEvent(requestData);
