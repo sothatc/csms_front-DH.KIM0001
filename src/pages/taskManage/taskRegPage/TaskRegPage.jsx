@@ -629,15 +629,15 @@ const TaskRegPage = () => {
                   <div>{taskData.stt_month_total_cnt}</div>
                   <div>성공</div>
                   <input
-                    value={taskData.stt_month_s_cnt}
-                    onChange={(e) => onChangeSTTCnt('stt_month_s_cnt', e)}
-                    disabled={enterpriseData.solution_tp === 'CRM'}
+                    value    = {taskData.stt_month_s_cnt}
+                    onChange = {(e) => onChangeSTTCnt('stt_month_s_cnt', e)}
+                    disabled = {enterpriseData.solution_tp === 'CRM'}
                   />
                   <div>실패</div>
                   <input
-                    value={taskData.stt_month_f_cnt}
-                    onChange={(e) => onChangeSTTCnt('stt_month_f_cnt', e)}
-                    disabled={enterpriseData.solution_tp === 'CRM'}
+                    value    = {taskData.stt_month_f_cnt}
+                    onChange = {(e) => onChangeSTTCnt('stt_month_f_cnt', e)}
+                    disabled = {enterpriseData.solution_tp === 'CRM'}
                   />
                 </div>
               </div>

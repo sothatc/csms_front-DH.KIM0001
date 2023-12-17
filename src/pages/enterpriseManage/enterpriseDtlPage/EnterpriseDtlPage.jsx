@@ -147,6 +147,7 @@ const EnterpriseDtlPage = () => {
       openModal({
         modalType : 'SystemInfoModal',
         isOpen    : true,
+        data: {'entp_unq' : enterpriseData.entp_unq},
       })
     );
   }
