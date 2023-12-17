@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from 'reduxStore/modalSlice';
 import styles from './SystemInfoModal.module.scss';
+import { insertSystemInfoAPI } from 'pages/api/Enterprise/EnterpriseAPI';
 
 
 
@@ -26,7 +27,16 @@ const SystemInfoModal = () => {
   }
 
   const onClickSaveSysInfo = () => {
+    const confirmed = window.confirm('저장 하시겠습니까?');
 
+    if(confirmed) {
+      insertSystemInfoAPI().then((response) => {
+        alert('저장이 완료되었습니다.');
+      })
+      .catch((err) => {
+        alert(`Axios API Error: ${err}`);
+      });
+    }
   }
 
   return (

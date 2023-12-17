@@ -196,16 +196,32 @@ const searchCorRegNumberAPI = async (object) => {
   }
 }
 
-export {getEnterpriseList,
-        getEnterpriseDtlInfo,
-        insertEnterprise,
-        updateEnterprise,
-        downloadEntpAtchFileAPI,
-        insertCustInfo,
-        getCustList,
-        getCustOneInfo,
-        getTaskMembList,
-        deleteCustInfo,
-        deleteEnterpriseInfo,
-        searchCorRegNumberAPI,
+const insertSystemInfoAPI = async (entp_unq) => {
+  try {
+    const response = await axiosInstance.post(`/entp/enterprise/insertSystemInfo`,
+      {
+        entp_unq,
+      }
+    );
+
+    return response;
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
+
+export {
+  getEnterpriseList,
+  getEnterpriseDtlInfo,
+  insertEnterprise,
+  updateEnterprise,
+  downloadEntpAtchFileAPI,
+  insertCustInfo,
+  getCustList,
+  getCustOneInfo,
+  getTaskMembList,
+  deleteCustInfo,
+  deleteEnterpriseInfo,
+  searchCorRegNumberAPI,
+  insertSystemInfoAPI,
 };
