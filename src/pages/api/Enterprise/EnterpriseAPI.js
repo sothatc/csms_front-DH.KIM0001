@@ -196,11 +196,11 @@ const searchCorRegNumberAPI = async (object) => {
   }
 }
 
-const insertSystemInfoAPI = async (entp_unq) => {
+const insertSystemInfoAPI = async (object) => {
   try {
     const response = await axiosInstance.post(`/entp/enterprise/insertSystemInfo`,
       {
-        entp_unq,
+        // entp_unq,
       }
     );
 

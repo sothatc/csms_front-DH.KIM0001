@@ -2,7 +2,7 @@ import { IconImage } from 'components/atoms';
 import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
 import { insertSystemInfoAPI } from 'pages/api/Enterprise/EnterpriseAPI';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from 'reduxStore/modalSlice';
 import styles from './SystemInfoModal.module.scss';
@@ -33,8 +33,8 @@ const defaultSysData = {
 }
 
 const systemDivsType1 = [
-  {data : 'svr_hst'      , type: 'I', label: '서버 호스트'}
-, {data : 'os_vers'      , type: 'I', label: 'OS'         }
+  // {data : 'svr_hst'      , type: 'I', label: '서버 호스트'}
+  {data : 'os_vers'      , type: 'I', label: 'OS'         }
 , {data : 'svr_ip'       , type: 'I', label: '서버 IP'    }
 , {data : 'svr_cont'     , type: 'I', label: '서버 용도'  }
 , {data : 'kern_vers'    , type: 'I', label: 'kenel'      }
@@ -52,7 +52,9 @@ const SystemInfoModal = () => {
   const [systemDataList , setSystemDataList ] = useState([]);
   const [systemInputData, setSystemInputData] = useState({...defaultSysData});
   const [systemRowIndex , setSystemRowIndex ] = useState();
+
   const dispatch = useDispatch();
+  const inputRef = useRef(null);
 
   const entp_unq = useSelector((state) => state.modal.modals[0].data.entp_unq);
 
@@ -84,6 +86,8 @@ const SystemInfoModal = () => {
       alert('시스템 정보를 입력해주세요.');
       return;
     }
+
+    inputRef.current.focus();
 
     let newData = JSON.parse(JSON.stringify(systemDataList));
     newData.push(defaultSysData);
@@ -132,6 +136,10 @@ const SystemInfoModal = () => {
     setSystemInputData({...systemInputData, [name]: value});
   }
 
+  const onClickSelServer = (index) => {
+    setSystemInputData(systemDataList[index]);
+  }
+
   return (
     <div className={styles.background}>
       <div className={styles.modal}>
@@ -144,8 +152,8 @@ const SystemInfoModal = () => {
         </div>
         <div className={styles.modal__servers}>
           {systemDataList.map((system, index) => (
-            <div>
-              {system.svr_hst}
+            <div key={index}>
+              <div onClick={() => onClickSelServer(index)}>{system.svr_hst}</div>
               <IconImage icon={'CLOSE'} onClickEvent={() => deleteSystemRow(index)} />
             </div>
           ))}
@@ -154,6 +162,14 @@ const SystemInfoModal = () => {
           </div>
         </div>
         <div className={styles.modal__content}>
+          <div>
+            <div>서버 hostname</div>
+            <input
+              value={systemInputData && systemInputData['svr_hst']}
+              onChange={(e) => onChangeSystemData('svr_hst', e.target.value)}
+              ref={inputRef}
+            />
+          </div>
           {systemDivsType1.map((item) => {
             return (
               <>
