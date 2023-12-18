@@ -15,11 +15,12 @@ div{
 
 .modal {
   display: grid;
-  grid-template-rows: 50px 150px 512px 40px;
+  // grid-template-rows: 50px 150px 512px 40px;
+  grid-template-rows: 50px min-content 512px 40px;
   grid-row-gap: 10px;
   margin: 3% auto;
   width: 650px;
-  min-height: 500px;
+  max-height: 800px;
   padding: 15px;
   border: 1px solid #888;
   border-radius: 10px;
@@ -48,6 +49,7 @@ div{
   &__servers {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    max-height: 150px;
     overflow: auto;
     padding: 10px;
     border-radius: 20px;
@@ -85,7 +87,7 @@ div{
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 289px;
+      width: 280px;
       height: 27px;
       padding: 0 10px;
       margin-bottom: 5px;
