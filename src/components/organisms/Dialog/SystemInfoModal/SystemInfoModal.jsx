@@ -33,8 +33,8 @@ const defaultSysData = {
 }
 
 const systemDivsType1 = [
-  {data : 'os_vers'      , type: 'I', label: 'OS'         }
-, {data : 'svr_hst'      , type: 'I', label: '서버 호스트'}
+  {data : 'svr_hst'      , type: 'I', label: '서버 호스트'}
+, {data : 'os_vers'      , type: 'I', label: 'OS'         }
 , {data : 'svr_ip'       , type: 'I', label: '서버 IP'    }
 , {data : 'svr_cont'     , type: 'I', label: '서버 용도'  }
 , {data : 'kern_vers'    , type: 'I', label: 'kenel'      }
@@ -51,9 +51,12 @@ const systemDivsType2 = [
 const SystemInfoModal = () => {
   const [systemDataList , setSystemDataList ] = useState([]);
   const [systemInputData, setSystemInputData] = useState({...defaultSysData});
-
-  const dispatch = useDispatch();
+  const [systemRowIndex , setSystemRowIndex ] = useState();
+console.log("systemDataList = ",systemDataList);
+console.log("systemRowIndex = ",systemRowIndex);
 console.log("systemInputData = ", systemInputData);
+  const dispatch = useDispatch();
+
   const entp_unq = useSelector((state) => state.modal.modals[0].data.entp_unq);
 
   const handleClose = () => {
@@ -62,8 +65,35 @@ console.log("systemInputData = ", systemInputData);
     }));
   }
 
+  const isAnyPropertyNotEmpty = (obj) => {
+    const excludedKeys = ['use_flag', 'resc_use_flag', 'trn_use_flag'];
+
+    if(systemDataList.length < 1) {
+      return true;
+    }else {
+      for(const key in obj) {
+        if(!excludedKeys.includes(key) && obj[key] !== '') {
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+
   const onClickMakeServer = () => {
-    setSystemDataList((prev) => [...prev, defaultSysData]);
+    const isNotEmpty = isAnyPropertyNotEmpty(systemInputData);
+
+    if(!isNotEmpty) {
+      alert('시스템 정보를 입력해주세요.');
+      return;
+    }
+
+    let newData = JSON.parse(JSON.stringify(systemDataList));
+    newData.push(defaultSysData);
+
+    setSystemDataList(newData);
+    setSystemRowIndex(systemDataList.length);
+    setSystemInputData({...defaultSysData});
   }
 
   const onClickSaveSysInfo = () => {
@@ -81,6 +111,11 @@ console.log("systemInputData = ", systemInputData);
 
   const onChangeSystemData = (name, value) => {
     setSystemInputData({...systemInputData, [name]: value});
+
+    const newData = JSON.parse(JSON.stringify(systemDataList));
+    newData[systemRowIndex] = {...systemInputData, [name]: value};
+
+    setSystemDataList(newData);
   }
 
   const onChangeSystemUseYnCode = (name, value) => {
@@ -98,93 +133,14 @@ console.log("systemInputData = ", systemInputData);
           </div>
         </div>
         <div className={styles.modal__servers}>
-          {/* map */}
           {systemDataList.map((system) => (
             <div>
               {system.svr_hst}
               <IconImage icon={'CLOSE'} />
             </div>
           ))}
-          {/* <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div> */}
-          {/* 더미 server 데이터
-          <div>
-            KRPCMPLV
-            <IconImage icon={'CLOSE'} />
-          </div>
-          <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div>
-          <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div>
-          <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div>
-          <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div>
-          <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div>
-          <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div>
-          <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div>
-          <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div>
-          <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div>
-          <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div>
-          <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div>
-          <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div>
-          <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div>
-          <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div>
-          <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div>
-          <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div>
-          <div>
-            KRPCMPLVRM310
-            <IconImage icon={'CLOSE'} />
-          </div> */}
-          {/* server 추가 버튼 */}
-          <div>
-            <IconImage icon={'PLUS'} onClickEvent={onClickMakeServer}/>
+          <div onClick={onClickMakeServer}>
+            <IconImage icon={'PLUS'} />
           </div>
         </div>
         <div className={styles.modal__content}>
