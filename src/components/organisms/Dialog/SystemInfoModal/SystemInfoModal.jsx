@@ -52,9 +52,6 @@ const SystemInfoModal = () => {
   const [systemDataList , setSystemDataList ] = useState([]);
   const [systemInputData, setSystemInputData] = useState({...defaultSysData});
   const [systemRowIndex , setSystemRowIndex ] = useState();
-console.log("systemDataList = ",systemDataList);
-console.log("systemRowIndex = ",systemRowIndex);
-console.log("systemInputData = ", systemInputData);
   const dispatch = useDispatch();
 
   const entp_unq = useSelector((state) => state.modal.modals[0].data.entp_unq);
@@ -95,6 +92,20 @@ console.log("systemInputData = ", systemInputData);
     setSystemRowIndex(systemDataList.length);
     setSystemInputData({...defaultSysData});
   }
+console.log("systemRowIndex = ",systemRowIndex);
+console.log("systemDataList.length = ", systemDataList.length);
+console.log("systemInputData = ", systemInputData);
+console.log("systemDataList = ", systemDataList);
+
+  const deleteSystemRow = (selectedIndex) => {
+    let newData = systemDataList.filter((_, index) => index !== selectedIndex);
+
+    setSystemDataList(newData);
+    setSystemRowIndex(systemDataList.length-1);
+
+    //ToDo 시스템 정보 삭제시 다음 선택된 정보에 버그
+    setSystemInputData(systemDataList[systemDataList.length-1]);
+  }
 
   const onClickSaveSysInfo = () => {
     const confirmed = window.confirm('저장 하시겠습니까?');
@@ -133,10 +144,10 @@ console.log("systemInputData = ", systemInputData);
           </div>
         </div>
         <div className={styles.modal__servers}>
-          {systemDataList.map((system) => (
+          {systemDataList.map((system, index) => (
             <div>
               {system.svr_hst}
-              <IconImage icon={'CLOSE'} />
+              <IconImage icon={'CLOSE'} onClickEvent={() => deleteSystemRow(index)} />
             </div>
           ))}
           <div onClick={onClickMakeServer}>
@@ -149,7 +160,7 @@ console.log("systemInputData = ", systemInputData);
               <>
                 <div>
                   <div>{item.label}</div>
-                  <input value={systemInputData[item.data]} onChange={(e) => onChangeSystemData(item.data, e.target.value)}/>
+                  <input value={systemInputData && systemInputData[item.data]} onChange={(e) => onChangeSystemData(item.data, e.target.value)}/>
                 </div>
               </>
             )
@@ -162,7 +173,7 @@ console.log("systemInputData = ", systemInputData);
                     <div>{item.label}</div>
                     <Select
                       name  = {item.data}
-                      value = {systemInputData[item.data]}
+                      value = {systemInputData && systemInputData[item.data]}
                       onChangeEvent={onChangeSystemUseYnCode}
                       dataSet={[
                         {value: 'Y', text: '사용'},
@@ -178,11 +189,11 @@ console.log("systemInputData = ", systemInputData);
             <div>Memory</div>
             <div>
               <div>
-                <input value={systemInputData.used_mem_sz} onChange={(e) => onChangeSystemData('used_mem_sz', e.target.value)} placeholder='Used'/>
+                <input value={systemInputData && systemInputData.used_mem_sz} onChange={(e) => onChangeSystemData('used_mem_sz', e.target.value)} placeholder='Used'/>
                 G
               </div>
               <div>
-              <input value={systemInputData.total_mem_sz} onChange={(e) => onChangeSystemData('total_mem_sz', e.target.value)} placeholder='Total'/>
+              <input value={systemInputData && systemInputData.total_mem_sz} onChange={(e) => onChangeSystemData('total_mem_sz', e.target.value)} placeholder='Total'/>
                 G
               </div>
             </div>
@@ -195,14 +206,14 @@ console.log("systemInputData = ", systemInputData);
             <div>
               {/* map */}
               <div>
-                <input value={systemInputData.partition_path} onChange={(e) => onChangeSystemData('partition_path', e.target.value)} placeholder='Partition Path' />
+                <input value={systemInputData && systemInputData.partition_path} onChange={(e) => onChangeSystemData('partition_path', e.target.value)} placeholder='Partition Path' />
                 <div>
                   <div>
-                    <input value={systemInputData.used_disk_sz} onChange={(e) => onChangeSystemData('used_disk_sz', e.target.value)} placeholder='Used'/>
+                    <input value={systemInputData && systemInputData.used_disk_sz} onChange={(e) => onChangeSystemData('used_disk_sz', e.target.value)} placeholder='Used'/>
                     G
                   </div>
                   <div>
-                    <input value={systemInputData.total_disk_sz} onChange={(e) => onChangeSystemData('total_disk_sz', e.target.value)} placeholder='Total'/>
+                    <input value={systemInputData && systemInputData.total_disk_sz} onChange={(e) => onChangeSystemData('total_disk_sz', e.target.value)} placeholder='Total'/>
                     G
                   </div>
                 </div>
