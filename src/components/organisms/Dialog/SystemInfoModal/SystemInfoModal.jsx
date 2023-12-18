@@ -92,10 +92,6 @@ const SystemInfoModal = () => {
     setSystemRowIndex(systemDataList.length);
     setSystemInputData({...defaultSysData});
   }
-console.log("systemRowIndex = ",systemRowIndex);
-console.log("systemDataList.length = ", systemDataList.length);
-console.log("systemInputData = ", systemInputData);
-console.log("systemDataList = ", systemDataList);
 
   const deleteSystemRow = (selectedIndex) => {
     let newData = systemDataList.filter((_, index) => index !== selectedIndex);
@@ -103,8 +99,11 @@ console.log("systemDataList = ", systemDataList);
     setSystemDataList(newData);
     setSystemRowIndex(systemDataList.length-1);
 
-    //ToDo 시스템 정보 삭제시 다음 선택된 정보에 버그
-    setSystemInputData(systemDataList[systemDataList.length-1]);
+    if(newData.length < 1) {
+      setSystemInputData({...defaultSysData});
+    }else {
+      setSystemInputData(newData[newData.length-1]);
+    }
   }
 
   const onClickSaveSysInfo = () => {
