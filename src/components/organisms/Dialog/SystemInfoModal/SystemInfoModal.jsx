@@ -1,19 +1,59 @@
 import { IconImage } from 'components/atoms';
 import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
+import { insertSystemInfoAPI } from 'pages/api/Enterprise/EnterpriseAPI';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from 'reduxStore/modalSlice';
 import styles from './SystemInfoModal.module.scss';
-import { insertSystemInfoAPI } from 'pages/api/Enterprise/EnterpriseAPI';
 
+const defaultSysData = {
+  svr_unq       : '',
+  entp_unq      : '',
+  svr_hst       : '',
+  svr_ip        : '',
+  svr_cont      : '',
+  use_flag      : 'N',
+  resc_use_flag : 'N',
+  trn_use_flag  : 'N',
+  os_vers       : '',
+  kern_vers     : '',
+  cpu_cnt       : '',
+  total_mem_sz  : '',
+  used_mem_sz   : '',
+  gpu_model     : '',
+  partition_path: '',
+  total_disk_sz : '',
+  used_disk_sz  : '',
+  base_path     : '',
+  log_path      : '',
+  gnr_memo      : '',
+  reg_usr_id    : '',
+  reg_dtm       : ''
+}
 
+const systemDivsType1 = [
+  {data : 'os_vers'      , type: 'I', label: 'OS'         }
+, {data : 'svr_hst'      , type: 'I', label: '서버 호스트'}
+, {data : 'svr_ip'       , type: 'I', label: '서버 IP'    }
+, {data : 'svr_cont'     , type: 'I', label: '서버 용도'  }
+, {data : 'kern_vers'    , type: 'I', label: 'kenel'      }
+, {data : 'gpu_model'    , type: 'I', label: 'GPU'        }
+, {data : 'cpu_cnt'      , type: 'I', label: 'CPU 코어'   }
+]
+
+const systemDivsType2 = [
+  {data : 'trn_use_flag' , type: 'S', label: '학습 사용'  }
+, {data : 'use_flag'     , type: 'S', label: '사용 여부'  }
+, {data : 'resc_use_flag', type: 'S', label: '리소스 사용'}
+]
 
 const SystemInfoModal = () => {
-  const [systemDataList, setSystemDataList] = useState([]);
+  const [systemDataList , setSystemDataList ] = useState([]);
+  const [systemInputData, setSystemInputData] = useState({...defaultSysData});
 
   const dispatch = useDispatch();
-
+console.log("systemInputData = ", systemInputData);
   const entp_unq = useSelector((state) => state.modal.modals[0].data.entp_unq);
 
   const handleClose = () => {
@@ -23,7 +63,7 @@ const SystemInfoModal = () => {
   }
 
   const onClickMakeServer = () => {
-
+    setSystemDataList((prev) => [...prev, defaultSysData]);
   }
 
   const onClickSaveSysInfo = () => {
@@ -39,6 +79,14 @@ const SystemInfoModal = () => {
     }
   }
 
+  const onChangeSystemData = (name, value) => {
+    setSystemInputData({...systemInputData, [name]: value});
+  }
+
+  const onChangeSystemUseYnCode = (name, value) => {
+    setSystemInputData({...systemInputData, [name]: value});
+  }
+
   return (
     <div className={styles.background}>
       <div className={styles.modal}>
@@ -51,11 +99,17 @@ const SystemInfoModal = () => {
         </div>
         <div className={styles.modal__servers}>
           {/* map */}
-          <div>
+          {systemDataList.map((system) => (
+            <div>
+              {system.svr_hst}
+              <IconImage icon={'CLOSE'} />
+            </div>
+          ))}
+          {/* <div>
             KRPCMPLVRM310
             <IconImage icon={'CLOSE'} />
-          </div>
-          {/* 더미 server 데이터 */}
+          </div> */}
+          {/* 더미 server 데이터
           <div>
             KRPCMPLV
             <IconImage icon={'CLOSE'} />
@@ -127,80 +181,52 @@ const SystemInfoModal = () => {
           <div>
             KRPCMPLVRM310
             <IconImage icon={'CLOSE'} />
-          </div>
+          </div> */}
           {/* server 추가 버튼 */}
           <div>
             <IconImage icon={'PLUS'} onClickEvent={onClickMakeServer}/>
           </div>
         </div>
         <div className={styles.modal__content}>
+          {systemDivsType1.map((item) => {
+            return (
+              <>
+                <div>
+                  <div>{item.label}</div>
+                  <input value={systemInputData[item.data]} onChange={(e) => onChangeSystemData(item.data, e.target.value)}/>
+                </div>
+              </>
+            )
+          })}
           <div>
-            <div>서버 Hostname</div>
-            <input />
-          </div>
-          <div>
-            <div>서버 IP</div>
-            <input />
-          </div>
-          <div>
-            <div>서버 용도</div>
-            <input />
-          </div>
-          <div>
-            <div>Kernel</div>
-            <input />
-          </div>
-          <div>
-            <div>GPU Model</div>
-            <input />
-          </div>
-          <div>
-            <div>기본경로</div>
-            <input />
-          </div>
-          <div>
-            <div>로그경로</div>
-            <input />
-          </div>
-          <div>
-            <div>
-              <div>사용 여부</div>
-              <Select
-                dataSet={[
-                  {value: 'Y', text: '사용'},
-                  {value: 'Y', text: '미사용'},
-                ]}
-              />
-            </div>
-            <div>
-              <div>학습 사용</div>
-              <Select
-
-                dataSet={[
-                  {value: 'Y', text: '사용'},
-                  {value: 'Y', text: '미사용'},
-                ]}
-              />
-            </div>
-            <div>
-              <div>리소스 사용</div>
-              <Select
-                dataSet={[
-                  {value: 'Y', text: '사용'},
-                  {value: 'Y', text: '미사용'},
-                ]}
-              />
-            </div>
+            {systemDivsType2.map((item) => {
+              return (
+                <>
+                  <div>
+                    <div>{item.label}</div>
+                    <Select
+                      name  = {item.data}
+                      value = {systemInputData[item.data]}
+                      onChangeEvent={onChangeSystemUseYnCode}
+                      dataSet={[
+                        {value: 'Y', text: '사용'},
+                        {value: 'N', text: '미사용'},
+                      ]}
+                    />
+                  </div>
+                </>
+              )})
+            }
           </div>
           <div>
             <div>Memory</div>
             <div>
               <div>
-                <input placeholder='Used'/>
+                <input value={systemInputData.used_mem_sz} onChange={(e) => onChangeSystemData('used_mem_sz', e.target.value)} placeholder='Used'/>
                 G
               </div>
               <div>
-                <input placeholder='Total'/>
+              <input value={systemInputData.total_mem_sz} onChange={(e) => onChangeSystemData('total_mem_sz', e.target.value)} placeholder='Total'/>
                 G
               </div>
             </div>
@@ -213,14 +239,14 @@ const SystemInfoModal = () => {
             <div>
               {/* map */}
               <div>
-                <input placeholder='Partition' />
+                <input value={systemInputData.partition_path} onChange={(e) => onChangeSystemData('partition_path', e.target.value)} placeholder='Partition Path' />
                 <div>
                   <div>
-                    <input placeholder='Used'/>
+                    <input value={systemInputData.used_disk_sz} onChange={(e) => onChangeSystemData('used_disk_sz', e.target.value)} placeholder='Used'/>
                     G
                   </div>
                   <div>
-                    <input placeholder='Total'/>
+                    <input value={systemInputData.total_disk_sz} onChange={(e) => onChangeSystemData('total_disk_sz', e.target.value)} placeholder='Total'/>
                     G
                   </div>
                 </div>

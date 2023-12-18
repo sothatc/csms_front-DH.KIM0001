@@ -87,13 +87,15 @@ div{
       margin-bottom: 5px;
       border-radius: 20px;
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      background-color: #82A5F7;
+      cursor: pointer;
+
 
       >img {
         width: 22px;
         height: 22px;
         border: 1px solid black;
         border-radius: 50%;
-        cursor: pointer;
       }
     }
   }
