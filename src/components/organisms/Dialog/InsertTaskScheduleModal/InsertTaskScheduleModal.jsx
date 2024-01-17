@@ -127,7 +127,9 @@ const InsertTaskScheduleModal = () => {
         <div className={styles.modal__title}>
           <div></div>
           <div>일정 등록</div>
-          <div className={styles.close} onClick={handleClose}>x</div>
+          <div>
+            <IconImage icon={'CLOSE'} onClickEvent={handleClose} />
+          </div>
         </div>
         <div className={styles.modal__date}>
           <IconImage icon={'CALENDAR'}/>

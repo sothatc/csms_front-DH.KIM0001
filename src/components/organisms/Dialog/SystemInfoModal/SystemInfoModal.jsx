@@ -1,8 +1,8 @@
 import { IconImage } from 'components/atoms';
 import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
-import { insertSystemInfoAPI } from 'pages/api/Enterprise/EnterpriseAPI';
-import { useRef, useState } from 'react';
+import { delDiskInfoAPI, delSystemInfoAPI, getSystemInfoList, insertDiskAPI, insertSystemServerAPI, updateSystemServerAPI } from 'pages/api/Enterprise/EnterpriseAPI';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from 'reduxStore/modalSlice';
 import styles from './SystemInfoModal.module.scss';
@@ -22,18 +22,21 @@ const defaultSysData = {
   total_mem_sz  : '',
   used_mem_sz   : '',
   gpu_model     : '',
-  partition_path: '',
-  total_disk_sz : '',
-  used_disk_sz  : '',
   base_path     : '',
   log_path      : '',
   gnr_memo      : '',
   reg_usr_id    : '',
-  reg_dtm       : ''
+  reg_dtm       : '',
+}
+
+const defaultDiskData = {
+  svr_unq        : '',
+  partition_path : '',
+  used_disk_sz   : '',
+  total_disk_sz  : '',
 }
 
 const systemDivsType1 = [
-  // {data : 'svr_hst'      , type: 'I', label: '서버 호스트'}
   {data : 'os_vers'      , type: 'I', label: 'OS'         }
 , {data : 'svr_ip'       , type: 'I', label: '서버 IP'    }
 , {data : 'svr_cont'     , type: 'I', label: '서버 용도'  }
@@ -51,27 +54,91 @@ const systemDivsType2 = [
 const SystemInfoModal = () => {
   const [systemDataList , setSystemDataList ] = useState([]);
   const [systemInputData, setSystemInputData] = useState({...defaultSysData});
-  const [systemRowIndex , setSystemRowIndex ] = useState();
+  const [systemRowIndex , setSystemRowIndex ] = useState(0);
+  const [diskDataList   , setDiskDataList   ] = useState([]);
+  const [diskInputData  , setDiskInputData  ] = useState({...defaultDiskData});
+  const [focusTrigger   , setFocusTrigger   ] = useState(false);
+  const [boolDataSave   , setBoolDataSave   ] = useState(true);
+  const [newSysServerUnq, setNewSysServerUnq] = useState();
+  const [newDiskUnqList , setNewDiskUnqList ] = useState([]);
+  const [enabledEdit    , setEnabledEdit    ] = useState(false);
 
   const dispatch = useDispatch();
   const inputRef = useRef(null);
-
   const entp_unq = useSelector((state) => state.modal.modals[0].data.entp_unq);
 
-  const handleClose = () => {
-    dispatch(closeModal({
-      modalTypeToClose: 'SystemInfoModal',
-    }));
+  /** ToDo: async를 사용해야 되는지 확인 */
+  const callSystemInfoAPIFn = (object) => {
+    return getSystemInfoList(object).then((response) => {
+      setSystemDataList(response.enterpriseSvrDTOList);
+      setDiskDataList(response.enterpriseSvrDiskDTOList);
+      return response;
+    })
+    .catch((err) => {
+      alert(`Axios API Error: ${err}`);
+    });
   }
 
-  const isAnyPropertyNotEmpty = (obj) => {
+  useEffect(() => {
+    if(focusTrigger && inputRef.current) {
+      inputRef.current.focus();
+      setFocusTrigger(false);
+    }
+
+    callSystemInfoAPIFn(entp_unq).then((response) => {
+      setDiskInputData(response.enterpriseSvrDiskDTOList[0]);
+      setSystemInputData(response.enterpriseSvrDTOList[0]);
+    }).catch((err) => {});
+
+  }, [focusTrigger])
+
+  const handleClose = () => {
+
+    if(!boolDataSave) {
+      const confirmed = window.confirm('저장하지 않은 데이터가 있습니다. 닫으시겠습니까?');
+      if(confirmed) {
+        delSystemInfoAPI(newSysServerUnq).then((response) => {
+
+        }).catch((err) => {
+          alert(`Axios API Error: ${err}`);
+        });
+
+        delDiskInfoAPI(newDiskUnqList).then((response) => {
+
+        }).catch((err) => {
+          alert(`Axios API Error: ${err}`);
+        });
+
+        dispatch(closeModal({
+          modalTypeToClose: 'SystemInfoModal',
+        }));
+
+      }else {
+        return;
+      }
+    }else {
+      dispatch(closeModal({
+        modalTypeToClose: 'SystemInfoModal',
+      }));
+    }
+  }
+
+  const filterDiskToSelServer = () => {
+    const selectedDiskList = diskDataList.filter((disk, _) => (
+      disk.svr_unq === systemDataList[systemRowIndex].svr_unq
+    ))
+
+    return selectedDiskList;
+  }
+
+  const isAnyPropertyNotEmpty = (listObj, inputObj) => {
     const excludedKeys = ['use_flag', 'resc_use_flag', 'trn_use_flag'];
 
-    if(systemDataList.length < 1) {
+    if(listObj.length < 1) {
       return true;
     }else {
-      for(const key in obj) {
-        if(!excludedKeys.includes(key) && obj[key] !== '') {
+      for(const key in inputObj) {
+        if(!excludedKeys.includes(key) && inputObj[key] !== '') {
           return true;
         }
       }
@@ -79,42 +146,120 @@ const SystemInfoModal = () => {
     }
   }
 
-  const onClickMakeServer = () => {
-    const isNotEmpty = isAnyPropertyNotEmpty(systemInputData);
+  const onClickCreateServer = () => {
+    if(!boolDataSave) {
+      alert('저장 후 추가해주세요.');
+      return;
+    }
 
+    const confirmed = window.confirm('서버를 추가하시겠습니까?');
+    if(confirmed) {
+      const newData = {...defaultSysData, entp_unq: entp_unq};
+
+      insertSystemServerAPI(newData).then((response) => {
+        setNewSysServerUnq(response);
+
+        callSystemInfoAPIFn(entp_unq).then((response) => {
+          setSystemInputData(response.enterpriseSvrDTOList[response.enterpriseSvrDTOList.length - 1]);
+          setSystemRowIndex(response.length - 1);
+        }).catch((err) => {});
+
+        setBoolDataSave(false);
+
+      })
+      .catch((err) => {
+        alert(`Axios API Error: ${err}`);
+      });
+
+      setFocusTrigger(true);
+    }
+  }
+
+  const onClickMakeDisk = () => {
+    const selectedDiskList = filterDiskToSelServer();
+
+    const isNotEmpty = isAnyPropertyNotEmpty(selectedDiskList, diskInputData);
+    if(!isNotEmpty) {
+      alert('Disk 정보를 입력해주세요.');
+      return;
+    }
+
+    const requestData = {
+      ...defaultDiskData,
+      entp_unq: entp_unq,
+      svr_unq : systemInputData.svr_unq,
+    }
+
+    insertDiskAPI(requestData).then((response) => {
+      const newUnq = [...newDiskUnqList];
+      newUnq.push(response);
+
+      setNewDiskUnqList(newUnq);
+
+      const newData = JSON.parse(JSON.stringify(diskDataList));
+      newData.push({
+        ...defaultDiskData,
+        svr_unq: systemInputData.svr_unq,
+        entp_unq: entp_unq,
+        disk_partition_unq: response,
+      });
+
+      setDiskDataList(newData);
+      setBoolDataSave(false);
+    })
+    .catch((err) => {
+      alert(`Axios API Error: ${err}`);
+    });
+  }
+
+  const deleteServer = (system) => {
+    const confirmed = window.confirm('서버 정보를 삭제하시겠습니까?');
+
+    if(confirmed) {
+      delSystemInfoAPI(system.svr_unq).then((response) => {
+
+      }).catch((err) => {
+        alert(`Axios API Error: ${err}`)
+      });
+    }
+  }
+
+  const deleteDisk = (disk) => {
+    const confirmed = window.confirm('Disk 정보를 삭제하시겠습니까?');
+
+    if(confirmed) {
+      const disk_partition_unq = disk.disk_partition_unq;
+
+      delDiskInfoAPI(disk_partition_unq).then((response) => {
+        callSystemInfoAPIFn(entp_unq);
+
+        if(newDiskUnqList.includes(disk_partition_unq)){
+          setBoolDataSave(true);
+        }
+      }).catch((err) => {
+        alert(`Axios API Error: ${err}`);
+      });
+    }
+  }
+
+  const onClickSaveSysInfo = () => {
+    const isNotEmpty = isAnyPropertyNotEmpty(systemDataList, systemInputData);
     if(!isNotEmpty) {
       alert('시스템 정보를 입력해주세요.');
       return;
     }
 
-    inputRef.current.focus();
-
-    let newData = JSON.parse(JSON.stringify(systemDataList));
-    newData.push(defaultSysData);
-
-    setSystemDataList(newData);
-    setSystemRowIndex(systemDataList.length);
-    setSystemInputData({...defaultSysData});
-  }
-
-  const deleteSystemRow = (selectedIndex) => {
-    let newData = systemDataList.filter((_, index) => index !== selectedIndex);
-
-    setSystemDataList(newData);
-    setSystemRowIndex(systemDataList.length-1);
-
-    if(newData.length < 1) {
-      setSystemInputData({...defaultSysData});
-    }else {
-      setSystemInputData(newData[newData.length-1]);
-    }
-  }
-
-  const onClickSaveSysInfo = () => {
     const confirmed = window.confirm('저장 하시겠습니까?');
 
     if(confirmed) {
-      insertSystemInfoAPI().then((response) => {
+      const requestData = {
+        ...systemInputData,
+        svr_unq: newSysServerUnq,
+        svrDiskDTOList: diskDataList
+      }
+
+      updateSystemServerAPI(requestData).then((response) => {
+        setBoolDataSave(true);
         alert('저장이 완료되었습니다.');
       })
       .catch((err) => {
@@ -124,27 +269,55 @@ const SystemInfoModal = () => {
   }
 
   const onChangeSystemData = (name, value) => {
-    setSystemInputData({...systemInputData, [name]: value});
+    if(!enabledEdit) {
+      return;
+    }
+    setSystemInputData({...systemInputData, [name]: value, entp_unq: entp_unq});
 
     const newData = JSON.parse(JSON.stringify(systemDataList));
     newData[systemRowIndex] = {...systemInputData, [name]: value};
-
     setSystemDataList(newData);
   }
 
+  const onChangeDiskInputData = (name, value, index) => {
+    if(!enabledEdit) {
+      return;
+    }
+    setDiskInputData({...diskInputData, [name]: value});
+
+    const filteredDiskList = filterDiskToSelServer();
+    filteredDiskList[index] = {...filteredDiskList[index], [name]: value};
+
+    const existingData = diskDataList.filter((disk, _) => (
+     disk.svr_unq !== systemDataList[systemRowIndex].svr_unq
+    ));
+
+    setDiskDataList(existingData.concat(filteredDiskList));
+  }
+
   const onChangeSystemUseYnCode = (name, value) => {
+    if(!enabledEdit) {
+      return;
+    }
     setSystemInputData({...systemInputData, [name]: value});
   }
 
   const onClickSelServer = (index) => {
     setSystemInputData(systemDataList[index]);
+    setSystemRowIndex(index);
+  }
+
+  const onClickEdit = () => {
+    setEnabledEdit(!enabledEdit);
   }
 
   return (
     <div className={styles.background}>
       <div className={styles.modal}>
         <div className={styles.modal__title}>
-          <div></div>
+          <div className={enabledEdit && `${styles['modal__title--active']}`}>
+            <Button image={'EDIT'} onClickEvent={onClickEdit} value={enabledEdit ? '편집중..' : '편집'} />
+          </div>
           <div>시스템 정보</div>
           <div className={styles.close} onClick={handleClose}>
             <IconImage icon={'CLOSE'} onClickEvent={handleClose} />
@@ -154,49 +327,55 @@ const SystemInfoModal = () => {
           {systemDataList.map((system, index) => (
             <div key={index}>
               <div onClick={() => onClickSelServer(index)}>{system.svr_hst}</div>
-              <IconImage icon={'CLOSE'} onClickEvent={() => deleteSystemRow(index)} />
+              {enabledEdit &&
+                <IconImage icon={'CLOSE'} onClickEvent={() => deleteServer(system)} />
+              }
             </div>
           ))}
-          <div onClick={onClickMakeServer}>
-            <IconImage icon={'PLUS'} />
-          </div>
+          {enabledEdit &&
+            <div className={styles.add__server} onClick={onClickCreateServer}>
+              <IconImage icon={'PLUS'} />
+            </div>
+          }
         </div>
         <div className={styles.modal__content}>
           <div>
-            <div>서버 hostname</div>
+            <div>서버 Hostname</div>
             <input
-              value={systemInputData && systemInputData['svr_hst']}
-              onChange={(e) => onChangeSystemData('svr_hst', e.target.value)}
-              ref={inputRef}
+              value    = {systemInputData && systemInputData['svr_hst']}
+              onChange = {(e) => onChangeSystemData('svr_hst', e.target.value)}
+              readOnly={systemDataList.length < 1 || !enabledEdit}
+              ref      = {inputRef}
             />
           </div>
-          {systemDivsType1.map((item) => {
+          {systemDivsType1.map((item, key) => {
             return (
-              <>
-                <div>
-                  <div>{item.label}</div>
-                  <input value={systemInputData && systemInputData[item.data]} onChange={(e) => onChangeSystemData(item.data, e.target.value)}/>
-                </div>
-              </>
+              <div key={key}>
+                <div>{item.label}</div>
+                <input
+                  value    = {systemInputData && systemInputData[item.data]}
+                  onChange = {(e) => onChangeSystemData(item.data, e.target.value)}
+                  readOnly={systemDataList.length < 1 || !enabledEdit}
+                />
+              </div>
             )
           })}
           <div>
-            {systemDivsType2.map((item) => {
+            {systemDivsType2.map((item, key) => {
               return (
-                <>
-                  <div>
-                    <div>{item.label}</div>
-                    <Select
-                      name  = {item.data}
-                      value = {systemInputData && systemInputData[item.data]}
-                      onChangeEvent={onChangeSystemUseYnCode}
-                      dataSet={[
-                        {value: 'Y', text: '사용'},
-                        {value: 'N', text: '미사용'},
-                      ]}
-                    />
-                  </div>
-                </>
+                <div key={key}>
+                  <div>{item.label}</div>
+                  <Select
+                    name          = {item.data}
+                    value         = {systemInputData && systemInputData[item.data]}
+                    onChangeEvent = {onChangeSystemUseYnCode}
+                    disabled      = {systemDataList.length < 1}
+                    dataSet={[
+                      {value: 'Y', text: '사용'},
+                      {value: 'N', text: '미사용'},
+                    ]}
+                  />
+                </div>
               )})
             }
           </div>
@@ -204,82 +383,61 @@ const SystemInfoModal = () => {
             <div>Memory</div>
             <div>
               <div>
-                <input value={systemInputData && systemInputData.used_mem_sz} onChange={(e) => onChangeSystemData('used_mem_sz', e.target.value)} placeholder='Used'/>
-                G
+                <input
+                  value       = {systemInputData && systemInputData.used_mem_sz}
+                  onChange    = {(e) => onChangeSystemData('used_mem_sz', e.target.value)}
+                  readOnly    = {systemDataList.length < 1 || !enabledEdit}
+                  placeholder = 'Used'
+                />
+                  G
               </div>
               <div>
-              <input value={systemInputData && systemInputData.total_mem_sz} onChange={(e) => onChangeSystemData('total_mem_sz', e.target.value)} placeholder='Total'/>
-                G
+                <input
+                  value       = {systemInputData && systemInputData.total_mem_sz}
+                  onChange    = {(e) => onChangeSystemData('total_mem_sz', e.target.value)}
+                  readOnly    = {systemDataList.length < 1 || !enabledEdit}
+                  placeholder = 'Total'
+                />
+                  G
               </div>
+              (Used / Total)
             </div>
           </div>
           <div>
             <div>
-              <div>Disk</div>
-              <IconImage icon={'PLUS'}/>
+              <div>Disk (Used / Total)</div>
+              {enabledEdit &&
+                <IconImage icon={'PLUS'} onClickEvent={onClickMakeDisk}/>
+              }
             </div>
             <div>
-              {/* map */}
-              <div>
-                <input value={systemInputData && systemInputData.partition_path} onChange={(e) => onChangeSystemData('partition_path', e.target.value)} placeholder='Partition Path' />
-                <div>
-                  <div>
-                    <input value={systemInputData && systemInputData.used_disk_sz} onChange={(e) => onChangeSystemData('used_disk_sz', e.target.value)} placeholder='Used'/>
-                    G
+              {diskDataList.filter(disk => disk.svr_unq === systemInputData.svr_unq)
+                .map((disk, index) => (
+                  <div key={index}>
+                    <input value={disk && disk.partition_path} onChange={(e) => onChangeDiskInputData('partition_path', e.target.value, index)} placeholder='Partition Path' readOnly={systemDataList.length < 1 || !enabledEdit}/>
+                    <div>
+                      <div>
+                        <input value={disk && disk.used_disk_sz} onChange={(e) => onChangeDiskInputData('used_disk_sz', e.target.value, index)} placeholder='Used' readOnly={systemDataList.length < 1 || !enabledEdit}/>
+                        G
+                      </div>
+                      <div>
+                        <input value={disk && disk.total_disk_sz} onChange={(e) => onChangeDiskInputData('total_disk_sz', e.target.value, index)} placeholder='Total' readOnly={systemDataList.length < 1 || !enabledEdit}/>
+                        G
+                      </div>
+                    </div>
+                    {enabledEdit &&
+                      <IconImage icon={'CLOSE'} onClickEvent={() => deleteDisk(disk)}/>
+                    }
                   </div>
-                  <div>
-                    <input value={systemInputData && systemInputData.total_disk_sz} onChange={(e) => onChangeSystemData('total_disk_sz', e.target.value)} placeholder='Total'/>
-                    G
-                  </div>
-                </div>
-                <IconImage icon={'CLOSE'} />
-              </div>
-              {/* 더미 disk 데이터 */}
-              <div>
-                <input placeholder='Partition' />
-                <div>
-                  <div>
-                    <input placeholder='Used'/>
-                    G
-                  </div>
-                  <div>
-                    <input placeholder='Total'/>
-                    G
-                  </div>
-                </div>
-              </div>
-              <div>
-                <input placeholder='Partition' />
-                <div>
-                  <div>
-                    <input placeholder='Used'/>
-                    G
-                  </div>
-                  <div>
-                    <input placeholder='Total'/>
-                    G
-                  </div>
-                </div>
-              </div>
-              <div>
-                <input placeholder='Partition' />
-                <div>
-                  <div>
-                    <input placeholder='Used'/>
-                    G
-                  </div>
-                  <div>
-                    <input placeholder='Total'/>
-                    G
-                  </div>
-                </div>
-              </div>
-              {/* 더비 disk 데이터 끝 */}
+                )
+              )}
             </div>
           </div>
         </div>
         <div className={styles.modal__btn}>
-          <Button value={'저장'} onClickEvent={onClickSaveSysInfo}/>
+          {enabledEdit &&
+            <Button value={'저장'} onClickEvent={onClickSaveSysInfo}/>
+          }
           <Button value={'닫기'} onClickEvent={handleClose}/>
         </div>
       </div>

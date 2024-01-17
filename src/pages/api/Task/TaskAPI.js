@@ -51,7 +51,7 @@ const getTaskScheduleListAPI = async(sch_st_dt) => {
 }
 
 const getMappingTaskToScheduleAPI = async (object) => {
-const {task_st_dt, entp_unq} = object;
+  const {task_st_dt, entp_unq} = object;
 
   try {
     const response = await axiosInstance.post(`/entp/task/setConfirmedSchedule`,

@@ -72,7 +72,7 @@ const EnterpriseManagePage = () => {
     }
 	});
 
-  const location = useLocation();
+  const location = useLocation(); //등록화면에서 라우팅됐는지 확인 (for업체 리스트 api 호출)
 
   const navigate = useNavigate();
 

@@ -113,6 +113,17 @@ const insertCustInfo = async (object) => {
   }
 }
 
+const updateCustInfo = async (custDataList) => {
+
+  try{
+    const response = await axiosInstance.post(`/entp/enterprise/setCustInfo`, custDataList);
+
+    return response;
+  }catch(err) {
+    throw Error(`Error: ${err}`)
+  }
+}
+
 const getCustList = async (entp_unq) => {
   try{
     const response = await axiosInstance.post(`/entp/enterprise/getCustList`,
@@ -196,13 +207,71 @@ const searchCorRegNumberAPI = async (object) => {
   }
 }
 
-const insertSystemInfoAPI = async (object) => {
+const insertSystemServerAPI = async (requestData) => {
+
   try {
-    const response = await axiosInstance.post(`/entp/enterprise/insertSystemInfo`,
+    const response = await axiosInstance.post(
+      `/entp/enterprise/insertSysServerInfo`,requestData
+    );
+
+    return response.data.data;
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
+
+const insertDiskAPI = async (requestData) => {
+  try {
+    const response = await axiosInstance.post(
+      `/entp/enterprise/insertDiskInfo`,requestData
+    );
+
+    return response.data.data;
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
+
+const getSystemInfoList = async (entp_unq) => {
+  try{
+    const response = await axiosInstance.post(
+      `/entp/enterprise/getSystemInfoList?entp_unq=${entp_unq}`
+    );
+
+    return response.data.data
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
+
+const delSystemInfoAPI = async (svr_unq) => {
+  try {
+    const response = await axiosInstance.post(`/entp/enterprise/delSysServer`,
       {
-        // entp_unq,
+        svr_unq,
       }
     );
+
+    return response;
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
+
+const delDiskInfoAPI = async (diskUnqList) => {
+  try {
+    const response = await axiosInstance.post(`/entp/enterprise/delDiskInfo?diskUnqList=${diskUnqList}`);
+
+    return response;
+  }catch(err) {
+    throw Error(`Error: ${err}`);
+  }
+}
+
+const updateSystemServerAPI = async (requestData) => {
+
+  try {
+    const response = await axiosInstance.post(`/entp/enterprise/setSysServerInfo`, requestData);
 
     return response;
   }catch(err) {
@@ -223,5 +292,11 @@ export {
   deleteCustInfo,
   deleteEnterpriseInfo,
   searchCorRegNumberAPI,
-  insertSystemInfoAPI,
+  insertSystemServerAPI,
+  getSystemInfoList,
+  delSystemInfoAPI,
+  updateSystemServerAPI,
+  insertDiskAPI,
+  delDiskInfoAPI,
+  updateCustInfo,
 };

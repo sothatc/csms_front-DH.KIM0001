@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import styles from './Select.module.scss';
 
-const Select = ({ name, dataSet=[{}], onChangeEvent=()=>{}, disabled, value, label }) => {
+const Select = ({ name, dataSet=[{}], onChangeEvent=()=>{}, disabled, value, label, primaryKey }) => {
   const [toggle        , setToggle]         = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
 
   const onChangeHandler = (codeVal, codeNm) => {
-    onChangeEvent && onChangeEvent(name, codeVal);
+    onChangeEvent && onChangeEvent(name, codeVal, primaryKey);
     setSelectedOption(codeNm);
     setToggle(false);
   }

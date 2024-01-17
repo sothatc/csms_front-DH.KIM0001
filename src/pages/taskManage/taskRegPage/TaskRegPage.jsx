@@ -13,7 +13,7 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { initModal, openModal, selectModals } from 'reduxStore/modalSlice';
+import { initModal, openModal } from 'reduxStore/modalSlice';
 import styles from './TaskRegPage.module.scss';
 
 const FILE_SIZE_MAX_LIMIT = 20 * 1024 * 1024;
@@ -332,7 +332,7 @@ const TaskRegPage = () => {
     });
 
     getMappingTaskToScheduleAPI(newTaskData).then((response) => {
-      console.log("response = ", response);
+
     })
     .catch((err) => {
       alert(`Axios API Error: ${err}`);

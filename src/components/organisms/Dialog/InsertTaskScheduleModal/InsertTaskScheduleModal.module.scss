@@ -23,12 +23,28 @@
   background-color: #DFE7F5;
 
   &__title {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 100px 1fr 100px;
     align-items: center;
     padding: 10px;
     font-size: 14px;
     font-weight: 600;
+
+    >div:nth-child(2) {
+      text-align: center;
+    }
+
+    >div:last-child {
+      display: flex;
+      justify-content: end;
+      >img {
+        width: 20px;
+        height: 20px;
+        text-align: end;
+        cursor: pointer;
+      }
+    }
+
   }
 
   &__date {
@@ -67,8 +83,6 @@
       }
 
       >button {
-        width: 75px;
-        height: 30px;
         font-size: 14px;
         border-radius: 20px;
       }

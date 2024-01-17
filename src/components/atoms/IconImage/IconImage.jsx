@@ -16,6 +16,10 @@ import Plus from 'assets/images/common/Plus.svg';
 import Minus from 'assets/images/common/Minus.svg';
 import Close from 'assets/images/common/Close.svg';
 import System from 'assets/images/task/System.svg';
+import AtchDown from 'assets/images/common/AtchDown.svg';
+import LoginForm from 'assets/images/user/LoginForm.png';
+import UserMg from 'assets/images/user/UserMg.svg';
+import Setting from 'assets/images/common/Setting.svg';
 
 import React from 'react';
 
@@ -59,10 +63,10 @@ const isDiscernIcon = ({ icon }) => {
       case 'CHECK'       :
         return Check;
 
-      case 'ERRORICON'       :
+      case 'ERRORICON'   :
         return ErrorIcon;
 
-      case 'PLUS'       :
+      case 'PLUS'        :
         return Plus;
 
       case 'MINUS'       :
@@ -71,8 +75,20 @@ const isDiscernIcon = ({ icon }) => {
       case 'CLOSE'       :
         return Close;
 
-      case 'SYSTEM'       :
+      case 'SYSTEM'      :
         return System;
+
+      case 'ATCHDOWN'    :
+        return AtchDown;
+
+      case 'LOGINFORM'   :
+        return LoginForm;
+
+      case 'SETTING'     :
+        return Setting;
+
+      case 'USERMG'      :
+        return UserMg;
 
       default:
           break;

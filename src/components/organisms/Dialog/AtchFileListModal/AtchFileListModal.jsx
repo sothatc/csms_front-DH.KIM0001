@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from 'reduxStore/modalSlice';
 import styles from './AtchFileListModal.module.scss';
+import { IconImage } from 'components/atoms';
 
 const AtchFileListModal = () => {
   const [atchFiles, setAtchFiles] = useState([]);
@@ -33,7 +34,6 @@ const AtchFileListModal = () => {
   },[])
 
   const handleClose = () => {
-    // dispatch(closeModal({data : null}));
     dispatch(closeModal({
       modalTypeToClose: 'AtchFileListModal',
     }));
@@ -75,19 +75,27 @@ const AtchFileListModal = () => {
     }
   }
 
+  const onClickAllAtchDown = () => {
+
+  }
   return (
     <div className={styles.background}>
       <div className={styles.modal}>
         <div className={styles.modal__title}>
-          <div></div>
+          <div title='모두 다운로드'>
+            <IconImage icon={'ATCHDOWN'} onClickEvent={onClickAllAtchDown}/>
+          </div>
           <div>첨부파일</div>
-          <div className={styles.close} onClick={handleClose}>
-            x
+          <div>
+            <IconImage icon={'CLOSE'} onClickEvent={handleClose}/>
           </div>
         </div>
         <div className={styles.modal__content}>
           {atchFiles.length > 0 ? atchFiles.map((file, key) => (
-            <div key={key} onClick={() => onClickDownAtchFile(file.atch_file_unq)}>{file.atch_file_org_nm}</div>
+            <div>
+              <div key={key} onClick={() => onClickDownAtchFile(file.atch_file_unq)}>{file.atch_file_org_nm}</div>
+              <div>{file.reg_dtm}</div>
+            </div>
           ))
             : null
           }

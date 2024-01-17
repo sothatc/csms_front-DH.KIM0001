@@ -15,7 +15,6 @@ div{
 
 .modal {
   display: grid;
-  // grid-template-rows: 50px 150px 512px 40px;
   grid-template-rows: 50px min-content 512px 40px;
   grid-row-gap: 10px;
   margin: 3% auto;
@@ -28,7 +27,7 @@ div{
 
   &__title {
     display: grid;
-    grid-template-columns: 20px 1fr 20px;
+    grid-template-columns: 100px 1fr 100px;
     padding: 10px;
     font-size: 14px;
     font-weight: 600;
@@ -38,10 +37,35 @@ div{
       align-items: center;
       justify-content: center;
 
+    }
+
+    >div:first-child {
+      display: flex;
+      justify-content: start;
+
+      >button {
+        border-style: none;
+
+        >img {
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+        }
+      }
+    }
+
+    >div:last-child {
+      display: flex;
+      justify-content: end;
+
       >img {
-        width: 20px;
-        height: 20px;
         cursor: pointer;
+      }
+    }
+
+    &--active {
+      >button {
+        box-shadow: 4px 4px 14px rgba(0, 0, 0, 0.15);
       }
     }
   }
@@ -55,7 +79,7 @@ div{
     border-radius: 20px;
     background-color: #fff;
 
-    >div:not(:last-child) {
+    >div {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -79,15 +103,18 @@ div{
       >img {
         width: 15px;
         margin-left: 12px;
+        padding: 2px;
+        border: 1px solid black;
+        border-radius: 50%;
         cursor: pointer;
       }
     }
 
-    >div:last-child {
+    .add__server {
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 280px;
+      width: 290px;
       height: 27px;
       padding: 0 10px;
       margin-bottom: 5px;
@@ -152,9 +179,11 @@ div{
 
       >div:last-child {
         display: flex;
+        align-items: center;
         height: 33px;
 
         >div {
+          height: 33px;
           padding: 0 10px;
           margin-right: 5px;
           border-radius: 10px;
@@ -188,6 +217,7 @@ div{
 
         >div {
           display: flex;
+          align-items: center;
           height: 33px;
           margin-bottom: 5px;
 
@@ -205,7 +235,7 @@ div{
               padding: 0 10px;
               border-radius: 10px;
               background-color: #fff;
-
+              height: 33px;
               >input {
                 width: 100px;
                 height: 100%;
@@ -216,6 +246,10 @@ div{
 
           >img {
             width: 20px;
+            height: 20px;
+            padding: 2px;
+            border: 1px solid black;
+            border-radius: 50%;
             cursor: pointer;
           }
         }

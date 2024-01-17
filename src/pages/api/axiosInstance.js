@@ -4,10 +4,12 @@ const axiosInstance = axios.create({
   header: {
     token: '',
   },
+  withCredentials: true // 인증쿠키와 header를 같이 보낼지 여부
 });
 
 axiosInstance.interceptors.request.use(
   (config) => {
+    // config.headers['token']
     return config;
   },
   (err) => {

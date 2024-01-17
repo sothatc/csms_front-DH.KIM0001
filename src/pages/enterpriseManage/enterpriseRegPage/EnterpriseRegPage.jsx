@@ -7,7 +7,6 @@ import { GenerateOptions } from 'pages/api/common/dataSet/dataSet';
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './EnterpriseRegPage.module.scss';
-import { IconImage } from 'components/atoms';
 
 
 
@@ -86,7 +85,7 @@ const EnterpriseRegPage = () => {
   const [custData       , setCustData       ] = useState({...defaultCustData});
   const [systemData     , setSystemData     ] = useState([]);
   const [isCorRegNum    , setIsCorRegNum    ] = useState(false);
-console.log("enterpriseData = ",enterpriseData.svc_tp);
+
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -186,7 +185,7 @@ console.log("enterpriseData = ",enterpriseData.svc_tp);
       alert('사업자등록번호는 숫자만 입력해주세요.');
     }else if(enterpriseData.solution_tp === 'STT' && enterpriseData.svc_tp === ''  ) {
       validationBoolean = false;
-      alert('STT 서비스 형태를 성택해주세요.');
+      alert('STT 서비스 형태를 선택해주세요.');
     }else if(!numericPattern.test(custData.memb_tel)) {
       validationBoolean = false;
       alert('전화번호는 숫자만 입력해주세요.');
@@ -230,7 +229,7 @@ console.log("enterpriseData = ",enterpriseData.svc_tp);
     });
 
     formData.append('enterpriseData', JSON.stringify(newEnterpriseData));
-    formData.append('systemData', JSON.stringify(systemData));
+    // formData.append('systemData', JSON.stringify(systemData));
     formData.append('custData', JSON.stringify(newCustData));
 
     insertEnterprise(formData).then((response) => {

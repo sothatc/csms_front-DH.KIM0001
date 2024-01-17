@@ -15,7 +15,7 @@
   grid-template-rows: 50px calc(100% - 110px) 40px;
   grid-row-gap: 10px;
   margin: 10% auto;
-  width: 20%;
+  width: 30%;
   height: 50%;
   padding: 15px;
   border: 1px solid #888;
@@ -23,12 +23,34 @@
   background-color: #DFE7F5;
 
   &__title {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 100px 1fr 100px;
     align-items: center;
     padding: 10px;
     font-size: 14px;
     font-weight: 600;
+
+    >div:first-child {
+
+      >img {
+        cursor: pointer;
+      }
+    }
+
+    >div:nth-child(2) {
+      text-align: center;
+    }
+
+    >div:last-child {
+      display: flex;
+      justify-content: end;
+
+      >img {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+      }
+    }
   }
 
   &__content {
@@ -36,9 +58,14 @@
     background-color: #fff;
 
     >div {
+      display: flex;
+      justify-content: space-between;
       margin-bottom: 10px;
-      text-decoration: underline;
-      cursor: pointer;
+
+      >div:first-child {
+        text-decoration: underline;
+        cursor: pointer;
+      }
     }
   }
 
