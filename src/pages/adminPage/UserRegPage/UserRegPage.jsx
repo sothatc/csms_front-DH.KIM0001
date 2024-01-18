@@ -1,7 +1,7 @@
 import { IconImage } from 'components/atoms';
 import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
-import { OrgChCodeObject, OrgCodeObject } from 'pages/api/AuthTypeObject';
+import { AuthCodeObject, OrgChCodeObject, OrgCodeObject } from 'pages/api/AuthTypeObject';
 import { setUserInfoAPI } from 'pages/api/adminMg/UserManageAPI';
 import { GenerateOptions } from 'pages/api/common/dataSet/dataSet';
 import { useMemo, useState } from 'react';
@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import styles from './UserRegPage.module.scss';
 
 const UserRegPage = () => {
-  const [orgCodeData, setOrgCodeData] = useState([]);
+  const [orgCodeData  , setOrgCodeData  ] = useState([]);
   const [orgChCodeData, setOrgChCodeData] = useState([]);
   const [userData, setUserData] = useState({
     user_id     : '',
@@ -28,7 +28,8 @@ const UserRegPage = () => {
 
   const orgCodeOptoins   = useMemo(() => GenerateOptions(OrgCodeObject), []);
   const orgChCodeOptoins = useMemo(() => GenerateOptions(OrgChCodeObject), []);
-console.log("orgChCodeData = ",orgChCodeData);
+  const authCodeOptions  = useMemo(() => GenerateOptions(AuthCodeObject), []);
+
   const onChangeUserData = (name, value) => {
     setUserData((prev) => {
       return (
@@ -53,7 +54,7 @@ console.log("orgChCodeData = ",orgChCodeData);
     });
   }
 
-  const onChangeOrgCode = (name, value) => {
+  const onChangeCode = (name, value) => {
     setUserData((prev) => {
       return {...prev, [name]: value};
     });
@@ -118,14 +119,24 @@ console.log("orgChCodeData = ",orgChCodeData);
                 name          = 'org_cd'
                 value         = {userData.org_cd}
                 dataSet       = {orgCodeOptoins}
-                onChangeEvent = {onChangeOrgCode}
+                onChangeEvent = {onChangeCode}
               />
               <div>부서분류(중)</div>
               <Select
                 name          = 'org_ch_cd'
                 value         = {userData.org_ch_cd}
                 dataSet       = {orgChCodeData}
-                onChangeEvent = {onChangeOrgCode}
+                disabled      = {!userData.org_cd}
+                onChangeEvent = {onChangeCode}
+              />
+            </div>
+            <div>
+              <div>권한설정</div>
+              <Select
+                name    = 'auth_cd'
+                value   = {userData.auth_cd}
+                dataSet = {authCodeOptions}
+                onChangeEvent={onChangeCode}
               />
             </div>
             <div>

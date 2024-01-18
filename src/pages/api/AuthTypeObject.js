@@ -1,6 +1,8 @@
 /** 사용자 권한 코드 */
 export const AuthCodeObject = {
-
+  'AUTH01': '시스템관리자',
+  'AUTH02': '관리자',
+  'AUTH03': '일반사용자',
 }
 
 /** 잇팩 부서 코드 (대분류) */
