@@ -1,13 +1,17 @@
 import { IconImage } from 'components/atoms';
 import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
-import { useState } from 'react';
+import { OrgChCodeObject, OrgCodeObject } from 'pages/api/AuthTypeObject';
+import { setUserInfoAPI } from 'pages/api/adminMg/UserManageAPI';
+import { GenerateOptions } from 'pages/api/common/dataSet/dataSet';
+import { useMemo, useState } from 'react';
 import { Navigation } from 'react-minimal-side-navigation';
 import { useNavigate } from 'react-router-dom';
 import styles from './UserRegPage.module.scss';
-import { setUserInfoAPI } from 'pages/api/adminMg/UserManageAPI';
 
 const UserRegPage = () => {
+  const [orgCodeData, setOrgCodeData] = useState([]);
+  const [orgChCodeData, setOrgChCodeData] = useState([]);
   const [userData, setUserData] = useState({
     user_id     : '',
     user_pwd    : '',
@@ -22,6 +26,9 @@ const UserRegPage = () => {
 
   const navigate = useNavigate();
 
+  const orgCodeOptoins   = useMemo(() => GenerateOptions(OrgCodeObject), []);
+  const orgChCodeOptoins = useMemo(() => GenerateOptions(OrgChCodeObject), []);
+console.log("orgChCodeData = ",orgChCodeData);
   const onChangeUserData = (name, value) => {
     setUserData((prev) => {
       return (
@@ -44,6 +51,16 @@ const UserRegPage = () => {
     .catch((err) => {
       alert(`Axios API Error: ${err}`);
     });
+  }
+
+  const onChangeOrgCode = (name, value) => {
+    setUserData((prev) => {
+      return {...prev, [name]: value};
+    });
+
+    if(name === 'org_cd') {
+      setOrgChCodeData(orgChCodeOptoins.filter(option => option.value.startsWith(value)));
+    }
   }
 
   return (
@@ -83,30 +100,36 @@ const UserRegPage = () => {
         <div className={styles.content__reg}>
           <div>
             <div>
-              <div>사용자 ID</div>
-              <input value={userData.user_id} placeholder='아이디' onChange={(e)=>onChangeUserData('user_id', e.target.value)}/>
+              <input value={userData.user_id} placeholder='*아이디(필수)' onChange={(e)=>onChangeUserData('user_id', e.target.value)}/>
+              <button value={''}>중복확인</button>
             </div>
             <div>
-              <div>비밀번호</div>
-              <input value={userData.user_pwd} placeholder='비밀번호' onChange={(e)=>onChangeUserData('user_pwd', e.target.value)}/>
+              <input value={userData.user_pwd} placeholder='*비밀번호(필수)' onChange={(e)=>onChangeUserData('user_pwd', e.target.value)}/>
             </div>
             <div>
-              <div>비밀번호 확인</div>
-              <input value={userData.user_re_pwd} placeholder='비밀번호 확인' onChange={(e)=>onChangeUserData('user_re_pwd', e.target.value)}/>
+              <input value={userData.user_re_pwd} placeholder='*비밀번호 확인(필수)' onChange={(e)=>onChangeUserData('user_re_pwd', e.target.value)}/>
             </div>
             <div>
-              <div>사용자 이름</div>
               <input value={userData.user_nm} placeholder='사용자 이름' onChange={(e)=>onChangeUserData('user_nm', e.target.value)}/>
             </div>
             <div>
-              <div>상위부서</div>
-              <Select />
-              <div>하위부서</div>
-              <Select />
+              <div>부서분류(대)</div>
+              <Select
+                name          = 'org_cd'
+                value         = {userData.org_cd}
+                dataSet       = {orgCodeOptoins}
+                onChangeEvent = {onChangeOrgCode}
+              />
+              <div>부서분류(중)</div>
+              <Select
+                name          = 'org_ch_cd'
+                value         = {userData.org_ch_cd}
+                dataSet       = {orgChCodeData}
+                onChangeEvent = {onChangeOrgCode}
+              />
             </div>
             <div>
-              <div>Memo</div>
-              <textarea value={userData.memo} onChange={(e)=>onChangeUserData('memo', e.target.value)}/>
+              <textarea value={userData.memo} placeholder='Memo' onChange={(e)=>onChangeUserData('memo', e.target.value)}/>
             </div>
             <div>
               <Button value={'등록'} onClickEvent={onClickRegUser}/>
