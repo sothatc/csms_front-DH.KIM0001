@@ -58,6 +58,18 @@
           }
         }
 
+        >div:nth-child(3) {
+          position: relative;
+
+          >p {
+            position: absolute;
+            right: 20px;
+            top: 9px;
+            font-size: 13px;
+            color: red;
+          }
+        }
+
         >div:nth-child(5) {
           display: grid;
           grid-template-columns: 90px 150px 90px 150px;

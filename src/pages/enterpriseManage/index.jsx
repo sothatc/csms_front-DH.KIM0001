@@ -108,7 +108,6 @@ const EnterpriseManagePage = () => {
 
   useEffect(() => {
     getEnterpriseListEvent(requestData);
-		// dispatch(initModal());
   },[currentPage, selSolutionBtn, location])
 
   const getEnterpriseListEvent = (requestData) => {
@@ -246,10 +245,10 @@ const EnterpriseManagePage = () => {
           <div>
             <div className='client__pagination--arrow client__pagination--pre'>
               <Button
-                image="ARROW-LEFT"
-                onClickEvent = {() => setCurrentPage((prev) => Math.max( prev - 1, 1 ))}
+                image           = "ARROW-LEFT"
+                onClickEvent    = {() => setCurrentPage((prev) => Math.max( prev - 1, 1 ))}
                 backgroundColor = ''
-                disabled     = {currentPage === 1}
+                disabled        = {currentPage === 1}
               />
             </div>
             <div className='client__pagination--num'>

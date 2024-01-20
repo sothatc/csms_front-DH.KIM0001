@@ -2,6 +2,7 @@ import { IconImage } from 'components/atoms';
 import { Button } from 'components/atoms/Button/Button';
 import { Select } from 'components/atoms/Select/Select';
 import { AuthCodeObject, OrgChCodeObject, OrgCodeObject } from 'pages/api/AuthTypeObject';
+import { findUserById } from 'pages/api/User/UserManageAPI';
 import { setUserInfoAPI } from 'pages/api/adminMg/UserManageAPI';
 import { GenerateOptions } from 'pages/api/common/dataSet/dataSet';
 import { useMemo, useState } from 'react';
@@ -10,8 +11,9 @@ import { useNavigate } from 'react-router-dom';
 import styles from './UserRegPage.module.scss';
 
 const UserRegPage = () => {
-  const [orgCodeData  , setOrgCodeData  ] = useState([]);
-  const [orgChCodeData, setOrgChCodeData] = useState([]);
+  const [orgChCodeData , setOrgChCodeData ] = useState([]);
+  const [boolValidation, setBoolValidation] = useState(false);
+  const [boolChkPw     , setBoolChkPw     ] = useState(false);
   const [userData, setUserData] = useState({
     user_id     : '',
     user_pwd    : '',
@@ -22,6 +24,7 @@ const UserRegPage = () => {
     memo        : '',
     reg_id      : '',
     reg_dtm     : '',
+    auth_cd     : '',
   });
 
   const navigate = useNavigate();
@@ -30,7 +33,56 @@ const UserRegPage = () => {
   const orgChCodeOptoins = useMemo(() => GenerateOptions(OrgChCodeObject), []);
   const authCodeOptions  = useMemo(() => GenerateOptions(AuthCodeObject), []);
 
+  const onClickChkId = () => {
+    findUserById(userData.user_id).then((response) => {
+      if(response.status === 'FAIL') {
+        alert('사용 가능한 아이디입니다.');
+        setBoolValidation(true);
+      }else {
+        alert('중복된 아이디입니다\n다시 입력해주세요.');
+        setBoolValidation(false);
+      }
+    })
+    .catch((err) => {
+      alert(`Axios API Error: ${err}`);
+    });
+  }
+
+  const onClickRegUser = () => {
+    if(!boolValidation) {
+      alert('아이디를 중복확인 해주세요.');
+      return;
+    }else if(!boolChkPw) {
+      alert('비밀번호를 확인해주세요.');
+    }else {
+      setUserInfoAPI(userData).then((response) => {
+        if(response.data.status === 'FAIL') {
+          alert('이미 존재하는 사용자입니다.');
+        }else {
+          alert('사용자가 등록되었습니다.');
+          navigate('/system/userMg');
+        }
+      })
+      .catch((err) => {
+        alert(`Axios API Error: ${err}`);
+      });
+    }
+
+  }
+
+  const checkPw = (value) => {
+    if(userData.user_pwd === value || userData.user_re_pwd === value) {
+      setBoolChkPw(true);
+    }else {
+      setBoolChkPw(false);
+    }
+  }
+
   const onChangeUserData = (name, value) => {
+    if(name === 'user_id') {
+      setBoolValidation(false);
+    }
+
     setUserData((prev) => {
       return (
         {...prev,
@@ -38,20 +90,10 @@ const UserRegPage = () => {
         }
       )
     })
-  }
 
-  const onClickRegUser = () => {
-    setUserInfoAPI(userData).then((response) => {
-      if(response.data.status === 'FAIL') {
-        alert('이미 존재하는 사용자입니다.');
-      }else {
-        alert('사용자가 등록되었습니다.');
-        navigate('/system/userMg');
-      }
-    })
-    .catch((err) => {
-      alert(`Axios API Error: ${err}`);
-    });
+    if(name === 'user_re_pwd' || name === 'user_pwd') {
+      checkPw(value);
+    }
   }
 
   const onChangeCode = (name, value) => {
@@ -61,6 +103,13 @@ const UserRegPage = () => {
 
     if(name === 'org_cd') {
       setOrgChCodeData(orgChCodeOptoins.filter(option => option.value.startsWith(value)));
+    }
+  }
+
+  const onClickMove = () => {
+    const confirmed = window.confirm('데이터가 저장되지 않을 수 있습니다. 취소하시겠습니까?');
+    if(confirmed) {
+      navigate('/system/userMg');
     }
   }
 
@@ -101,14 +150,15 @@ const UserRegPage = () => {
         <div className={styles.content__reg}>
           <div>
             <div>
-              <input value={userData.user_id} placeholder='*아이디(필수)' onChange={(e)=>onChangeUserData('user_id', e.target.value)}/>
-              <button value={''}>중복확인</button>
+              <input value={userData.user_id} placeholder='*아이디(필수)' onChange={(e)=>onChangeUserData('user_id', e.target.value)} maxLength={15}/>
+              <button onClick={onClickChkId}>중복확인</button>
             </div>
             <div>
-              <input value={userData.user_pwd} placeholder='*비밀번호(필수)' onChange={(e)=>onChangeUserData('user_pwd', e.target.value)}/>
+              <input type='password' value={userData.user_pwd} placeholder='*비밀번호(필수)' onChange={(e)=>onChangeUserData('user_pwd', e.target.value)} maxLength={20}/>
             </div>
             <div>
-              <input value={userData.user_re_pwd} placeholder='*비밀번호 확인(필수)' onChange={(e)=>onChangeUserData('user_re_pwd', e.target.value)}/>
+              {!boolChkPw && userData.user_pwd ? <p>비밀번호가 일치하지 않습니다.</p> : null}
+              <input type='password' value={userData.user_re_pwd} placeholder='*비밀번호 확인(필수)' onChange={(e)=>onChangeUserData('user_re_pwd', e.target.value)} maxLength={20}/>
             </div>
             <div>
               <input value={userData.user_nm} placeholder='사용자 이름' onChange={(e)=>onChangeUserData('user_nm', e.target.value)}/>
@@ -133,10 +183,10 @@ const UserRegPage = () => {
             <div>
               <div>권한설정</div>
               <Select
-                name    = 'auth_cd'
-                value   = {userData.auth_cd}
-                dataSet = {authCodeOptions}
-                onChangeEvent={onChangeCode}
+                name          = 'auth_cd'
+                value         = {userData.auth_cd}
+                dataSet       = {authCodeOptions}
+                onChangeEvent = {onChangeCode}
               />
             </div>
             <div>
@@ -144,7 +194,7 @@ const UserRegPage = () => {
             </div>
             <div>
               <Button value={'등록'} onClickEvent={onClickRegUser}/>
-              <Button value={'취소'} />
+              <Button value={'취소'} onClickEvent={onClickMove}/>
             </div>
           </div>
         </div>

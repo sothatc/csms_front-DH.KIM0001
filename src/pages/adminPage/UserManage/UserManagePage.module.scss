@@ -10,15 +10,62 @@
     flex-basis: 90%;
     padding: 40px 40px;
 
-    >div {
-      display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      place-items: center;
-      height: 45px;
-    }
+    &__pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 0;
 
-    &__header {
+      >div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 20px;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 
+        .content__pagination--num {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 0 30px;
+
+          >li{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: 600;
+            background-color: transparent;
+            cursor: pointer;
+          }
+
+          .content__pagination--active {
+            background-color: #1D267D;
+            color: #fff;
+          }
+        }
+
+        .content__pagination--arrow {
+
+          >button {
+            width: 40px;
+            height: 40px;
+            border-style: none;
+            background-color: transparent;
+          }
+        }
+
+        .content__pagination--pre {
+
+        }
+        .content__pagination--next {
+
+        }
+      }
     }
   }
 }

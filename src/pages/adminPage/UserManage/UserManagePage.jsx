@@ -1,40 +1,90 @@
 import { IconImage } from 'components/atoms';
+import Grid from 'components/molecules/Grid/Grid';
+import { getUserListAPI } from 'pages/api/User/UserManageAPI';
+import { useEffect, useState } from 'react';
 import { Navigation } from 'react-minimal-side-navigation';
 import 'react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css';
 import { useNavigate } from 'react-router-dom';
 import styles from './UserManagePage.module.scss';
+import { Button } from 'components/atoms/Button/Button';
 
 
-const dummyData = [];
-for(let i=0; i<30; i++) {
-  dummyData.push({
-    user_id  : `test${i}`,
-    user_pwd : `000${i}`,
-    user_nm  : `userName${i}`,
-    use_yn:'Y',
-    cell_tel_no:'01022223344' ,
-    email:`test${i}@email.com`,
-    org_cd:'',
-    org_ch_cd:'',
-    jnco_dt: new Date(),
-    retir_dt: new Date(),
-    conn_ip:'172.16.0.49',
-    lgn_tm: '',
-    lgout_tm:'',
-    pwd_ini_yn_cd: 'N',
-    lgn_yn_cd:'N',
-    memo:'memo3eeee',
-    reg_id: 'admin01',
-    reg_dtm: new Date(),
-    chg_id: '',
-    chg_dtm: '',
-    session_token: '',
-  })
-}
+const ColumnDefs = [
+  {headerName: '사용자 ID'           , field: 'user_id'      },
+  {headerName: '사용여부'            , field: 'use_yn'       },
+  {headerName: '사용자명'            , field: 'user_nm'      },
+  {headerName: '최근 접속 IP'        , field: 'conn_ip'      },
+  {headerName: '로그인 시간'         , field: 'lgn_tm'       },
+  {headerName: '로그아웃 시간'       , field: 'lgout_tm'     },
+  {headerName: '비밀번호 초기화 여부', field: 'pwd_ini_yn_cd'},
+  {headerName: '로그인 상태'         , field: 'lgn_yn_cd'    },
+]
 
 const UserManagePage = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagingData , setPagingData ] = useState({});
+  const [userList   , setUserList   ] = useState([]);
+  const [requestData, setRequestData] = useState({
+    use_yn : '',
+    user_id: '',
+    user_nm: '',
+    conn_ip: '',
+    paging : {
+      limit : 10,
+      offset: 1,
+    }
+  })
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getUserListEvent(requestData);
+  },[])
+
+  const getUserListEvent = (requestData) => {
+    getUserListAPI(requestData).then((response) => {
+      setUserList(response.userList);
+      setPagingData(response.paging);
+    })
+    .catch((err) => {
+      alert(`Axios API Error: ${err}`);
+    });
+  }
+
+  const onClickPaging = (page) => {
+    setCurrentPage(page);
+  };
+
+  const renderPageNumbers = () => {
+
+    const totalPages = pagingData.page_cnt; // 전체 페이지 수
+    const visiblePages = 5; // 보이는 번호 갯수
+
+    const pageNumbers = [];
+    const halfVisiblePages = Math.floor(visiblePages / 2);
+
+     let start = currentPage - halfVisiblePages;
+     let end = currentPage + halfVisiblePages;
+
+     if (start <= 0) {
+       start = 1;
+       end = Math.min(totalPages, visiblePages);
+     }
+
+     if (end > totalPages) {
+       end = totalPages;
+       start = Math.max(1, totalPages - visiblePages + 1);
+     }
+
+     for (let i = start; i <= end; i++) {
+      pageNumbers.push(
+        <li key={i} className={i === currentPage ? 'client__pagination--active' : ''} onClick={() => onClickPaging(i)}>
+          {i}
+        </li>
+      );
+    }
+    return pageNumbers;
+  };
 
   return (
     <div className={styles.admin}>
@@ -71,31 +121,39 @@ const UserManagePage = () => {
       </div>
 
       <div className={styles.content}> {/** admin, nav, content까지 공통 Layout으로 분리 예정 */}
-        <div className={styles.content__header}>
-          <div>사용자 ID</div>
-          <div>사용여부</div>
-          <div>사용자명</div>
-          <div>최근 접속 IP</div>
-          <div>로그인 시간</div>
-          <div>로그아웃 시간</div>
-          <div>비밀번호 초기화</div>
-          <div>로그인 여부</div>
+        <div className={styles.content__grid}>
+          <Grid
+            data   = {userList}
+            header = {ColumnDefs}
+          />
         </div>
-        {dummyData && dummyData.map((user, index) => (
-          <div className={styles.content__list}>
-            <div>{user.user_id}</div>
-            <div>{user.use_yn}</div>
-            <div>{user.user_nm}</div>
-            <div>{user.conn_ip}</div>
-            <div>{user.lgn_tm}</div>
-            <div>{user.lgout_tm}</div>
-            <div>{user.pwd_ini_yn_cd}</div>
-            <div>{user.lgn_yn_cd}</div>
+        <div className={styles.content__pagination}>
+        <div>
+            <div className={`${styles['content__pagination--arrow']} ${styles['content__pagination--pre']}`}>
+              <Button
+                image           = "ARROW-LEFT"
+                onClickEvent    = {() => setCurrentPage((prev) => Math.max( prev - 1, 1 ))}
+                backgroundColor = ''
+                disabled        = {currentPage === 1}
+              />
+            </div>
+            <div className={`${styles['content__pagination--num']}`}>
+              {renderPageNumbers()}
+            </div>
+            <div className={`${styles['content__pagination--arrow']} ${styles['content__pagination--next']}`}>
+              <Button
+                image="ARROW-RIGHT"
+                onClickEvent = {() => setCurrentPage((prev) => Math.min( prev + 1, pagingData.page_cnt ))}
+                disabled     = {currentPage === pagingData.page_cnt}
+                backgroundColor = ''
+              />
+            </div>
           </div>
-        ))}
+        </div>
       </div>
     </div>
   )
 }
 
 export { UserManagePage };
+
