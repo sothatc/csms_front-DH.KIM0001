@@ -88,7 +88,7 @@ const UserManagePage = () => {
 
   return (
     <div className={styles.admin}>
-      <div className={styles.nav}>
+      {/* <div className={styles.nav}>
         <Navigation
           onSelect = {({itemId}) => {
             navigate(itemId);
@@ -96,12 +96,12 @@ const UserManagePage = () => {
           items = {[
             {
               title: '사용자 관리',
-              itemId: '/system/userMg',
+              itemId: '/admin/userMg',
               elemBefore: () => <IconImage icon={'USERMG'}/>,
               subNav: [
                 {
                   title: '추가/등록',
-                  itemId: '/system/userReg'
+                  itemId: '/admin/userReg'
                 },
               ],
             },
@@ -118,7 +118,7 @@ const UserManagePage = () => {
             },
           ]}
         />
-      </div>
+      </div> */}
 
       <div className={styles.content}> {/** admin, nav, content까지 공통 Layout으로 분리 예정 */}
         <div className={styles.content__grid}>

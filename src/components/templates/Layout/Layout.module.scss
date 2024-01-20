@@ -11,4 +11,15 @@
     width: calc(100% - 10px * 2);
     min-height: calc(100vh - 100px);
   }
+
+  .admin {
+    display: flex;
+    height: calc(100vh - 100px - 85px - 30px);
+
+    .nav {
+      position: relative;
+      flex-basis: 14rem;
+      padding: 100px 0;
+    }
+  }
 }
