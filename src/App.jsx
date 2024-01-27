@@ -1,7 +1,5 @@
 import LoginForm from 'components/organisms/LoginForm/LoginForm';
 import { Layout } from 'components/templates/Layout/Layout';
-import { UserManagePage } from 'pages/adminPage/UserManage/UserManagePage';
-import { UserRegPage } from 'pages/adminPage/UserRegPage/UserRegPage';
 import EnterpriseManagePage from 'pages/enterpriseManage';
 import EnterpriseDtlPage from 'pages/enterpriseManage/enterpriseDtlPage/EnterpriseDtlPage';
 import EnterpriseRegPage from 'pages/enterpriseManage/enterpriseRegPage/EnterpriseRegPage';
@@ -13,9 +11,12 @@ import { Route, Routes } from 'react-router-dom';
 import { GlobalModal } from 'reduxStore/GlobalModal';
 import { store } from 'reduxStore/store';
 import HomePage from './pages/home';
+import { UserManagePage } from 'pages/adminPage/UserManage/UserManagePage';
+import { UserRegPage } from 'pages/adminPage/UserRegPage/UserRegPage';
+import { checkCookieTokenExistence } from 'pages/api/useCookie';
 
 function App() {
-  const loginCheck = true;
+  const loginCheck = checkCookieTokenExistence();
 
   return (
     <Provider store={store}>
@@ -24,19 +25,18 @@ function App() {
         <Routes>
           {!loginCheck
             ?
-            <Route path ="/" element = {<LoginForm />} />
+            <Route exact path ="/" element = {<LoginForm />} />
             :
             <>
-              <Route exact path="/"               element = {<HomePage />            } />
-              <Route path ="/enterprise"          element = {<EnterpriseManagePage />} />
-              <Route path ="/enterprise/register" element = {<EnterpriseRegPage />   } />
-              <Route path ="/enterprise/detail"   element = {<EnterpriseDtlPage />   } />
-              <Route path ="/task"                element = {<TaskManagePage />      } />
-              <Route path ="/task/register"       element = {<TaskRegPage />         } />
-              <Route path ="/task/detail"         element = {<TaskDtlPage />         } />
-              {/* <Route path ="/system"              element = {<UserManagePage />      } /> */}
-              <Route path ="/admin/userMg"        element = {<UserManagePage />      } />
-              <Route path ="/admin/userReg"       element = {<UserRegPage />         } />
+              <Route exact path="/"                     element = {<HomePage />            } />
+              <Route exact path ="/enterprise"          element = {<EnterpriseManagePage />} />
+              <Route exact path ="/enterprise/register" element = {<EnterpriseRegPage />   } />
+              <Route exact path ="/enterprise/detail"   element = {<EnterpriseDtlPage />   } />
+              <Route exact path ="/task"                element = {<TaskManagePage />      } />
+              <Route exact path ="/task/register"       element = {<TaskRegPage />         } />
+              <Route exact path ="/task/detail"         element = {<TaskDtlPage />         } />
+              <Route exact path ="/admin/userMg"        element = {<UserManagePage />      } />
+              <Route exact path ="/admin/userReg"       element = {<UserRegPage />         } />
             </>
           }
         </Routes>

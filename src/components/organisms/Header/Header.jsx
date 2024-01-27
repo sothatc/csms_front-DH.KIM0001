@@ -1,11 +1,22 @@
 import { IconImage } from 'components/atoms';
+import { Button } from 'components/atoms/Button/Button';
+import { jwtDecode } from 'jwt-decode';
 import { HeaderMenu } from 'pages/api/HeaderObject';
-import React from 'react';
+import { getCookie, removeCookie } from 'pages/api/useCookie';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Header.module.scss';
 
 const Header = React.memo((childrenElemant) => {
+  const [userId, setUserId] = useState('');
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setUserId(
+      jwtDecode(getCookie('access_token')).user_id
+    );
+  },[])
 
   const onClickMoveToPage = (path) => {
     if(childrenElemant[2] || childrenElemant[5]) {
@@ -19,6 +30,12 @@ const Header = React.memo((childrenElemant) => {
     }else {
       navigate(path);
     }
+  }
+
+  const onClickLogOut = () => {
+    removeCookie("access_token");
+    navigate("/");
+    window.location.reload(true);
   }
 
   return (
@@ -40,8 +57,9 @@ const Header = React.memo((childrenElemant) => {
           </ul>
         </div>
         <div className={styles.nav__user}>
-          <div>itfact</div>
-          <IconImage icon='ADMIN' />
+          <div>{userId}</div>
+          <IconImage icon='ADMIN' tooltip={'관리자'} />
+          <IconImage icon={'POWER'} tooltip={'로그아웃'} onClickEvent={onClickLogOut} />
         </div>
       </nav>
     </header>

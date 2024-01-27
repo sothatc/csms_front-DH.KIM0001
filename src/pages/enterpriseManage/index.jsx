@@ -4,6 +4,7 @@ import Grid from 'components/molecules/Grid/Grid';
 import { getEnterpriseList } from 'pages/api/Enterprise/EnterpriseAPI';
 import { EntpTypeObject, SvcTypeObject } from 'pages/api/EnterpriseTypeObject';
 import { GenerateOptions } from 'pages/api/common/dataSet/dataSet';
+import { getCookie } from 'pages/api/useCookie';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -72,7 +73,8 @@ const EnterpriseManagePage = () => {
     }
 	});
 
-  const location = useLocation(); //등록화면에서 라우팅됐는지 확인 (for업체 리스트 api 호출)
+  //등록화면에서 라우팅됐는지 확인 (for업체 리스트 api 호출)
+  const location = useLocation();
 
   const navigate = useNavigate();
 
@@ -109,6 +111,7 @@ const EnterpriseManagePage = () => {
   useEffect(() => {
     getEnterpriseListEvent(requestData);
   },[currentPage, selSolutionBtn, location])
+  console.log("getCookie = ", getCookie("access_token"));
 
   const getEnterpriseListEvent = (requestData) => {
 
@@ -147,7 +150,6 @@ const EnterpriseManagePage = () => {
   };
 
   const renderPageNumbers = () => {
-
     const totalPages = pagingData.page_cnt; // 전체 페이지 수
     const visiblePages = 5; // 보이는 번호 갯수
 

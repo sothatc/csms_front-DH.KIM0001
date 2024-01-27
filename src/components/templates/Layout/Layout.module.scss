@@ -1,25 +1,36 @@
 .layout {
-  // display             : grid;
-  // grid-template-rows  : 90px calc(100% - 90px - 90px) 90px;
   min-width           : 100vw;
   max-width           : 100vw;
   min-height          : 100vh;
   max-height          : 100vh;
 
+  .admin {
+    padding: 100px 0 10px 5px;
+
+    .admin__wrap {
+      display: flex;
+      height: calc(100vh - 100px - 85px - 30px);
+
+      .nav {
+        position: relative;
+        min-width: 280px;
+        padding: 100px 0;
+      }
+
+      .content {
+        flex-basis: 90%;
+        min-width: 1060px;
+        min-height: 630px;
+        box-shadow: inset 0 -1px 20px rgba(0, 0, 0, 0.2);
+        background-color: #F1F1F1;
+      }
+    }
+  }
+
+
   .login {
     padding: 0;
     width: calc(100% - 10px * 2);
     min-height: calc(100vh - 100px);
-  }
-
-  .admin {
-    display: flex;
-    height: calc(100vh - 100px - 85px - 30px);
-
-    .nav {
-      position: relative;
-      flex-basis: 14rem;
-      padding: 100px 0;
-    }
   }
 }

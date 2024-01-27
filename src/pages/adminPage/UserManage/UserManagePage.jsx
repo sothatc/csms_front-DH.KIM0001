@@ -1,12 +1,9 @@
-import { IconImage } from 'components/atoms';
+import { Button } from 'components/atoms/Button/Button';
 import Grid from 'components/molecules/Grid/Grid';
 import { getUserListAPI } from 'pages/api/User/UserManageAPI';
 import { useEffect, useState } from 'react';
-import { Navigation } from 'react-minimal-side-navigation';
 import 'react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css';
-import { useNavigate } from 'react-router-dom';
 import styles from './UserManagePage.module.scss';
-import { Button } from 'components/atoms/Button/Button';
 
 
 const ColumnDefs = [
@@ -34,8 +31,6 @@ const UserManagePage = () => {
       offset: 1,
     }
   })
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     getUserListEvent(requestData);
@@ -87,67 +82,33 @@ const UserManagePage = () => {
   };
 
   return (
-    <div className={styles.admin}>
-      {/* <div className={styles.nav}>
-        <Navigation
-          onSelect = {({itemId}) => {
-            navigate(itemId);
-          }}
-          items = {[
-            {
-              title: '사용자 관리',
-              itemId: '/admin/userMg',
-              elemBefore: () => <IconImage icon={'USERMG'}/>,
-              subNav: [
-                {
-                  title: '추가/등록',
-                  itemId: '/admin/userReg'
-                },
-              ],
-            },
-            {
-              title: '설정',
-              itemId: '/setting',
-              elemBefore: () => <IconImage icon={'SETTING'}/>,
-              subNav: [
-                {
-                  title: '테마',
-                  itemId: '/setting/theme',
-                },
-              ],
-            },
-          ]}
+    <div className={styles.user}>
+      <div className={styles.user__grid}>
+        <Grid
+          data   = {userList}
+          header = {ColumnDefs}
         />
-      </div> */}
-
-      <div className={styles.content}> {/** admin, nav, content까지 공통 Layout으로 분리 예정 */}
-        <div className={styles.content__grid}>
-          <Grid
-            data   = {userList}
-            header = {ColumnDefs}
-          />
-        </div>
-        <div className={styles.content__pagination}>
+      </div>
+      <div className={styles.user__pagination}>
         <div>
-            <div className={`${styles['content__pagination--arrow']} ${styles['content__pagination--pre']}`}>
-              <Button
-                image           = "ARROW-LEFT"
-                onClickEvent    = {() => setCurrentPage((prev) => Math.max( prev - 1, 1 ))}
-                backgroundColor = ''
-                disabled        = {currentPage === 1}
-              />
-            </div>
-            <div className={`${styles['content__pagination--num']}`}>
-              {renderPageNumbers()}
-            </div>
-            <div className={`${styles['content__pagination--arrow']} ${styles['content__pagination--next']}`}>
-              <Button
-                image="ARROW-RIGHT"
-                onClickEvent = {() => setCurrentPage((prev) => Math.min( prev + 1, pagingData.page_cnt ))}
-                disabled     = {currentPage === pagingData.page_cnt}
-                backgroundColor = ''
-              />
-            </div>
+          <div className={`${styles['user__pagination--arrow']} ${styles['user__pagination--pre']}`}>
+            <Button
+              image           = "ARROW-LEFT"
+              onClickEvent    = {() => setCurrentPage((prev) => Math.max( prev - 1, 1 ))}
+              disabled        = {currentPage === 1}
+              backgroundColor = ''
+            />
+          </div>
+          <div className={`${styles['user__pagination--num']}`}>
+            {renderPageNumbers()}
+          </div>
+          <div className={`${styles['user__pagination--arrow']} ${styles['user__pagination--next']}`}>
+            <Button
+              image           = "ARROW-RIGHT"
+              onClickEvent    = {() => setCurrentPage((prev) => Math.min( prev + 1, pagingData.page_cnt ))}
+              disabled        = {currentPage === pagingData.page_cnt}
+              backgroundColor = ''
+            />
           </div>
         </div>
       </div>

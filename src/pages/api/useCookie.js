@@ -1,26 +1,28 @@
-const getCookie = (key) => {
-    const checkKeyExistence = document.cookie
-                                .split("; ")
-                                .find((current) => current.startsWith('${key}='));
-    return checkKeyExistence ? true : false;
+const { Cookies } = require("react-cookie");
+
+const cookies = new Cookies();
+
+/**
+ * @param {*} name
+ * @param {*} value
+ * @param {} option 만료기한 (-1: 쿠키 삭제)
+ * @returns
+ */
+export const setCookie = (name, value, option) => {
+  return cookies.set(name, value, {...option});
 }
 
-const getCookieValue = (key) => {
-    const CookieValue = document.cookie
-    .split("; ")
-    .find((current) => current.startsWith('${key}='))
-    .split("=")[1];
-    return CookieValue;
+/** 쿠키 getter */
+export const getCookie = (name) => {
+  return cookies.get(name)
 }
 
-const deleteCookie = (key) => {
-    let today = new Date();
-    today = today.toUTCString();
-    document.cookie = '${key}=; path=/; expires=${today}';
+/** 쿠키 삭제 */
+export const removeCookie = (name) => {
+  return cookies.remove(name);
 }
 
-export {
-    getCookie,
-    getCookieValue,
-    deleteCookie
+export const checkCookieTokenExistence = () => {
+  return getCookie("access_token");
 }
+

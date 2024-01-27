@@ -20,7 +20,9 @@ import AtchDown from 'assets/images/common/AtchDown.svg';
 import LoginForm from 'assets/images/user/LoginForm.png';
 import UserMg from 'assets/images/user/UserMg.svg';
 import Setting from 'assets/images/common/Setting.svg';
+import Power from 'assets/images/common/Power.svg';
 
+import styles from './IconImage.module.scss';
 import React from 'react';
 
 const isDiscernIcon = ({ icon }) => {
@@ -90,20 +92,31 @@ const isDiscernIcon = ({ icon }) => {
       case 'USERMG'      :
         return UserMg;
 
+      case 'POWER'       :
+        return Power;
+
       default:
           break;
     }
 }
 
-const IconImage = React.memo(({ id, icon, onClickEvent}) => {
+const IconImage = React.memo(({ id, icon, onClickEvent, tooltip}) => {
     const Icon = isDiscernIcon({ icon });
     const onClickHandler = () => {
         onClickEvent && onClickEvent(id);
     }
+
     return (
-        <>
+      <>
+        {tooltip
+          ?
+          <div className={styles.tootip} tooltip={tooltip} flow="down">
+            <img id={id} src={Icon} alt="아이콘" onClick={onClickHandler} />
+          </div>
+          :
           <img id={id} src={Icon} alt="아이콘" onClick={onClickHandler} />
-        </>
+        }
+      </>
     )
 });
 
